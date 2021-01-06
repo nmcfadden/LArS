@@ -1,0 +1,40 @@
+################
+#VERBOSITY
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+
+#################
+#SEED
+/run/random/setRandomSeed 0
+
+##################
+# isotropic emission
+/xenoScope/gun/angtype iso
+
+# make sure the volume below is a bit larger than the object the source will be confined to
+/xenoScope/gun/type   Point
+/xenoScope/gun/center 0. 0. 100. cm
+
+##################
+# particle type + energy spectrum
+
+/xenoScope/gun/energy 0 keV
+/xenoScope/gun/particle ion
+
+# Co60
+/xenoScope/gun/ion 27 60 0 0
+
+
+##################
+# MC acceleration techniques for gammas. AP playground: if false it is not used
+/run/forced/setVarianceReduction false
+
+# Scintillation processes in the LXe
+/Xe/detector/setLXeScintillation false
+
+# Tree Filling options
+/run/writeEmpty true

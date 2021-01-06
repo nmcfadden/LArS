@@ -1,0 +1,62 @@
+################
+#VERBOSITY
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+#SEED
+/run/random/setRandomSeed 0
+
+#/xenoScope/gun/type  Point
+#/xenoScope/gun/center 1250. 0. 0. mm
+#/xenoScope/gun/angtype direction
+#/xenoScope/gun/direction 1 1 0
+
+# make sure the volume below is a bit larger than the object the source will be confined to
+/xenoScope/gun/type Volume
+/xenoScope/gun/shape Cylinder
+/xenoScope/gun/center 0. 0. 0. cm
+/xenoScope/gun/radius 1600 mm
+/xenoScope/gun/halfz  2000 mm
+/xenoScope/gun/confine LScintVessel
+
+##################
+# Select the volume to confine the source. For cryostat studies choose:
+# InnerCryostat - for the inner vessel
+# OuterCryostat - for the outer vessel
+# HexapodPlatformPhysical  HexapodLegPhysical_1 HexapodLegPhysical_2 - for the Hexapod (platform and legs)
+
+#/gps/pos/confine HexapodPlatformPhysical
+
+
+##################
+# particle type + energy spectrum
+/xenoScope/gun/energytype Spectrum
+/xenoScope/gun/energyspectrum ./macros/spectra/optPhoton/bis-MSB_1cm.dat
+#/xenoScope/gun/energy   6.98 eV
+#/xenoScope/gun/energy   2.88 eV
+/xenoScope/gun/particle opticalphoton
+
+
+##################
+# MC acceleration techniques for gammas. AP playground: if false it is not used
+#/run/forced/setVarianceReduction false
+
+#
+# Scintillation processes in the LXe
+#
+/Xe/detector/setLXeScintillation false
+
+#
+# Scintillation processes in the LScint (only when material selected is "Gd_LScint")
+#
+/Xe/detector/setGdLScintScintillation false
+
+
+#/analysis/settings/setPMTdetails false   -- ???
+
+# Tree Filling options
+/run/writeEmpty true

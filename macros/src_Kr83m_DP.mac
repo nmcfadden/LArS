@@ -1,0 +1,77 @@
+#################
+# Macro to simulate Kr83m in the LXe phase of a dual phase setup
+# by Alex
+#################
+
+##################
+# optical properties
+/Xe/detector/setTeflonReflectivity 0.
+/Xe/detector/setGXeTeflonReflectivity 0.95
+
+/Xe/detector/setLXeAbsorbtionLength 10 m 
+/Xe/detector/setGXeAbsorbtionLength 10 m 
+
+/Xe/detector/setLXeRayScatterLength 40. cm
+
+/Xe/detector/setLXeRefractionIndex 1.63
+
+/Xe/detector/setLXeMeshTransparency 0.89770509
+/Xe/detector/setGXeMeshTransparency 0.89770509
+
+
+#################
+# verbosity
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+# seed
+/run/random/setRandomSeed 0
+
+#################
+# gun
+/xenoScope/gun/angtype iso
+/xenoScope/gun/type    Volume  
+/xenoScope/gun/shape   Cylinder
+
+
+#################
+
+
+### S1
+#gun confined to entire LXe volume
+#/xenoScope/gun/center 0. 0. -1. m 
+#/xenoScope/gun/radius 0.08 m
+#/xenoScope/gun/halfz  3 m
+## select the volume to confine the source
+#/xenoScope/gun/confine LXe*
+
+### S2
+#gun confined to entire LXe volume
+/xenoScope/gun/center 0. 0. 0.0  m 
+/xenoScope/gun/radius 0.8 cm
+/xenoScope/gun/halfz  0.8 cm
+## select the volume to confine the source
+#/xenoScope/gun/confine LXe*
+
+
+
+##################
+# particle type + energy spectrum
+/xenoScope/gun/energy 0 keV
+/xenoScope/gun/particle ion
+
+#for Rn-220
+/xenoScope/gun/ion 86 220 0 0
+
+##################
+# scintillation processes in the LXe
+/Xe/detector/setLXeScintillation true
+
+##################
+# tree Filling options
+/run/writeEmpty true
+

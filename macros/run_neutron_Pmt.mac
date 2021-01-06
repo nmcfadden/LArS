@@ -1,0 +1,60 @@
+################
+#VERBOSITY
+/control/verbose 1
+/run/verbose 1
+/event/verbose 2
+/tracking/verbose 2
+/xenoScope/gun/verbose 1
+
+#################
+#SEED
+/run/random/setRandomSeed 0
+
+##################
+# isotropic emission
+/xenoScope/gun/angtype iso
+
+# make sure the volume below is a bit larger than the object the source will be confined to
+/xenoScope/gun/type   Volume  
+/xenoScope/gun/shape  Cylinder
+/xenoScope/gun/center 0. 0. 0. cm
+/xenoScope/gun/radius 800 mm
+/xenoScope/gun/halfz  1200 mm
+
+##################
+# Select the volume to confine the source. For cryostat studies choose:
+# InnerCryostat - for the inner vessel
+# OuterCryostat - for the outer vessel
+# HexapodPlatformPhysical  HexapodLegPhysical_1 HexapodLegPhysical_2 - for the Hexapod (platform and legs)
+
+/xenoScope/gun/confine PMT*
+
+##################
+# particle type + energy spectrum
+/xenoScope/gun/energytype Spectrum
+/xenoScope/gun/energyspectrum ./macros/spectra/neutron/flat.dat
+/xenoScope/gun/particle neutron
+
+
+##################
+# MC acceleration techniques for gammas. AP playground: if false it is not used
+/run/forced/setVarianceReduction false
+
+#
+# Scintillation processes in the LXe
+#
+/Xe/detector/setLXeScintillation false
+
+#
+# Scintillation processes in the LScint (only when material selected is "Gd_LScint")
+#
+/Xe/detector/setGdLScintScintillation false
+
+# Tree Filling options
+/run/writeEmpty true
+
+
+###################
+# command to guarantee neutrons until their capture (not needed in G4 10.03+)
+# /physics_engine/neutron/energyLimit 1.e-10 eV	 
+# /physics_engine/neutron/timeLimit 999999999 s

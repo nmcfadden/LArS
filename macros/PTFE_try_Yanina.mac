@@ -1,0 +1,52 @@
+#################
+# Macro to simulate background particles 
+#################
+
+##################
+
+#################
+# verbosity
+/control/verbose 0
+/run/verbose 1
+/event/verbose 1
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+# seed
+/run/random/setRandomSeed 0
+
+#################
+# gun
+/xenoScope/gun/angtype iso
+/xenoScope/gun/type    Volume  
+/xenoScope/gun/shape   Cylinder
+
+
+#################
+#gun confined to entire LXe volume
+/xenoScope/gun/center 0. 0. 0.0  m 
+/xenoScope/gun/radius 5. m
+/xenoScope/gun/halfz  5. m
+## select the volume to confine the source
+/xenoScope/gun/confine PTFE*
+
+
+
+##################
+# particle type + energy spectrum
+
+
+
+#for Rn-226
+/xenoScope/gun/particle ion
+/xenoScope/gun/ion 86 226 0 0
+/xenoScope/gun/energy 0 keV
+##################
+# scintillation processes in the LXe
+#/Xe/detector/setLXeScintillation true
+
+##################
+# tree Filling options
+/run/writeEmpty true
+

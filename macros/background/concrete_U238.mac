@@ -1,0 +1,69 @@
+#################
+# Macro to simulate background particles 
+#################
+
+##################
+
+#################
+# verbosity
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xebra/gun/verbose 0
+
+#################
+# seed
+/run/random/setRandomSeed 0
+
+#################
+# gun
+/xebra/gun/angtype iso
+#/xebra/gun/direction 0 0 0
+/xebra/gun/type    Volume  
+/xebra/gun/shape   Cylinder
+
+
+#################
+
+
+### Bancground material confinement
+#gun confined to entire LXe volume
+/xebra/gun/center 0. 0. 0.  m 
+/xebra/gun/radius 15 m
+/xebra/gun/halfz  10 m
+## select the volume to confine the source
+#/xebra/gun/confine Steel*
+#/xebra/gun/confine Cu*
+#/xebra/gun/confine SiPM*
+#/xebra/gun/confine PMT*
+/xebra/gun/confine Concrete*
+#/xebra/gun/confine PTFE*
+
+##################
+# particle type + energy spectrum
+
+/xebra/gun/particle ion
+#/xebra/gun/ion 88 226 0 0
+#/xebra/gun/ion 90 232 0 0 
+/xebra/gun/ion 92 238 0 0
+#/xebra/gun/ion 27 60 0 0
+#/xebra/gun/ion 19 40 0 0  
+/xebra/gun/energy 0 keV
+##################
+# scintillation processes in the LXe
+/Xe/detector/setLXeScintillation false
+
+##################
+# tree Filling options
+/run/writeEmpty true
+
+#/run/initialize
+#/vis/open OGLSQt
+#/vis/drawVolume world
+
+#/vis/scene/add/trajectories smooth
+#/vis/scene/endOfEventAction accumulate
+#/vis/viewer/set/viewpointThetaPhi 90 0  deg
+#/vis/viewer/set/targetPoint 0 0 -165 cm
+#/vis/viewer/zoom 8

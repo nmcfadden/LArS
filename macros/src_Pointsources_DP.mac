@@ -1,0 +1,87 @@
+#################
+# Macro to simulate external radioactive point sources
+# by Alex
+#################
+
+##################
+# optical properties
+/Xe/detector/setTeflonReflectivity 0.95
+/Xe/detector/setGXeTeflonReflectivity 0.95
+
+/Xe/detector/setLXeAbsorbtionLength 100 cm 
+/Xe/detector/setGXeAbsorbtionLength 100 m 
+
+/Xe/detector/setLXeRayScatterLength 30 cm
+
+/Xe/detector/setLXeRefractionIndex 1.63
+
+#################
+# verbosity
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+# seed
+/run/random/setRandomSeed 0
+
+#################
+# gun
+/xenoScope/gun/angtype iso
+/xenoScope/gun/type    Point
+
+#################
+## place inside sample tube assuming that centered in z-coordinate wrt to active volume
+## position centered in sample tube
+/xenoScope/gun/center 0. -122. -35.75 mm
+## position outside outer cryostat
+#/xenoScope/gun/center 250. 0. -35.75 mm
+## position centered in LXe outside of reflector
+#/xenoScope/gun/center 0. -45. -35.75 mm
+## place inside sample tube centered below TPC
+#/xenoScope/gun/center 0. 0. -275. mm
+
+##################
+# particle type + energy spectrum
+/xenoScope/gun/energy 0 keV
+/xenoScope/gun/particle ion
+
+# for Cs137
+/xenoScope/gun/ion 55 137 0 0
+
+# for Co57
+# /xenoScope/gun/ion 27 57 0 0
+
+# for Co60
+# /xenoScope/gun/ion 27 60 0 0
+
+# for K40
+#/xenoScope/gun/ion 19 40 0 0
+
+# for U238->Ra226
+#/xenoScope/gun/ion 92 238 0 0
+#/grdm/nucleusLimits 238 230 92 90
+
+# for Ar110m
+#/xenoScope/gun/ion 47 110 0 118.
+
+# for Rb83->Kr83
+#/xenoScope/gun/ion 37 83 0 0 
+#/grdm/nucleusLimits 83 83 37 36
+
+# for Kr85
+#/xenoScope/gun/ion 36 85 0 0 
+
+
+
+##################
+# scintillation processes in the LXe
+/Xe/detector/setLXeScintillation false
+#/Xe/detector/setLXeScintillation true
+
+##################
+# tree Filling options
+/run/writeEmpty false
+

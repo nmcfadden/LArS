@@ -1,0 +1,42 @@
+################
+#VERBOSITY
+/control/verbose 0
+/run/verbose 1
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+
+#################
+#SEED
+/run/random/setRandomSeed 0
+
+##################
+# isotropic emission
+/xenoScope/gun/angtype iso
+
+# make sure the volume below is a bit larger than the object the source will be confined to
+/xenoScope/gun/type Surface
+/xenoScope/gun/shape Cylinder
+/xenoScope/gun/center 0. 0. 150.67 cm
+/xenoScope/gun/halfz 184.8 cm
+/xenoScope/gun/radius 25.5 cm
+
+##################
+# particle type + energy spectrum
+
+/xenoScope/gun/particle gamma
+/xenoScope/gun/energytype Mono
+#/xenoScope/gun/energyspectrum "File containing energy spectrum"
+/xenoScope/gun/energy 100 MeV
+
+
+##################
+# MC acceleration techniques for gammas. AP playground: if false it is not used
+/run/forced/setVarianceReduction false
+
+# Scintillation processes in the LXe
+/Xe/detector/setLXeScintillation false
+
+# Tree Filling options
+/run/writeEmpty true

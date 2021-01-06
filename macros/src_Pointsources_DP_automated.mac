@@ -1,0 +1,48 @@
+#################
+# Macro to simulate external radioactive point sources
+#################
+
+##################
+# optical properties
+/Xe/detector/setTeflonReflectivity 0.95
+/Xe/detector/setGXeTeflonReflectivity 0.95
+/Xe/detector/setLXeAbsorbtionLength 100 cm
+/Xe/detector/setGXeAbsorbtionLength 100 m
+/Xe/detector/setLXeRayScatterLength 30 cm
+/Xe/detector/setLXeRefractionIndex 1.63
+/Xe/detector/setLXeMeshTransparency 0.89770509
+/Xe/detector/setGXeMeshTransparency 0.89770509
+
+#################
+# verbosity
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+# seed
+/run/random/setRandomSeed 0
+
+#################
+# gun
+/xenoScope/gun/angtype iso
+/xenoScope/gun/type    Point 
+/xenoScope/gun/center 0. -122. -35.75 mm
+/xenoScope/gun/numberofparticles 1
+
+##################
+# particle type + energy spectrum
+/xenoScope/gun/energy   0 keV
+/xenoScope/gun/particle ion
+/xenoScope/gun/ion 27 60 0 0
+
+##################
+# scintillation processes in the LXe
+/Xe/detector/setLXeScintillation false
+
+##################
+# tree Filling options
+/run/writeEmpty false
+
