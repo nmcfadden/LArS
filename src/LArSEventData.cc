@@ -19,12 +19,23 @@ LArSEventData::LArSEventData()
 	m_pParentType = new vector<string>;
 	m_pCreatorProcess = new vector<string>;
 	m_pDepositingProcess = new vector<string>;
+  
+  //step info 
+  m_pVol = new vector<string>;
+  m_pCreator = new vector<string>;
 	m_pX = new vector<float>;
 	m_pY = new vector<float>;
 	m_pZ = new vector<float>;
 	m_pEnergyDeposited = new vector<float>;
 	m_pKineticEnergy = new vector<float>;
 	m_pTime = new vector<float>;
+
+  //Primary info
+  m_pVolPrim = new vector<string>;
+  m_pXPrim = new vector<float>;
+  m_pYPrim = new vector<float>;
+  m_pZPrim = new vector<float>;
+
 	// DR 20161012 - Branches to save incoming and outcoming energy in LXe. Useful for analysis of the single scatter events in the active volume.
 	m_pPreMomDirX = new vector<float>;
 	m_pPreMomDirY = new vector<float>;
@@ -86,13 +97,21 @@ LArSEventData::~LArSEventData()
 	delete m_pParentType;
 	delete m_pCreatorProcess;
 	delete m_pDepositingProcess;
+  
+  delete m_pVol;
+  delete m_pCreator;
 	delete m_pX;
 	delete m_pY;
 	delete m_pZ;
 	delete m_pEnergyDeposited;
 	delete m_pKineticEnergy;
 	delete m_pTime;
-	delete m_pPreMomDirX;
+  delete m_pVolPrim;
+  delete m_pXPrim; 
+  delete m_pYPrim; 
+  delete m_pZPrim; 
+	
+  delete m_pPreMomDirX;
 	delete m_pPreMomDirY;
 	delete m_pPreMomDirZ;
 	delete m_pPostMomDirX;
@@ -151,12 +170,23 @@ LArSEventData::Clear()
 	m_pParentType->clear();
 	m_pCreatorProcess->clear();
 	m_pDepositingProcess->clear();
+ 
+  //Step info added by Neil
+  m_pVol->clear();
+  m_pCreator->clear();
 	m_pX->clear();
 	m_pY->clear();
 	m_pZ->clear();
 	m_pEnergyDeposited->clear();
 	m_pKineticEnergy->clear();
 	m_pTime->clear();
+
+  //Primary info
+  m_pVolPrim->clear();
+  m_pXPrim->clear();
+  m_pYPrim->clear();
+  m_pZPrim->clear();
+
 	m_pPreMomDirX->clear();
 	m_pPreMomDirY->clear();
 	m_pPreMomDirZ->clear();

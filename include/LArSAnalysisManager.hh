@@ -78,6 +78,8 @@ private:
   G4int m_iLXeHitsCollectionID;
   G4int m_iPmtHitsCollectionID;
   G4int m_iLScintHitsCollectionID;
+
+  G4int fPastTrackPrimaryID = -1;
   
   G4String m_hDataFilename;
   G4int m_iNbEventsToSimulate;

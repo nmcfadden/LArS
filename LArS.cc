@@ -140,8 +140,8 @@ main(int argc, char **argv)
   // set user-defined action classes
   pRunManager->SetUserAction(pPrimaryGeneratorAction);
   pRunManager->SetUserAction(new LArSStackingAction(pAnalysisManager));
-  pRunManager->SetUserAction(new LArSSteppingAction(pAnalysisManager));
   pRunManager->SetUserAction(new LArSRunAction(pAnalysisManager));
+  pRunManager->SetUserAction(new LArSSteppingAction(pAnalysisManager));
   pRunManager->SetUserAction(new LArSEventAction(pAnalysisManager));
   
   // geometry IO

@@ -33,12 +33,24 @@ public:
 	vector<string> *m_pParentType;				// type of particle
 	vector<string> *m_pCreatorProcess;			// interaction
 	vector<string> *m_pDepositingProcess;			// energy depositing process
-	vector<float> *m_pX;					// position of the step
+	
+  //Added by Neil
+  //step info
+  vector<string> *m_pVol;
+  vector<string> *m_pCreator;
+  vector<float> *m_pX;					// position of the step
 	vector<float> *m_pY;
 	vector<float> *m_pZ;
 	vector<float> *m_pEnergyDeposited; 			// energy deposited in the step
 	vector<float> *m_pKineticEnergy;			// particle kinetic energy after the step
 	vector<float> *m_pTime;					// time of the step
+
+  //primary info
+  vector<string> *m_pVolPrim;
+  vector<float> *m_pXPrim;
+  vector<float> *m_pYPrim;
+  vector<float> *m_pZPrim;
+
 	// DR 20161012 - Branches to save incoming and outcoming energy in LXe. Useful for analysis of the single scatter events in the active volume.
 	vector<float> *m_pPreMomDirX;				// momentum direction before the hit
 	vector<float> *m_pPreMomDirY;

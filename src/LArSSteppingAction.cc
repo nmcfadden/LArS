@@ -6,6 +6,7 @@ LArSSteppingAction::LArSSteppingAction(LArSAnalysisManager *myAM):myAnalysisMana
 
 void LArSSteppingAction::UserSteppingAction(const G4Step* aStep)
 {
+  myAnalysisManager->Step(aStep);
 	G4int  trackID = aStep->GetTrack()->GetTrackID();
 	particle = aStep->GetTrack()->GetDefinition()->GetParticleName();
 	G4int particlePDGcode = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
@@ -44,7 +45,6 @@ void LArSSteppingAction::UserSteppingAction(const G4Step* aStep)
 									eP,
 									timeP,
 									trackID);      
-        G4cout<<"Made it into the stepping action for OP"<<G4endl;
 		}
 	}
   

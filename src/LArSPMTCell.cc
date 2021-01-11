@@ -65,6 +65,13 @@ G4LogicalVolume* LArSPMTCell::Construct(){
   G4LogicalVolume * bottomCell_logical = new G4LogicalVolume(bottomCell_solid,G4Material::GetMaterial("Aluminum"),"bottomCell_Logical",0,0,0);
   G4VPhysicalVolume * bottomCell_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-topCellThickness/(mm)-wallCellHeight/(mm)-topCellThickness/(2*mm))*mm ),bottomCell_logical,"bottomCell_physical",LAr_logical,0,false,0);
 
+  //Alpha source used to in particle generator macro to confine alpha to small volume
+  G4double alphaDiameter = 1*mm;
+  G4double alphaThickness = 0.001*mm;
+  G4Tubs* alphaSource_solid = new G4Tubs("alphaSource_solid",0,alphaDiameter/2,alphaThickness/2,0,360*deg);
+  G4LogicalVolume * alphaSource_logical = new G4LogicalVolume(alphaSource_solid,G4Material::GetMaterial("Aluminum"),"alphaSource_Logical",0,0,0);
+  G4VPhysicalVolume * alphaSource_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-topCellThickness/(mm)-wallCellHeight/(mm)+alphaThickness/(2*mm))*mm ),alphaSource_logical,"alphaSource_physical",LAr_logical,0,false,0);
+
 
 
 
