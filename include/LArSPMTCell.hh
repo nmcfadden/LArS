@@ -33,6 +33,7 @@ public:
 
     G4LogicalVolume* GetMotherVolume();
     void PrintGeometryInformation();
+    inline G4VPhysicalVolume* GetPhysicalVolume(){return pmtWindow_physical;};
 
 private:
 
@@ -43,6 +44,15 @@ private:
     
     //Physical volumes
     G4VPhysicalVolume *LAr_physical;
+    G4VPhysicalVolume *pmtWindow_physical;
+    G4VPhysicalVolume *acrylicWindow_physical;
+    G4VPhysicalVolume *topCell_physical;
+    G4VPhysicalVolume *wallCell_Physical;
+    G4VPhysicalVolume *supportRod_Physical0;
+    G4VPhysicalVolume *supportRod_Physical1;
+    G4VPhysicalVolume *supportRod_Physical2;
+    G4VPhysicalVolume *bottomCell_physical;
+    G4VPhysicalVolume *alphaSource_physical;
     
     
 };

@@ -81,7 +81,7 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
 
   m_pTree->Branch("etot", &m_pEventData->m_fTotalEnergyDeposited, "etot/F");
   m_pTree->Branch("nsteps", &m_pEventData->m_iNbSteps, "nsteps/I");
-  m_pTree->Branch("type", "vector<string>", &m_pEventData->m_pParticleType);
+  m_pTree->Branch("type", "vector<int>", &m_pEventData->m_pParticleType);
   m_pTree->Branch("parenttype", "vector<string>", &m_pEventData->m_pParentType);
   m_pTree->Branch("creaproc", "vector<string>", &m_pEventData->m_pCreatorProcess);
   m_pTree->Branch("edproc", "vector<string>", &m_pEventData->m_pDepositingProcess);
@@ -242,14 +242,14 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
       if(pHit->GetParticleType() == "opticalphoton") continue;
       m_pEventData->m_pTrackId->push_back(pHit->GetTrackId());
       m_pEventData->m_pParentId->push_back(pHit->GetParentId());
-      m_pEventData->m_pParticleType->push_back(pHit->GetParticleType());
+//      m_pEventData->m_pParticleType->push_back(pHit->GetParticleType());
       m_pEventData->m_pParentType->push_back(pHit->GetParentType());
       m_pEventData->m_pCreatorProcess->push_back(pHit->GetCreatorProcess());
       m_pEventData->m_pDepositingProcess->push_back(pHit->GetDepositingProcess());
       m_pEventData->m_pX->push_back(pHit->GetPosition().x()/mm);
       m_pEventData->m_pY->push_back(pHit->GetPosition().y()/mm);
       m_pEventData->m_pZ->push_back(pHit->GetPosition().z()/mm);
-      fTotalEnergyDeposited += pHit->GetEnergyDeposited()/keV;
+      //fTotalEnergyDeposited += pHit->GetEnergyDeposited()/keV;
       m_pEventData->m_pEnergyDeposited->push_back(pHit->GetEnergyDeposited()/keV);
       m_pEventData->m_pKineticEnergy->push_back(pHit->GetKineticEnergy()/keV);
       m_pEventData->m_pTime->push_back(pHit->GetTime()/ns);       
@@ -272,7 +272,7 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
   G4int iNbBottomPmts = 0;
   G4int iNbRingPmts = 0;
   //***4 resizing m_pPmtHits array
-  m_pEventData->m_pPmtHits->resize(iNbTopPmts+iNbBottomPmts, 0);
+  //m_pEventData->m_pPmtHits->resize(iNbTopPmts+iNbBottomPmts, 0);
 
 
 
@@ -285,7 +285,7 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
 
 
   m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
-  m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
+  //m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
   m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
   //  // also write the header information + primary vertex of the empty events....
   m_pEventData->m_iNbSteps = iNbSteps;
@@ -302,7 +302,7 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
   else
   {
     // if(fTotalEnergyDeposited > 0.) m_pTree->Fill();
-    if(fTotalEnergyDeposited > 0. || iNbPmtHits > 0) m_pTree->Fill(); // only events with some activity are written to the tree
+    if(m_pEventData->m_fTotalEnergyDeposited > 0. || iNbPmtHits > 0) m_pTree->Fill(); // only events with some activity are written to the tree
   }
   m_pEventData->Clear(); 
   m_pTreeFile->cd();
@@ -397,6 +397,11 @@ void LArSAnalysisManager::Step(const G4Step *step)
   m_pEventData->m_pTrackId->push_back(trackID);
   m_pEventData->m_pParentId->push_back(parentTrackID);
   m_pEventData->m_pDepositingProcess->push_back(procName);
+  m_pEventData->m_pParticleType->push_back(pid);
+  m_pEventData->m_fTotalEnergyDeposited += eDep;
+
+  if(physVolName.contains("pmt") || physVolName.contains("PMT")) m_pEventData->m_iNbTopPmtHits++;
+
 
 
 

@@ -19,7 +19,9 @@ G4double LArSDetectorConstruction::GetGeometryParameter(const char *szParameter)
 G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
   //////////////// Define Materials //////////////////////
   LArSMaterials *Materials = new LArSMaterials();
-  Materials->BuildAll(); 
+  Materials->BuildAll();
+  //Intialize optical surfaces
+  LArSOpticalSurfaces* opSurfaces = new LArSOpticalSurfaces();
 
   ///////////////// Place World Volume/////////////////////
   G4Box *World_volume_solid = new G4Box("World_volume", 20*m, 20*m, 20*m);
@@ -47,14 +49,49 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
   //G4cout << G4endl << "LAr constructed...Mother Volume name is "<<Mother_volume->GetName() << G4endl;
   
   //*****************************************Defining sensitivity*****************************************
+  ///*
+  //Remove SD schema because it is outdated
   G4SDManager *SDManager = G4SDManager::GetSDMpointer(); 
   LArSSensitiveDetector *LArSD = new LArSSensitiveDetector("LArSD");
   SDManager->AddNewDetector(LArSD); 
   lar->GetMotherVolume()->SetSensitiveDetector(LArSD);
-
+  //*/
   ////////////////Construct PMT Cell////////////////////
   LArSPMTCell *pmtCell = new LArSPMTCell(this);
   Mother_volume = pmtCell->Construct();
+
+  //get physical volumes by name for optical boundries
+  //Some physical boundries are between the LAr
+  //LAr boundaries defined here,
+  G4PhysicalVolumeStore* volumeStore = G4PhysicalVolumeStore::GetInstance();
+  G4int nVolumes = (G4int) volumeStore->size();
+  G4String candidateList;
+  for(G4int i=0;i<nVolumes;i++) {
+    candidateList = (*volumeStore)[i]->GetName();
+    G4VPhysicalVolume* phys_vol = (*volumeStore)[i];
+    if(candidateList.contains("pmt") || candidateList.contains("PMT") ){
+      //QE is only defined in one direction from LAr to window
+      new G4LogicalBorderSurface("PMTQE"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MgF2-PMT"));
+    }
+    if(candidateList.contains("wallCell")){
+      new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
+      new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+    }
+    if(candidateList.contains("supportRod")){
+      new G4LogicalBorderSurface("supportRod"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
+      new G4LogicalBorderSurface(to_string(i)+"supportRod",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+    }
+    if(candidateList.contains("topCell")){
+      new G4LogicalBorderSurface("topCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
+      new G4LogicalBorderSurface(to_string(i)+"topCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+    }
+    if(candidateList.contains("bottomCell")){
+      new G4LogicalBorderSurface("bottomCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
+      new G4LogicalBorderSurface(to_string(i)+"bottomCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+    }
+
+
+  }
 
   /////////////////Overlap Check////////////////////
   if(pCheckOverlap) SecondOverlapCheck();

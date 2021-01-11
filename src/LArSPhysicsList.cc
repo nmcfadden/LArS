@@ -397,9 +397,7 @@ LArSPhysicsList::MakePhysicsPlots()
   //
   // return to root directory
   //
-              G4cout <<"run till here"<<G4endl;
   _f_physics->cd();
   _f_physics->Write();
   _f_physics->Close();
-                G4cout <<"run till here"<<G4endl;
 }

@@ -15,7 +15,7 @@ LArSEventData::LArSEventData()
 	m_iNbSteps = 0;
 	m_pTrackId = new vector<int>;
 	m_pParentId = new vector<int>;
-	m_pParticleType = new vector<string>;
+	m_pParticleType = new vector<int>;
 	m_pParentType = new vector<string>;
 	m_pCreatorProcess = new vector<string>;
 	m_pDepositingProcess = new vector<string>;

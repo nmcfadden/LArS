@@ -31,6 +31,7 @@ public:
 
     G4LogicalVolume* GetMotherVolume();
     void PrintGeometryInformation();
+    inline G4VPhysicalVolume* GetPhysicalVolume(){return LAr_physical;};
 
 private:
 

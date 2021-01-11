@@ -49,21 +49,21 @@ void LArSOpticalMaterialProperties::ConstructionOpticalProperties()
     ph_energies[i] = LambdaE/(650*nm) + i*((LambdaE/(115*nm) - (LambdaE/(650*nm)))/(NUMENTRIES_2-1));
   }
   RegisterArgonOpticalProperties();
-  RegisterXeDopedArgonOpticalProperties();
+  //RegisterXeDopedArgonOpticalProperties();
   Register_TPB_Properties();
   Register_PEN_Properties();
-  Register_Fiber_Properties();
-  Register_Fiber_Cladding_Properties();
-  Register_Nylon_Properties();
-  Register_Copper_Properties();
-  Register_Germanium_Properties();
-  Register_Silicon_Properties();
+  //Register_Fiber_Properties();
+  //Register_Fiber_Cladding_Properties();
+  //Register_Nylon_Properties();
+  //Register_Copper_Properties();
+  //Register_Germanium_Properties();
+  //Register_Silicon_Properties();
   Register_Teflon_Properties();
-  Register_Silica_Properties();
+  //Register_Silica_Properties();
   //Register_VM2000();
-  Register_StainlessSteel();
+  //Register_StainlessSteel();
 
-  G4cout <<"Constructed LGND Optical Material Properties"<<G4endl;
+  G4cout <<"Constructed Optical Material Properties"<<G4endl;
 }
 
 /// Methods imported from the MPIKLarGe class
@@ -87,7 +87,6 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 
 	  // New value based on the triplet lifetime from Mark Heisel
 	  // Redefine the values to res-scale according to Mark's calculation
-	  // TODO - what is the correct yield value?
     // G4double LAr_LY_scale = fDetectorDB->GetLArInstArgonLYScale();
 	  // photon_yield = 28120. * LAr_LY_scale;
   
@@ -95,18 +94,17 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  tau_l = 922*ns;
 
 	  /*
-    ** TODO - 
     G4double LAr_att_scale = fDetectorDB->GetLArInstArgonAbsLScale();
     if (LAr_att_scale != 1.0) {
       G4cout << "Scaling XUV argon attenuation length by a factor of " << LAr_att_scale << G4endl;
     }
-    */
 
 	  G4cout << "LAr Optical parameters: " << G4endl;
 	  G4cout << "     Scintillation yield : " << photon_yield << " ph/MeV" << G4endl;
 	  G4cout << "     Singlet lifetime : " << tau_s/ns << " ns" << G4endl;
 	  G4cout << "     Triplet lifetime : " << tau_l/ns << " ns" << G4endl;
 
+    */
 	  G4int ji;
 	  G4double e;
 	  G4double ee;
@@ -127,14 +125,14 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  //TODO
     //LAr_ABSL_xuv *= LAr_att_scale;
 
-	  G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
+	  //G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
 	  for (ji = 0; ji < NUMENTRIES; ji++){
 	      e = PPCKOVLowE + ((G4double)ji) * de;
 	      LAr_PPCK[ji] = e;
 	      LAr_RIND[ji] = LArRefIndex((LambdaE / e));
 	      LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
-	      G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
 	      /* Uncomment for debugging purposes
+	      G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
 	      G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
 		  LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
 	       */
@@ -147,8 +145,8 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	      }
 
 	  }
-    G4cout << "XUV attenuation length: " << LAr_ABSL_xuv/cm << " cm" << G4endl;
-    G4cout << "VIS attenuation length: " << LAr_ABSL_vis/m << " m" << G4endl;
+    //G4cout << "XUV attenuation length: " << LAr_ABSL_xuv/cm << " cm" << G4endl;
+    //G4cout << "VIS attenuation length: " << LAr_ABSL_vis/m << " m" << G4endl;
 
 	  G4double PPSCHighE = LambdaE /(115*nanometer);
 	  G4double PPSCLowE = LambdaE /(136*nanometer);
@@ -267,13 +265,13 @@ void LArSOpticalMaterialProperties::RegisterXeDopedArgonOpticalProperties()
     if (LAr_att_scale != 1.0) {
       G4cout << "Scaling XUV argon attenuation length by a factor of " << LAr_att_scale << G4endl;
     }
-    */
 
     G4cout << "LAr Optical parameters: " << G4endl;
     G4cout << "     Scintillation yield : " << photon_yield << " ph/MeV" << G4endl;
     G4cout << "     Singlet lifetime : " << tau_s/ns << " ns" << G4endl;
     G4cout << "     Triplet lifetime : " << tau_l/ns << " ns" << G4endl;
 
+    */
     G4int ji;
     G4double e;
     G4double ee;
@@ -295,13 +293,13 @@ void LArSOpticalMaterialProperties::RegisterXeDopedArgonOpticalProperties()
     //TODO
     //LAr_ABSL_xuv *= LAr_att_scale;
 
-    G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
+    //G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
     for (ji = 0; ji < NUMENTRIES; ji++){
       e = PPCKOVLowE + ((G4double)ji) * de;
       LAr_PPCK[ji] = e;
       LAr_RIND[ji] = LArRefIndex((LambdaE / e));
       LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
-      G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
+      //G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
       /* Uncomment for debugging purposes
         G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
       LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
@@ -317,9 +315,6 @@ void LArSOpticalMaterialProperties::RegisterXeDopedArgonOpticalProperties()
         LAr_ABSL[ji] = LAr_ABSL_vis;
       }
     }
-    G4cout << "XUV LAr attenuation length: " << LAr_ABSL_xuv/cm << " cm" << G4endl;
-    G4cout << "VUV XeD attenuation length: " << XeD_ABSL_vuv/m << " m" << G4endl;
-    G4cout << "VIS attenuation length: " << LAr_ABSL_vis/m << " m" << G4endl;
 
     G4double PPSCHighE = LambdaE /(115*nanometer);
     G4double PPSCLowE = LambdaE /(240*nanometer);
@@ -524,7 +519,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   G4double pdTeflonSpecularLobe[NUMENTRIES_2]; 
   G4double pdTeflonSpecularSpike[NUMENTRIES_2];
   G4double pdTeflonBackscatter[NUMENTRIES_2];  
-  G4double absLength[NUMENTRIES_2];
+  //G4double absLength[NUMENTRIES_2];
 
   for (int i = 0; i < NUMENTRIES_2; i++) {
     auto r = TetratexReflGraph->Eval(LambdaE/(ph_energies[i])/nm);
@@ -894,8 +889,8 @@ void LArSOpticalMaterialProperties::Register_Fiber_Properties()
   // compute scale factor for absorption lengths
   G4double scaleAbs = 0.7*mm / (FibersAbsorptionGr->Eval(400)*m);
 
-  G4cout << "Making PolystyreneFiber optical properties" << G4endl;
-  G4cout << "energy[eV]\twavelength[nm]\tWLS-absl[mm]\tWLS-emi" << G4endl;
+  //G4cout << "Making PolystyreneFiber optical properties" << G4endl;
+  //G4cout << "energy[eV]\twavelength[nm]\tWLS-absl[mm]\tWLS-emi" << G4endl;
 
   for (int i = 0; i < NUMENTRIES_2; ++i) {
     FiberRIndex[i] = 1.6;
@@ -908,8 +903,8 @@ void LArSOpticalMaterialProperties::Register_Fiber_Properties()
     // use emission from file
     auto e = FibersEmissionGr->Eval(LambdaE/(ph_energies[i])/nm);
     FiberWLSEmission[i] = e >= 0 ? e : 0;
-    G4cout << ph_energies[i]/eV << "\t" << LambdaE/(ph_energies[i])/nm << "\t\t"
-      << FiberWLSAbsorption[i] << "\t\t" << FiberWLSEmission[i] << "\t" << G4endl;
+    //G4cout << ph_energies[i]/eV << "\t" << LambdaE/(ph_energies[i])/nm << "\t\t"
+    //  << FiberWLSAbsorption[i] << "\t\t" << FiberWLSEmission[i] << "\t" << G4endl;
   }
 
   G4MaterialPropertiesTable* fiberTable = new G4MaterialPropertiesTable();
@@ -982,7 +977,7 @@ void LArSOpticalMaterialProperties::Register_Fiber_Cladding_Properties()
  // claddingTable->AddProperty("ABSLENGTH",claddingOuterFixEnergies,claddingOuterAbsorption,npoints_fixed);
 
   fFiber_claddingOuter_material->SetMaterialPropertiesTable(claddingOuterTable);
-  G4cout << " Constructed Fiber Cladding Properties"<< G4endl;
+  //G4cout << " Constructed Fiber Cladding Properties"<< G4endl;
 }
 
 //copied from GEGeometryLArInstrumentation.cc
@@ -1047,7 +1042,7 @@ void LArSOpticalMaterialProperties::Register_Copper_Properties()
     ReflectivityCu[i] = CuReflGr->GetY()[n_points_cu-1-i];
     AbsorptionCu[i] = 1.0*nm;
     EfficiencyCu[i] = 1;;
-    G4cout<<"Copper reflectivity "<<ReflectivityCu[i]<<" "<<PhotonEnergyCu[i]<<G4endl;
+    //G4cout<<"Copper reflectivity "<<ReflectivityCu[i]<<" "<<PhotonEnergyCu[i]<<G4endl;
   }
 
   auto CuOptTable = new G4MaterialPropertiesTable();
@@ -1250,13 +1245,11 @@ void LArSOpticalMaterialProperties::Register_StainlessSteel()
   G4String pathFile = pathString + "/RIndexReal_SS.dat";
 
   TGraph *ssRIndexReal = new TGraph(pathFile.data(),"%lg,%lg,%*lg");  
-  G4double *RIndexRealSi = new G4double[ssRIndexReal->GetN()];
   G4double *waveIndexRealSi = new G4double[ssRIndexReal->GetN()];
   G4double *nrgIndexRealSi = new G4double[ssRIndexReal->GetN()];
 
   pathFile = pathString + "/RIndexImag_SS.dat";
   TGraph *ssRIndexImag = new TGraph(pathFile.data(),"%lg,%lg,%*lg");
-  G4double *RIndexImagSi = new G4double[ssRIndexImag->GetN()];
   G4double *waveIndexImagSi = new G4double[ssRIndexImag->GetN()];
   G4double *nrgIndexImagSi = new G4double[ssRIndexReal->GetN()];
 
@@ -1289,7 +1282,7 @@ void LArSOpticalMaterialProperties::Register_StainlessSteel()
 
 TGraph* LArSOpticalMaterialProperties::ReadSpectrumFromFile(G4String filename) {
 
-  G4cout << "Looking for " << filename << " file" << G4endl;
+  //G4cout << "Looking for " << filename << " file" << G4endl;
   G4String pathFile;
   if (!getenv("LARSOPTICALDATA")) {
     G4cout << "LARSOPTICALDATA environment variable not set! Setting it to '.'" << G4endl;

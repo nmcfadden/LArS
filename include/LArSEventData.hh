@@ -29,7 +29,7 @@ public:
 	int m_iNbSteps;						// number of energy depositing steps
 	vector<int> *m_pTrackId;				// id of the particle
 	vector<int> *m_pParentId;				// id of the parent particle
-	vector<string> *m_pParticleType;			// type of particle
+	vector<int> *m_pParticleType;			// type of particle
 	vector<string> *m_pParentType;				// type of particle
 	vector<string> *m_pCreatorProcess;			// interaction
 	vector<string> *m_pDepositingProcess;			// energy depositing process

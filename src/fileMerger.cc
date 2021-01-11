@@ -100,6 +100,7 @@ void fileMerger::Merge(){
 
   for(int i=0; i<(int)auxfiles.size(); i++){
     std::string auxfile = auxfiles[i];
+    if(auxfile.find("DET")!= std::string::npos) continue;
     std::cout << "fileMerger::Merge()          adding file:  "<<auxfile.c_str()<<std::endl;
     CopyFile(auxfile.c_str());
   }

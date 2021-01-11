@@ -5,6 +5,7 @@
 #include "LArSMaterials.hh"
 #include "LArSDetectorMessenger.hh"
 #include "LArSPmtSensitiveDetector.hh"
+#include "LArSOpticalSurfaces.hh"
 
 
 // Detector components
