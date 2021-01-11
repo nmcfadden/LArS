@@ -34,7 +34,7 @@
 # particle type + energy spectrum
 
 /xenoScope/gun/energy 10 eV
-/xenoScope/gun/particle opticalphoton
+/xenoScope/gun/particle gamma
 
 # Co60
 #/xenoScope/gun/ion 27 60 0 0

@@ -1,5 +1,5 @@
-#ifndef __XEBRARUNACTION_H__
-#define __XEBRARUNACTION_H__
+#ifndef __LARSRUNACTION_H__
+#define __LARSRUNACTION_H__
 
 #include "LArSRunActionMessenger.hh"
 #include "LArSAnalysisManager.hh"

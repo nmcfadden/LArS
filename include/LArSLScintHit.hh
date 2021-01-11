@@ -1,5 +1,5 @@
-#ifndef __XEBRALSCINTHIT_H__
-#define __XEBRALSCINTHIT_H__
+#ifndef __LARSLSCINTHIT_H__
+#define __LARSLSCINTHIT_H__
 
 #include <G4VHit.hh>
 #include <G4THitsCollection.hh>

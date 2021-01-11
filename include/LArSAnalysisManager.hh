@@ -1,5 +1,5 @@
-#ifndef __XEBRAANALYSISMANAGER_H__
-#define __XEBRAANALYSISMANAGER_H__
+#ifndef __LARSANALYSISMANAGER_H__
+#define __LARSANALYSISMANAGER_H__
 
 //Root Header Files
 #include <TROOT.h>
@@ -9,7 +9,7 @@
 #include <TDirectory.h>
 #include <TH1.h>
 
-//XEBRA header files
+//LARS header files
 #include "LArSDetectorConstruction.hh"
 #include "LArSPmtSensitiveDetector.hh"
 #include "LArSLXeHit.hh"
@@ -99,4 +99,4 @@ private:
   G4bool            writeEmptyEvents;
 };
 
-#endif // __XEBRAANALYSISMANAGER_H__
+#endif // __LARSANALYSISMANAGER_H__

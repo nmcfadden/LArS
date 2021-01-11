@@ -12,8 +12,8 @@ G4LogicalVolume* LArSConstructLab::Construct(){
     
 //Lab is a 5x5x5 m^3 box of air with 25 cm thick concrete walls
 //**********************************************MATERIALS**********************************************
-    Air = G4Material::GetMaterial("G4_AIR");
-    Concrete = G4Material::GetMaterial("Concrete");
+    Air = G4Material::GetMaterial("Air");
+    Concrete = G4Material::GetMaterial("Rock");
 
 //**********************************************PARAMETERS*********************************************    
     //Hall 

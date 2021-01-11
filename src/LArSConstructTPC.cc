@@ -276,7 +276,7 @@ G4LogicalVolume* LArSConstructTPC::Construct(){
     
     //*****************************************Defining sensitivity*****************************************
     G4SDManager *pSDManager = G4SDManager::GetSDMpointer(); 
-    LArSLXeSensitiveDetector *pLXeSD = new LArSLXeSensitiveDetector("LArSSD");
+    LArSSensitiveDetector *pLXeSD = new LArSSensitiveDetector("LArSSD");
     pSDManager->AddNewDetector(pLXeSD); 
     LXe_volume_logical->SetSensitiveDetector(pLXeSD);
     

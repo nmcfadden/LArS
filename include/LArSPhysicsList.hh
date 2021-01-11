@@ -1,5 +1,5 @@
-#ifndef __XEBRAPHYSICSLIST_H__
-#define __XEBRAPHYSICSLIST_H__
+#ifndef __LARSPHYSICSLIST_H__
+#define __LARSPHYSICSLIST_H__
 
 #include "LArSPhysicsMessenger.hh"
 

@@ -1,5 +1,5 @@
-#ifndef XEBRADetectorMessenger_h
-#define XEBRADetectorMessenger_h 1
+#ifndef LARSDetectorMessenger_h
+#define LARSDetectorMessenger_h 1
 
 #include "LArSDetectorConstruction.hh"
 
@@ -30,7 +30,7 @@
 #include <G4ios.hh>
 #include <G4SystemOfUnits.hh>
 
-//XEBRA Classes
+//LARS Classes
 class LArSDetectorConstruction;
 
 //G4 Classes

@@ -1,9 +1,9 @@
-#ifndef XEBRACONSTRUCTTPC_H
-#define XEBRACONSTRUCTTPC_H
+#ifndef LARSCONSTRUCTTPC_H
+#define LARSCONSTRUCTTPC_H
 
 #include "LArSDetectorConstruction.hh"
 #include "LArSPmtSensitiveDetector.hh"
-#include "LArSLXeSensitiveDetector.hh"
+#include "LArSSensitiveDetector.hh"
 #include "LArSPmtHit.hh"
 #include "LArSLXeHit.hh"
 #include "LArSDetectorMessenger.hh"

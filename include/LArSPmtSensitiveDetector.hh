@@ -1,7 +1,7 @@
-#ifndef __XEBRAPMTSENSITIVEDETECTOR_H__
-#define __XEBRAPMTSENSITIVEDETECTOR_H__
+#ifndef __LARSPMTSENSITIVEDETECTOR_H__
+#define __LARSPMTSENSITIVEDETECTOR_H__
 
-//XEBRA header files
+//LARS header files
 #include "LArSPmtHit.hh"
 
 //G4 header files

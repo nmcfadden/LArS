@@ -1,7 +1,7 @@
-#ifndef __XEBRAPARTICLESOURCE_H__
-#define __XEBRAPARTICLESOURCE_H__
+#ifndef __LARSPARTICLESOURCE_H__
+#define __LARSPARTICLESOURCE_H__
 
-// XEBRA header files
+// LARS header files
 #include "LArSParticleSourceMessenger.hh"
 
 //Additional Header Files

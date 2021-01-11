@@ -1,6 +1,6 @@
 #include "LArSDetectorConstruction.hh"
 
-map<G4String, G4double> LArSDetectorConstruction::m_hGeometryParameters;
+std::map<G4String, G4double> LArSDetectorConstruction::m_hGeometryParameters;
 
 LArSDetectorConstruction::LArSDetectorConstruction(G4String fName){  
     m_pDetectorMessenger = new LArSDetectorMessenger(this);
@@ -19,8 +19,7 @@ G4double LArSDetectorConstruction::GetGeometryParameter(const char *szParameter)
 G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
   //////////////// Define Materials //////////////////////
   LArSMaterials *Materials = new LArSMaterials();
-  Materials->DefineMaterials(); 
-  
+  Materials->BuildAll(); 
 
   ///////////////// Place World Volume/////////////////////
   G4Box *World_volume_solid = new G4Box("World_volume", 20*m, 20*m, 20*m);
@@ -49,12 +48,13 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
   
   //*****************************************Defining sensitivity*****************************************
   G4SDManager *SDManager = G4SDManager::GetSDMpointer(); 
-  LArSLXeSensitiveDetector *LArSD = new LArSLXeSensitiveDetector("LArSD");
+  LArSSensitiveDetector *LArSD = new LArSSensitiveDetector("LArSD");
   SDManager->AddNewDetector(LArSD); 
   lar->GetMotherVolume()->SetSensitiveDetector(LArSD);
 
-  /////////////////Construct PMT Cell////////////////////
- 
+  ////////////////Construct PMT Cell////////////////////
+  LArSPMTCell *pmtCell = new LArSPMTCell(this);
+  Mother_volume = pmtCell->Construct();
 
   /////////////////Overlap Check////////////////////
   if(pCheckOverlap) SecondOverlapCheck();

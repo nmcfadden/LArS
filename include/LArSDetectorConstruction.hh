@@ -102,7 +102,7 @@ private:
 
     // PARAMETERS
 
-        static map<G4String, G4double> m_hGeometryParameters;
+        static std::map<G4String, G4double> m_hGeometryParameters;
         void DefineGeometryParameters();
 
 

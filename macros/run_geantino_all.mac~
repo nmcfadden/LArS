@@ -40,7 +40,8 @@
 /xenoScope/gun/confine wallCell_physical
 /xenoScope/gun/confine bottomCell_physical
 #/xenoScope/gun/confine supportRod_physical*
-/xenoScope/gun/confine pmtWindow_physical 
+/xenoScope/gun/confine pmtWindow_physical
+/xenoScope/gun/confine acrylicWindow_physical
 
 
 ##################

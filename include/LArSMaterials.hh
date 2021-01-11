@@ -1,33 +1,34 @@
-#ifndef __XEBRAMATERIALS_H__
-#define __XEBRAMATERIALS_H__
+#ifndef _LARSMATERIALS_HH
+#define _LARSMATERIALS_HH
 
-// Additional Header Files
-#include <globals.hh>
-#include <map>
-#include <vector>
+#include "G4Element.hh"
+#include "G4Isotope.hh"
+#include "G4Material.hh"
 
-using std::vector;
-using std::map;
+#include "LArSOpticalMaterialProperties.hh"
 
-// Root Header Files
-#include "TDirectory.h"
-#include "TFile.h"
-
-// G4 Header Files
-#include <G4Material.hh>
-#include <G4NistManager.hh>
-#include <G4SystemOfUnits.hh>
-#include <math.h>
+//---------------------------------------------------------------------------//
 
 
-class LArSMaterials {
- public:
+//---------------------------------------------------------------------------//
+
+class LArSMaterials
+{
+public:
+
   LArSMaterials();
   ~LArSMaterials();
-    
-  void DefineMaterials();
 
- private:
+  //public interface
+  void BuildIsotopes();
+  void BuildElements();
+  void BuildMaterials();
+  void BuildAll();
+
+private:
+  bool fIsotopesBuilt;
+  bool fElementsBuilt;
+  bool fMaterialsBuilt;
+
 };
-
 #endif

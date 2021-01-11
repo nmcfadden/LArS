@@ -12,9 +12,7 @@ G4LogicalVolume* LArSActiveVolume::Construct(){
 
 //**********************************************PARAMETERS*********************************************    
   //Materials
-  //TODO create liquid argon and gasous argon
-  //G4Material *GAr = G4Material::GetMaterial("Vacuum");
-  G4Material *LAr = G4Material::GetMaterial("SS304LSteel");;
+  G4Material *LAr = G4Material::GetMaterial("Argon-Liq");;
    
   G4double General_phi_start = 0.*deg;
   G4double General_phi_total = 360*deg;

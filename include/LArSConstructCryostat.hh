@@ -1,5 +1,5 @@
-#ifndef XEBRACONSTRUCTCRYOSTAT_H
-#define XEBRACONSTRUCTCRYOSTAT_H
+#ifndef LARSCONSTRUCTCRYOSTAT_H
+#define LARSCONSTRUCTCRYOSTAT_H
 
 //LArS header files
 #include "LArSDetectorConstruction.hh"

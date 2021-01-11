@@ -1,5 +1,5 @@
-#ifndef __XEBRAPMTHIT_H__
-#define __XEBRAPMTHIT_H__
+#ifndef __LARSPMTHIT_H__
+#define __LARSPMTHIT_H__
 
 #include <G4VHit.hh>
 #include <G4THitsCollection.hh>

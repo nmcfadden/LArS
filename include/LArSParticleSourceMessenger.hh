@@ -1,5 +1,5 @@
-#ifndef __XEBRAPARTICLESOURCEMESSENGER_H__
-#define __XEBRAPARTICLESOURCEMESSENGER_H__
+#ifndef __LARSPARTICLESOURCEMESSENGER_H__
+#define __LARSPARTICLESOURCEMESSENGER_H__
 
 //Additional Header Files
 #include <globals.hh>
@@ -8,7 +8,7 @@
 #include <G4UImessenger.hh>
 #include <globals.hh>
 
-//XEBRA Classes
+//LARS Classes
 class LArSParticleSource;
 
 //G4 Classes

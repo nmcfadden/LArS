@@ -1,5 +1,5 @@
-#ifndef __XEBRARUNACTIONMESSENGER_H__
-#define __XEBRARUNACTIONMESSENGER_H__
+#ifndef __LARSRUNACTIONMESSENGER_H__
+#define __LARSRUNACTIONMESSENGER_H__
 
 #include <G4UImessenger.hh>
 #include <globals.hh>

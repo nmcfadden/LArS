@@ -36,7 +36,7 @@ void LArSSteppingAction::UserSteppingAction(const G4Step* aStep)
   Int_t SaveTopPmt = 1; // ToDo: experiment with this flag to see if top pmts are hit
 	if (SaveTopPmt){
     string volName = aStep->GetTrack()->GetVolume()->GetName();
-		if(particle=="opticalphoton" && volName.find("pmt") != std::string::npos){
+		if(particle=="opticalphoton" && volName.find("PMT") != std::string::npos){
 				myAnalysisManager->FillParticleInSave(3,
 									particlePDGcode,
 									aStep->GetPostStepPoint()->GetPosition(),

@@ -48,8 +48,6 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
   // include missing ROOT classes
   gROOT->ProcessLine("#include <vector>");
 
-  gROOT->ProcessLine("#include <vector>");
-  
   m_pTree->Branch("eventid", &m_pEventData->m_iEventId, "eventid/I");
   // PMT hits 
   m_pTree->Branch("ntpmthits", &m_pEventData->m_iNbTopPmtHits, "ntpmthits/I");
@@ -220,67 +218,62 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
 		// LXe hits
     for(G4int i=0; i<iNbLXeHits; i++)
     {
-	  LArSLXeHit *pHit = (*pLXeHitsCollection)[i];
+	    LArSLXeHit *pHit = (*pLXeHitsCollection)[i];
 
-	  if(pHit->GetParticleType() != "opticalphoton")
-      {
-        m_pEventData->m_pTrackId->push_back(pHit->GetTrackId());
-        m_pEventData->m_pParentId->push_back(pHit->GetParentId());
-        m_pEventData->m_pParticleType->push_back(pHit->GetParticleType());
-        m_pEventData->m_pParentType->push_back(pHit->GetParentType());
-        m_pEventData->m_pCreatorProcess->push_back(pHit->GetCreatorProcess());
-        m_pEventData->m_pDepositingProcess->push_back(pHit->GetDepositingProcess());
-        m_pEventData->m_pX->push_back(pHit->GetPosition().x()/mm);
-        m_pEventData->m_pY->push_back(pHit->GetPosition().y()/mm);
-        m_pEventData->m_pZ->push_back(pHit->GetPosition().z()/mm);
-        fTotalEnergyDeposited += pHit->GetEnergyDeposited()/keV;
-        m_pEventData->m_pEnergyDeposited->push_back(pHit->GetEnergyDeposited()/keV);
-        m_pEventData->m_pKineticEnergy->push_back(pHit->GetKineticEnergy()/keV);
-        m_pEventData->m_pTime->push_back(pHit->GetTime()/ns);       
-        m_pEventData->m_pPreMomDirX->push_back(pHit->GetPreMomentumDir().x());
-        m_pEventData->m_pPreMomDirY->push_back(pHit->GetPreMomentumDir().y());
-        m_pEventData->m_pPreMomDirZ->push_back(pHit->GetPreMomentumDir().z());
-        m_pEventData->m_pPostMomDirX->push_back(pHit->GetPostMomentumDir().x());
-        m_pEventData->m_pPostMomDirY->push_back(pHit->GetPostMomentumDir().y());
-        m_pEventData->m_pPostMomDirZ->push_back(pHit->GetPostMomentumDir().z());
-        m_pEventData->m_pPreKineticEnergy->push_back(pHit->GetPreKineticEnergy()/keV);
-        m_pEventData->m_pPostKineticEnergy->push_back(pHit->GetPostKineticEnergy()/keV);
-            
-        iNbSteps++;
-      }
-      
+      if(pHit->GetParticleType() == "opticalphoton") continue;
+      m_pEventData->m_pTrackId->push_back(pHit->GetTrackId());
+      m_pEventData->m_pParentId->push_back(pHit->GetParentId());
+      m_pEventData->m_pParticleType->push_back(pHit->GetParticleType());
+      m_pEventData->m_pParentType->push_back(pHit->GetParentType());
+      m_pEventData->m_pCreatorProcess->push_back(pHit->GetCreatorProcess());
+      m_pEventData->m_pDepositingProcess->push_back(pHit->GetDepositingProcess());
+      m_pEventData->m_pX->push_back(pHit->GetPosition().x()/mm);
+      m_pEventData->m_pY->push_back(pHit->GetPosition().y()/mm);
+      m_pEventData->m_pZ->push_back(pHit->GetPosition().z()/mm);
+      fTotalEnergyDeposited += pHit->GetEnergyDeposited()/keV;
+      m_pEventData->m_pEnergyDeposited->push_back(pHit->GetEnergyDeposited()/keV);
+      m_pEventData->m_pKineticEnergy->push_back(pHit->GetKineticEnergy()/keV);
+      m_pEventData->m_pTime->push_back(pHit->GetTime()/ns);       
+      m_pEventData->m_pPreMomDirX->push_back(pHit->GetPreMomentumDir().x());
+      m_pEventData->m_pPreMomDirY->push_back(pHit->GetPreMomentumDir().y());
+      m_pEventData->m_pPreMomDirZ->push_back(pHit->GetPreMomentumDir().z());
+      m_pEventData->m_pPostMomDirX->push_back(pHit->GetPostMomentumDir().x());
+      m_pEventData->m_pPostMomDirY->push_back(pHit->GetPostMomentumDir().y());
+      m_pEventData->m_pPostMomDirZ->push_back(pHit->GetPostMomentumDir().z());
+      m_pEventData->m_pPreKineticEnergy->push_back(pHit->GetPreKineticEnergy()/keV);
+      m_pEventData->m_pPostKineticEnergy->push_back(pHit->GetPostKineticEnergy()/keV);
+
+      iNbSteps++;
     }
-
-
   }
 
-//***3 defining the number of pmts
+  //***3 defining the number of pmts
 
-		G4int iNbTopPmts = 0;
-		G4int iNbBottomPmts = 0;
-		G4int iNbRingPmts = 0;
-//***4 resizing m_pPmtHits array
-		m_pEventData->m_pPmtHits->resize(iNbTopPmts+iNbBottomPmts, 0);
+  G4int iNbTopPmts = 1;
+  G4int iNbBottomPmts = 0;
+  G4int iNbRingPmts = 0;
+  //***4 resizing m_pPmtHits array
+  m_pEventData->m_pPmtHits->resize(iNbTopPmts+iNbBottomPmts, 0);
 
 
 
-    for(G4int i=0; i<iNbPmtHits; i++)
-    {
-        (*(m_pEventData->m_pPmtHits))[(*pPmtHitsCollection)[i]->GetPmtNb()]++; //? 
-        G4cout << "PMTID " << (*pPmtHitsCollection)[i]->GetPmtNb() << G4endl;  
-		m_pEventData->m_iPmtNumber = (*pPmtHitsCollection)[i]->GetPmtNb();
-    }   
+  for(G4int i=0; i<iNbPmtHits; i++)
+  {
+    (*(m_pEventData->m_pPmtHits))[(*pPmtHitsCollection)[i]->GetPmtNb()]++; //? 
+    G4cout << "PMTID " << (*pPmtHitsCollection)[i]->GetPmtNb() << G4endl;  
+    m_pEventData->m_iPmtNumber = (*pPmtHitsCollection)[i]->GetPmtNb();
+  }   
 
-  
-    m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
-    m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
-    m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
- //  // also write the header information + primary vertex of the empty events....
- m_pEventData->m_iNbSteps = iNbSteps;
- m_pEventData->m_iLScintNbSteps = iLScintNbSteps;
- m_pEventData->m_fTotalEnergyDeposited = fTotalEnergyDeposited;
- m_pEventData->m_fLScintTotalEnergyDeposited = fLScintTotalEnergyDeposited;
-  
+
+  m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
+  m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
+  m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
+  //  // also write the header information + primary vertex of the empty events....
+  m_pEventData->m_iNbSteps = iNbSteps;
+  m_pEventData->m_iLScintNbSteps = iLScintNbSteps;
+  m_pEventData->m_fTotalEnergyDeposited = fTotalEnergyDeposited;
+  m_pEventData->m_fLScintTotalEnergyDeposited = fLScintTotalEnergyDeposited;
+
 
   // save only energy depositing events
   if(writeEmptyEvents)
@@ -289,8 +282,8 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
   }
   else
   {
-  // if(fTotalEnergyDeposited > 0.) m_pTree->Fill();
-  if(fTotalEnergyDeposited > 0. || iNbPmtHits > 0) m_pTree->Fill(); // only events with some activity are written to the tree
+    // if(fTotalEnergyDeposited > 0.) m_pTree->Fill();
+    if(fTotalEnergyDeposited > 0. || iNbPmtHits > 0) m_pTree->Fill(); // only events with some activity are written to the tree
   }
   m_pEventData->Clear(); 
   m_pTreeFile->cd();

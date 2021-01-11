@@ -1,5 +1,5 @@
-#ifndef XEBRACONSTRUCTLAB_H
-#define XEBRACONSTRUCTLAB_H
+#ifndef LARSCONSTRUCTLAB_H
+#define LARSCONSTRUCTLAB_H
 
 //Xebra header files
 #include "LArSDetectorConstruction.hh"

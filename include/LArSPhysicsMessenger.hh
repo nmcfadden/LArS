@@ -1,5 +1,5 @@
-#ifndef __XEBRAPHYSICSMESSENGER_H__
-#define __XEBRAPHYSICSMESSENGER_H__
+#ifndef __LARSPHYSICSMESSENGER_H__
+#define __LARSPHYSICSMESSENGER_H__
 
 //  LArSPhysicsMessenger class.
 //  Allow for setting of preferences in the PhysicsList

@@ -1,5 +1,5 @@
-#ifndef __XEBRAEVENTACTION_H__
-#define __XEBRAEVENTACTION_H__
+#ifndef __LARSEVENTACTION_H__
+#define __LARSEVENTACTION_H__
 
 #include "LArSAnalysisManager.hh"
 
@@ -26,5 +26,5 @@ private:
 	LArSAnalysisManager *m_pAnalysisManager;
 };
 
-#endif // __XEBRAEVENTACTION_H__
+#endif // __LARSEVENTACTION_H__
 

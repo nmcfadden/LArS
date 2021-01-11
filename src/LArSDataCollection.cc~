@@ -1,0 +1,42 @@
+#include "LArSDataCollection.h"
+
+
+LArSDataCollection::LArSDataCollection(){
+
+}
+
+void LArSDataCollection::BeginOfEventAction(const G4Event *event){
+G4cout<<"Begin of event action"<<G4endl;
+}
+
+
+void LArSDataCollection::BeginOfRunAction(){
+
+}
+
+void LArSDataCollection::BeginOfRunAction(){
+
+}
+
+void LArSDataCollection::EndOfEventAction(const G4Event *event){
+
+G4cout<<"Begin of event action"<<G4endl;
+}
+
+void LArSDataCollection::EndOfRunAction(){
+
+}
+
+void LArSDataCollection::RootSteppingAction(const G4Step* step){
+G4cout<<"Are we making it into the stepping action?"<<endl;
+}
+
+void LArSDataCollection::WriteEvent(){
+
+}
+
+void LArSDataCollection::WriteFile(){
+
+}
+
+

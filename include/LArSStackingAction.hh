@@ -1,5 +1,5 @@
-#ifndef __XEBRASTACKINGACTION_H__
-#define __XEBRASTACKINGACTION_H__
+#ifndef __LARSSTACKINGACTION_H__
+#define __LARSSTACKINGACTION_H__
 
 #include "LArSAnalysisManager.hh"
 

@@ -13,7 +13,7 @@ G4LogicalVolume* LArSConstructCryostat::Construct(){
 //**********************************************PARAMETERS*********************************************    
    //Materials
    G4Material *Vacuum = G4Material::GetMaterial("Vacuum");;
-   G4Material *Steel = G4Material::GetMaterial("SS304LSteel");;
+   G4Material *Steel = G4Material::GetMaterial("Steel");;
     
    //General
    G4double General_r_inner[4] = {0.,0.,0.,0.};
@@ -52,7 +52,7 @@ G4LogicalVolume* LArSConstructCryostat::Construct(){
    //Inner cryostat
    G4double Inner_cryostat_z_plane[2] = {0.,0.};
    Inner_cryostat_z_plane[0] = -223.5*mm;
-   Inner_cryostat_z_plane[1] = 223.5*mm;
+   Inner_cryostat_z_plane[1] = 226*mm;
        
    G4double Inner_cryostat_r_outer[2] = {0.,0.};
    Inner_cryostat_r_outer[0] = 129*mm;

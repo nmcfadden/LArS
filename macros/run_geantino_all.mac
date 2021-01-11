@@ -3,8 +3,8 @@
 /control/verbose 0
 /run/verbose 0
 /event/verbose 0
-/tracking/verbose 0
-/xenoScope/gun/verbose 0
+/tracking/verbose 2
+/xenoScope/gun/verbose 2
 
 #################
 #SEED

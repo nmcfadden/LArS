@@ -1,5 +1,5 @@
-#ifndef __XEBRAEVENTDATA_H__
-#define __XEBRAEVENTDATA_H__
+#ifndef __LARSEVENTDATA_H__
+#define __LARSEVENTDATA_H__
 
 #include <string>
 #include <vector>
