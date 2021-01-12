@@ -3,3 +3,7 @@ include/*~
 macros/*~
 *root
 *~
+src/.nfs*
+include/.nfs*
+bin/*
+build/
