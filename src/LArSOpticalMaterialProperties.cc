@@ -79,32 +79,11 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	   * Nominal values for pure argon
 	   */
 	  G4double scint_yield = 23.6*eV;  // Nominal energy to produce a photon (measured)
-	  G4double photon_yield = 1.0*MeV/scint_yield;
+	  G4double photon_yield = 1.0*MeV/scint_yield;//42372 photons/MeV
 	  G4double tau_s = 6.0*ns;
 	  G4double tau_l = 1590.0*ns;
 	  /*G4double yield_ratio = 0.23; // For gammas and electrons*/
 
-
-	  // New value based on the triplet lifetime from Mark Heisel
-	  // Redefine the values to res-scale according to Mark's calculation
-    // G4double LAr_LY_scale = fDetectorDB->GetLArInstArgonLYScale();
-	  // photon_yield = 28120. * LAr_LY_scale;
-  
-	  tau_s = 5.95*ns;
-	  tau_l = 922*ns;
-
-	  /*
-    G4double LAr_att_scale = fDetectorDB->GetLArInstArgonAbsLScale();
-    if (LAr_att_scale != 1.0) {
-      G4cout << "Scaling XUV argon attenuation length by a factor of " << LAr_att_scale << G4endl;
-    }
-
-	  G4cout << "LAr Optical parameters: " << G4endl;
-	  G4cout << "     Scintillation yield : " << photon_yield << " ph/MeV" << G4endl;
-	  G4cout << "     Singlet lifetime : " << tau_s/ns << " ns" << G4endl;
-	  G4cout << "     Triplet lifetime : " << tau_l/ns << " ns" << G4endl;
-
-    */
 	  G4int ji;
 	  G4double e;
 	  G4double ee;
@@ -120,31 +99,27 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  G4double LAr_ABSL[(NUMENTRIES)];
 
 	  G4double LAr_ABSL_xuv = 60*cm;
-	  //G4double LAr_ABSL_xuv = 110*cm;
 	  G4double LAr_ABSL_vis = 10*m;
-	  //TODO
-    //LAr_ABSL_xuv *= LAr_att_scale;
 
 	  //G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
-	  for (ji = 0; ji < NUMENTRIES; ji++){
-	      e = PPCKOVLowE + ((G4double)ji) * de;
-	      LAr_PPCK[ji] = e;
-	      LAr_RIND[ji] = LArRefIndex((LambdaE / e));
-	      LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
-	      /* Uncomment for debugging purposes
-	      G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
-	      G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
-		  LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
-	       */
+    for (ji = 0; ji < NUMENTRIES; ji++){
+      e = PPCKOVLowE + ((G4double)ji) * de;
+      LAr_PPCK[ji] = e;
+      LAr_RIND[ji] = LArRefIndex((LambdaE / e));
+      LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
+      /* Uncomment for debugging purposes
+         G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
+         G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
+         LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
+         */
 
-	      if (((LambdaE / e)/nm) < 200.0) {
-	    	  LAr_ABSL[ji] =LAr_ABSL_xuv;
-	      } 
-        else {
-	    	  LAr_ABSL[ji] = LAr_ABSL_vis;
-	      }
-
-	  }
+      if (((LambdaE / e)/nm) < 200.0) {
+        LAr_ABSL[ji] =LAr_ABSL_xuv;
+      } 
+      else {
+        LAr_ABSL[ji] = LAr_ABSL_vis;
+      }
+    }
     //G4cout << "XUV attenuation length: " << LAr_ABSL_xuv/cm << " cm" << G4endl;
     //G4cout << "VIS attenuation length: " << LAr_ABSL_vis/m << " m" << G4endl;
 
@@ -153,17 +128,17 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  G4double dee = ((PPSCHighE - PPSCLowE) / ((G4double)(num-1)));
 	  G4double LAr_SCIN[num];
 	  G4double LAr_SCPP[num];
-	  for (ji = 0; ji < num; ji++){
-	      ee=PPSCLowE+ ((G4double)ji) * dee;
-	      LAr_SCPP[ji]=ee;
-	      LAr_SCIN[ji]=ArScintillationSpectrum((LambdaE/ee)/nanometer);
-	      /** Keep for debugging purposes
-	      G4cout << " WL: " << (LambdaE/LAr_SCPP[ji])/nanometer<< " nm Scint: " << LAr_SCPP[ji]/eV << " eV :: " << LAr_SCIN[ji] << G4endl;
+    for (ji = 0; ji < num; ji++){
+      ee=PPSCLowE+ ((G4double)ji) * dee;
+      LAr_SCPP[ji]=ee;
+      LAr_SCIN[ji]=ArScintillationSpectrum((LambdaE/ee)/nanometer);
+      /** Keep for debugging purposes
+        G4cout << " WL: " << (LambdaE/LAr_SCPP[ji])/nanometer<< " nm Scint: " << LAr_SCPP[ji]/eV << " eV :: " << LAr_SCIN[ji] << G4endl;
 
-	      G4cout << " WL1: " << (LambdaE/ee)/nanometer << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " En: " << LAr_PPCK[ji]/eV << " ;n: " <<
-		  LAr_RIND[ji] << " ; Rayleigh  " << LAr_RAYL[ji]/m << " m; Scint " << LAr_SCIN[ji] << G4endl;
-	       */
-	  }
+        G4cout << " WL1: " << (LambdaE/ee)/nanometer << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " En: " << LAr_PPCK[ji]/eV << " ;n: " <<
+        LAr_RIND[ji] << " ; Rayleigh  " << LAr_RAYL[ji]/m << " m; Scint " << LAr_SCIN[ji] << G4endl;
+        */
+    }
 
 	  G4MaterialPropertiesTable* myMPT1 = new G4MaterialPropertiesTable();
 
@@ -173,12 +148,10 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 
 	  // Fast and slow components of the scintillation
 	  // They should both be the same
-	  if ( (LAr_SCPP[0] >= PPCKOVLowE) &&
-	       (LAr_SCPP[(sizeof(LAr_SCPP)/sizeof(G4double) - 1)] <= PPCKOVHighE) )
-	    {
+	  if ( (LAr_SCPP[0] >= PPCKOVLowE) && (LAr_SCPP[(sizeof(LAr_SCPP)/sizeof(G4double) - 1)] <= PPCKOVHighE) ){
 	      myMPT1->AddProperty("FASTCOMPONENT",LAr_SCPP,LAr_SCIN,num);
 	      myMPT1->AddProperty("SLOWCOMPONENT",LAr_SCPP,LAr_SCIN,num);
-	    }
+	  }
 	  myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield);
 	  myMPT1->AddConstProperty("FASTTIMECONSTANT", tau_s);
 	  myMPT1->AddConstProperty("SLOWTIMECONSTANT",tau_l);

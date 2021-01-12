@@ -61,12 +61,18 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
   m_pTree->Branch("ekin", "vector<float>", &m_pEventData->m_pKineticEnergy);
   m_pTree->Branch("trackid", "vector<int>", &m_pEventData->m_pTrackId);
   m_pTree->Branch("parentid", "vector<int>", &m_pEventData->m_pParentId);
+  m_pTree->Branch("edproc", "vector<string>", &m_pEventData->m_pDepositingProcess);
+  m_pTree->Branch("parenttype", "vector<string>", &m_pEventData->m_pParentType);
+  m_pTree->Branch("etot", &m_pEventData->m_fTotalEnergyDeposited, "etot/F");
+  
 
   m_pTree->Branch("VolPrim","vector<string>",&m_pEventData->m_pVolPrim);
   m_pTree->Branch("xPrim", "vector<float>", &m_pEventData->m_pXPrim);
   m_pTree->Branch("yPrim", "vector<float>", &m_pEventData->m_pYPrim);
   m_pTree->Branch("zPrim", "vector<float>", &m_pEventData->m_pZPrim);
+  m_pTree->Branch("KEPrim", "vector<float>", &m_pEventData->m_pKErim);
 
+  m_pTree->Branch("pmthits", "vector<int>", &m_pEventData->m_pPmtHits);
   
   // PMT hits 
   m_pTree->Branch("ntpmthits", &m_pEventData->m_iNbTopPmtHits, "ntpmthits/I");
@@ -77,14 +83,10 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
   m_pTree->Branch("PmtNb", &m_pEventData->m_iPmtNumber, "PmtNb/I");
 
 
-  m_pTree->Branch("pmthits", "vector<int>", &m_pEventData->m_pPmtHits);
 
-  m_pTree->Branch("etot", &m_pEventData->m_fTotalEnergyDeposited, "etot/F");
   m_pTree->Branch("nsteps", &m_pEventData->m_iNbSteps, "nsteps/I");
   m_pTree->Branch("type", "vector<int>", &m_pEventData->m_pParticleType);
-  m_pTree->Branch("parenttype", "vector<string>", &m_pEventData->m_pParentType);
   m_pTree->Branch("creaproc", "vector<string>", &m_pEventData->m_pCreatorProcess);
-  m_pTree->Branch("edproc", "vector<string>", &m_pEventData->m_pDepositingProcess);
   /*
   m_pTree->Branch("xp", "vector<float>", &m_pEventData->m_pX);
   m_pTree->Branch("yp", "vector<float>", &m_pEventData->m_pY);
@@ -266,28 +268,6 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
     }
   }
 
-  //***3 defining the number of pmts
-
-  G4int iNbTopPmts = 1;
-  G4int iNbBottomPmts = 0;
-  G4int iNbRingPmts = 0;
-  //***4 resizing m_pPmtHits array
-  //m_pEventData->m_pPmtHits->resize(iNbTopPmts+iNbBottomPmts, 0);
-
-
-
-  for(G4int i=0; i<iNbPmtHits; i++)
-  {
-    (*(m_pEventData->m_pPmtHits))[(*pPmtHitsCollection)[i]->GetPmtNb()]++; //? 
-    G4cout << "PMTID " << (*pPmtHitsCollection)[i]->GetPmtNb() << G4endl;  
-    m_pEventData->m_iPmtNumber = (*pPmtHitsCollection)[i]->GetPmtNb();
-  }   
-
-
-  m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
-  //m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
-  m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
-  //  // also write the header information + primary vertex of the empty events....
   m_pEventData->m_iNbSteps = iNbSteps;
   m_pEventData->m_iLScintNbSteps = iLScintNbSteps;
   m_pEventData->m_fTotalEnergyDeposited = fTotalEnergyDeposited;
@@ -335,6 +315,7 @@ void LArSAnalysisManager::Step(const G4Step *step)
     m_pEventData->m_pXPrim->push_back(position.x());
     m_pEventData->m_pYPrim->push_back(position.y() );
     m_pEventData->m_pZPrim->push_back(position.z());
+    m_pEventData->m_pKErim->push_back(kineticE);
     
   }
   if(fPastTrackPrimaryID != track->GetTrackID()){
@@ -349,13 +330,7 @@ void LArSAnalysisManager::Step(const G4Step *step)
   int parentTrackID = track->GetParentID();
   double stepLength = step->GetStepLength();
   double totalTrackLength = track->GetTrackLength();
-  bool recordPreStep = false;
-  double trackWeight = 0;//postStepPoint->GetWeight();
-  //const G4VProcess* creator = track->GetCreatorProcess();
-  //G4String creatorName;
-  if(creator)
-    creatorName = creator->GetProcessName();
-
+ 
   //If you use the pre point you never find tracks that stop in the SiPM,
   G4String physVolName;
   if(postStepPoint->GetPhysicalVolume() != NULL)
@@ -400,7 +375,7 @@ void LArSAnalysisManager::Step(const G4Step *step)
   m_pEventData->m_pParticleType->push_back(pid);
   m_pEventData->m_fTotalEnergyDeposited += eDep;
 
-  if(physVolName.contains("pmt") || physVolName.contains("PMT")) m_pEventData->m_iNbTopPmtHits++;
+  if(physVolName.contains("pmt") || physVolName.contains("PMT")) m_pEventData->m_pPmtHits++;
 
 
 

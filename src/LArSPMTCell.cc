@@ -39,8 +39,8 @@ G4LogicalVolume* LArSPMTCell::Construct(){
   acrylicWindow_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-acrylicWindowThickness/(2*mm)-delta/mm)*mm ),acrylicWindow_logical,"acrylicWindow_physical",LAr_logical,0,false,0);
 
   G4double topCellOuterDiameter = 106*mm;
-  G4double topCellThickness = 10*mm;
-  //Top disk is 10 mm thick with a 64 mm hole for the pmt
+  G4double topCellThickness = 14*mm;
+  //Top disk is 14 mm thick with a 64 mm hole for the pmt
   G4Tubs* topCell_solid = new G4Tubs("topCell_solid",pmtWindowDiameter/2.,topCellOuterDiameter/2,topCellThickness/2,0,360*deg);
   G4LogicalVolume * topCell_logical = new G4LogicalVolume(topCell_solid,G4Material::GetMaterial("Aluminum"),"topCell_Logical",0,0,0);
   topCell_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-topCellThickness/(2*mm))*mm ),topCell_logical,"topCell_physical",LAr_logical,0,false,0);
