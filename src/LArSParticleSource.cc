@@ -296,89 +296,84 @@ LArSParticleSource::GeneratePointsInSurface()
   if(m_hSourcePosType != "Surface" && m_iVerbosityLevel >= 1)
     G4cout << "Error SourcePosType not Surface" << G4endl;
   
-  if(m_hShape == "Sphere")
-    {
-      
-      G4double costh =  G4UniformRand()*2. - 1.;
-      G4double sinth =  sqrt(1-costh*costh);
-      G4double phi =  G4UniformRand()*twopi;
-      
-      x = m_dRadius * sinth * cos(phi);
-      y = m_dRadius * sinth * sin(phi);
-      z = m_dRadius * costh;
-      
+  if(m_hShape == "Sphere"){
+    G4double costh =  G4UniformRand()*2. - 1.;
+    G4double sinth =  sqrt(1-costh*costh);
+    G4double phi =  G4UniformRand()*twopi;
+
+    x = m_dRadius * sinth * cos(phi);
+    y = m_dRadius * sinth * sin(phi);
+    z = m_dRadius * costh;
+  }
+
+  else if(m_hShape == "Cylinder"){
+    //compute areas
+    G4double BaseArea = pi * m_dRadius * m_dRadius;
+    G4double LateralArea = twopi * m_dRadius * 2*m_dHalfz;
+    G4double TotalArea = 2*BaseArea + LateralArea;
+
+    G4double rnd = G4UniformRand();
+
+    if(rnd < LateralArea/TotalArea){ // sample in lateral
+      G4double phi =  G4UniformRand()*twopi;	
+      x = m_dRadius * cos(phi);
+      y = m_dRadius * sin(phi);
+
+      z = m_dHalfz * (2*G4UniformRand()-1.);	
     }
-  
-  else if(m_hShape == "Cylinder")
-    {      
-      //compute areas
-      G4double BaseArea = pi * m_dRadius * m_dRadius;
-      G4double LateralArea = twopi * m_dRadius * 2*m_dHalfz;
-      G4double TotalArea = 2*BaseArea + LateralArea;
-      
-      G4double rnd = G4UniformRand();
-      
-      if(rnd < LateralArea/TotalArea){ // sample in lateral
-	G4double phi =  G4UniformRand()*twopi;	
-	x = m_dRadius * cos(phi);
-	y = m_dRadius * sin(phi);
-	
-	z = m_dHalfz * (2*G4UniformRand()-1.);	
-      }
-      else{ //sample in base	
-	G4double r = sqrt(G4UniformRand()) * m_dRadius;	
-	G4double phi =  G4UniformRand()*twopi;	
-	x = r * cos(phi);
-	y = r * sin(phi);
-	
-	G4double sign = G4UniformRand();
-	if(sign>0.5) z = m_dHalfz;
-	else z = -m_dHalfz;	
-      }
+    else{ //sample in base	
+      G4double r = sqrt(G4UniformRand()) * m_dRadius;	
+      G4double phi =  G4UniformRand()*twopi;	
+      x = r * cos(phi);
+      y = r * sin(phi);
+
+      G4double sign = G4UniformRand();
+      if(sign>0.5) z = m_dHalfz;
+      else z = -m_dHalfz;	
+    }
+
+  }
+  else if(m_hShape == "Box"){
+
+    G4double SurfXY =  m_dHalfx * m_dHalfy;
+    G4double SurfXZ =  m_dHalfx * m_dHalfz;
+    G4double SurfYZ =  m_dHalfy * m_dHalfz;
+    G4double SurfTot = SurfXY + SurfXZ + SurfYZ;
+
+    G4double rnd = G4UniformRand();
+
+    if(rnd < SurfXY/SurfTot){ // sample in XY
+
+      x = 2*(G4UniformRand()-0.5)*m_dHalfx;
+      y = 2*(G4UniformRand()-0.5)*m_dHalfy;
+
+      G4double sign = G4UniformRand();
+      if(sign>0.5) z = m_dHalfz;
+      else z = -m_dHalfz;	
+    }
+    else if(rnd < (SurfXY+SurfXZ)/SurfTot){ // sample in XZ 
+
+      x = 2*(G4UniformRand()-0.5)*m_dHalfx;
+      z = 2*(G4UniformRand()-0.5)*m_dHalfz;
+
+      G4double sign = G4UniformRand();
+      if(sign>0.5) y = m_dHalfy;
+      else y = -m_dHalfy;				
+    }
+    else{ // sample in YZ
+      y = 2*(G4UniformRand()-0.5)*m_dHalfy;
+      z = 2*(G4UniformRand()-0.5)*m_dHalfz;
+
+      G4double sign = G4UniformRand();
+      if(sign>0.5) x = m_dHalfx;
+      else x = -m_dHalfx;				
 
     }
-  else if(m_hShape == "Box")
-    {
-      
-      G4double SurfXY =  m_dHalfx * m_dHalfy;
-      G4double SurfXZ =  m_dHalfx * m_dHalfz;
-      G4double SurfYZ =  m_dHalfy * m_dHalfz;
-      G4double SurfTot = SurfXY + SurfXZ + SurfYZ;
-      
-      G4double rnd = G4UniformRand();
-      
-      if(rnd < SurfXY/SurfTot){ // sample in XY
-	
-	x = 2*(G4UniformRand()-0.5)*m_dHalfx;
-	y = 2*(G4UniformRand()-0.5)*m_dHalfy;
-	
-	G4double sign = G4UniformRand();
-	if(sign>0.5) z = m_dHalfz;
-	else z = -m_dHalfz;	
-      }
-      else if(rnd < (SurfXY+SurfXZ)/SurfTot){ // sample in XZ 
-	
-	x = 2*(G4UniformRand()-0.5)*m_dHalfx;
-	z = 2*(G4UniformRand()-0.5)*m_dHalfz;
+  }
 
-	G4double sign = G4UniformRand();
-	if(sign>0.5) y = m_dHalfy;
-	else y = -m_dHalfy;				
-      }
-      else{ // sample in YZ
-	y = 2*(G4UniformRand()-0.5)*m_dHalfy;
-	z = 2*(G4UniformRand()-0.5)*m_dHalfz;
-
-	G4double sign = G4UniformRand();
-	if(sign>0.5) x = m_dHalfx;
-	else x = -m_dHalfx;				
-	
-      }
-    }
-  
   else
     G4cout << "Error: Volume Shape Does Not Exist" << G4endl;
-  
+
   RandPos.setX(x);
   RandPos.setY(y);
   RandPos.setZ(z);
@@ -477,23 +472,20 @@ LArSParticleSource::GeneratePrimaryVertex(G4Event * evt)
 	G4bool srcconf = false;
 	G4int LoopCount = 0;
 
-	while(srcconf == false)
-	{
+	while(srcconf == false){
 		if(m_hSourcePosType == "Point")
 			GeneratePointSource();
 		else if(m_hSourcePosType == "Volume")
 			GeneratePointsInVolume();
 		else if(m_hSourcePosType == "Surface")
 		  GeneratePointsInSurface();
-		else
-		{
+		else{
 			G4cout << "Error: SourcePosType undefined" << G4endl;
 			G4cout << "Generating point source" << G4endl;
 			GeneratePointSource();
 		}
 
-		if(m_bConfine == true)
-		{
+		if(m_bConfine == true){
 			srcconf = IsSourceConfined();
 			// if source in confined srcconf = true terminating the loop
 			// if source isnt confined srcconf = false and loop continues
@@ -502,8 +494,7 @@ LArSParticleSource::GeneratePrimaryVertex(G4Event * evt)
 			srcconf = true;		// terminate loop
 
 		LoopCount++;
-		if(LoopCount == 1000000)
-		{
+		if(LoopCount == 1000000){
 			G4cout << "*************************************" << G4endl;
 			G4cout << "LoopCount = 1000000" << G4endl;
 			G4cout << "Either the source distribution >> confinement" << G4endl;
@@ -517,7 +508,7 @@ LArSParticleSource::GeneratePrimaryVertex(G4Event * evt)
 		}
 	}
     
-    // create a new vertex
+  // create a new vertex
 	G4PrimaryVertex *vertex = new G4PrimaryVertex(m_hParticlePosition, m_dParticleTime);
     
     for(G4int i = 0; i < m_iNumberOfParticlesToBeGenerated; i++){
@@ -547,8 +538,7 @@ LArSParticleSource::GeneratePrimaryVertex(G4Event * evt)
         G4double py = pmom * m_hParticleMomentumDirection.y();
         G4double pz = pmom * m_hParticleMomentumDirection.z();
     
-        if(m_iVerbosityLevel >= 1)
-        {
+        if(m_iVerbosityLevel >= 1) {
             G4cout << "Particle name: " << m_pParticleDefinition->GetParticleName() << G4endl;
             G4cout << "       Energy: " << m_dParticleEnergy << G4endl;
             G4cout << "     Position: " << m_hParticlePosition << G4endl;

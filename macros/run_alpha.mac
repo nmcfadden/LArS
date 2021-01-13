@@ -1,0 +1,69 @@
+################
+#VERBOSITY
+/control/verbose 0
+/run/verbose 0
+/event/verbose 0
+/tracking/verbose 0
+/xenoScope/gun/verbose 0
+
+#################
+#SEED
+/run/random/setRandomSeed 0
+
+##################
+# isotropic emission
+/xenoScope/gun/angtype iso
+
+/xenoScope/gun/type   Point
+#/xenoScope/gun/type   Surface
+/xenoScope/gun/shape  Cylinder
+#/xenoScope/gun/center 0. 0. -181.5 mm
+#
+/xenoScope/gun/center 0. 0. -100 mm
+/xenoScope/gun/radius 0.50 mm
+/xenoScope/gun/halfz  0.01 mm
+
+##################
+# Select the volume to confine the source. For cryostat studies choose:
+
+#/xenoScope/gun/confine LAr*
+
+##################
+# particle type + energy spectrum
+
+/xenoScope/gun/energy 1 MeV
+/xenoScope/gun/particle alpha
+
+# Co60
+#/xenoScope/gun/ion 27 60 0 0
+
+# K40
+#/xenoScope/gun/ion 19 40 0 0
+
+# U238->Ra226
+#/xenoScope/gun/ion 92 238 0 0
+#/grdm/nucleusLimits 238 230 92 90
+
+# Ar110m
+#/xenoScope/gun/ion 47 110 0 118.
+
+# Rb83->Kr83
+#/xenoScope/gun/ion 37 83 0 0 
+#/grdm/nucleusLimits 83 83 37 36
+
+# Kr85
+#/xenoScope/gun/ion 36 85 0 0 
+
+
+
+##################
+# MC acceleration techniques for gammas. AP playground: if false it is not used
+/run/forced/setVarianceReduction false
+
+# Scintillation processes in the LXe
+#/Xe/detector/setLXeScintillation false
+
+# Tree Filling options
+/run/writeEmpty true
+
+
