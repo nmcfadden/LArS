@@ -35,7 +35,6 @@ LArSEventData::LArSEventData()
   m_pXPrim = new vector<float>;
   m_pYPrim = new vector<float>;
   m_pZPrim = new vector<float>;
-  m_pKErim = new vector<float>;
 
 	// DR 20161012 - Branches to save incoming and outcoming energy in LXe. Useful for analysis of the single scatter events in the active volume.
 	m_pPreMomDirX = new vector<float>;
@@ -110,8 +109,7 @@ LArSEventData::~LArSEventData()
   delete m_pVolPrim;
   delete m_pXPrim; 
   delete m_pYPrim; 
-  delete m_pZPrim;
-  delete m_pKErim;
+  delete m_pZPrim; 
 	
   delete m_pPreMomDirX;
 	delete m_pPreMomDirY;
@@ -188,7 +186,6 @@ LArSEventData::Clear()
   m_pXPrim->clear();
   m_pYPrim->clear();
   m_pZPrim->clear();
-  m_pKErim->clear();
 
 	m_pPreMomDirX->clear();
 	m_pPreMomDirY->clear();

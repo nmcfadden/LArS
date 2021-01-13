@@ -14,12 +14,14 @@
 # isotropic emission
 /xenoScope/gun/angtype iso
 
-# make sure the volume below is a bit larger than the object the source will be confined to
-/xenoScope/gun/type   Surface
+/xenoScope/gun/type   Point
+#/xenoScope/gun/type   Surface
 /xenoScope/gun/shape  Cylinder
-/xenoScope/gun/center 0. 0. -181.5 mm
+#/xenoScope/gun/center 0. 0. -181.5 mm
+#
+/xenoScope/gun/center 0. 0. -100 mm
 /xenoScope/gun/radius 0.50 mm
-/xenoScope/gun/halfz  0.5 mm
+/xenoScope/gun/halfz  0.01 mm
 
 ##################
 # Select the volume to confine the source. For cryostat studies choose:

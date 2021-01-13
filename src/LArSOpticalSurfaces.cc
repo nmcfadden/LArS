@@ -347,6 +347,3 @@ std::vector<std::string> LArSOpticalSurfaces::GetListOfSurfaces() {
   for (auto& _s : fOpticalSurfaces) v.push_back(_s.first);
   return v;
 }
-
-
-
