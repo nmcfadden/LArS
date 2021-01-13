@@ -15,7 +15,7 @@ export LARSDIR=/path/to/LArS/MC/
 export LARSOPTICALDATA=$LARSDIR/opticalData
 
 ## Compilation & Running Macros:
-mkdir build
+mkdir build bin
 cd build
 cmake ..
 make
