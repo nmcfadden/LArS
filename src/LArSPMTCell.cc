@@ -8,7 +8,9 @@ LArSPMTCell::LArSPMTCell( LArSDetectorConstruction * constructorClass)
 
 LArSPMTCell::~LArSPMTCell() {;}
 
-G4LogicalVolume* LArSPMTCell::Construct(){
+G4LogicalVolume* LArSPMTCell::Construct (bool bAcrylicWindow){
+
+  std::cout<<bAcrylicWindow<<std::endl;
 
   //LAr volume extends in Z from -219.5*mm to 226*mm
   LAr_logical = Constructor_class->GetMotherVolumeLogical();
@@ -61,14 +63,14 @@ G4LogicalVolume* LArSPMTCell::Construct(){
   supportRod_Physical2 = new G4PVPlacement(0,G4ThreeVector(-rodPlacementRadius*cos(60*PI/180.0),-rodPlacementRadius*sin(60*PI/180.0),(-219.5+148-topCellThickness/(mm)-wallCellHeight/(2*mm))*mm ),supportRod_logical,"supportRod_physical2",LAr_logical,0,false,0);
 
    
-  //TODO No alpha source added as a material, will assume it is black
   G4Tubs* bottomCell_solid = new G4Tubs("bottomCell_solid",0,topCellOuterDiameter/2,topCellThickness/2,0,360*deg);
   G4LogicalVolume * bottomCell_logical = new G4LogicalVolume(bottomCell_solid,G4Material::GetMaterial("Aluminum"),"bottomCell_Logical",0,0,0);
   bottomCell_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-topCellThickness/(mm)-wallCellHeight/(mm)-topCellThickness/(2*mm))*mm ),bottomCell_logical,"bottomCell_physical",LAr_logical,0,false,0);
 
+  //TODO No alpha source added as a material, will assume it is black // new edit (Gabriela):I kept the material as aluminum and added a surface with a specific reflectivity for the alpha source
   //Alpha source used to in particle generator macro to confine alpha to small volume
-  G4double alphaDiameter = 1*mm;
-  G4double alphaThickness = 0.001*mm;
+  G4double alphaDiameter = 5*mm;//I changed the dimension of the source (Gabriela)
+  G4double alphaThickness = 0.01*mm;
   G4Tubs* alphaSource_solid = new G4Tubs("alphaSource_solid",0,alphaDiameter/2,alphaThickness/2,0,360*deg);
   G4LogicalVolume * alphaSource_logical = new G4LogicalVolume(alphaSource_solid,G4Material::GetMaterial("Aluminum"),"alphaSource_Logical",0,0,0);
   alphaSource_physical = new G4PVPlacement(0,G4ThreeVector(0.,0.,(-219.5+148-topCellThickness/(mm)-wallCellHeight/(mm)+alphaThickness/(2*mm))*mm ),alphaSource_logical,"alphaSource_physical",LAr_logical,0,false,0);
