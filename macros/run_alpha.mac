@@ -18,11 +18,9 @@
 #/xenoScope/gun/type   Surface
 /xenoScope/gun/shape  Cylinder
 #/xenoScope/gun/center 0. 0. -181.5 mm
-#
-/xenoScope/gun/center 0. 0. -100 mm
-/xenoScope/gun/radius 0.50 mm
-/xenoScope/gun/halfz  0.01 mm
-
+/xenoScope/gun/center 0. 0. -185.489 mm # source position z= -185.499 mm
+/xenoScope/gun/radius 2.00 # increased radius
+/xenoScope/gun/halfz  0.00499 mm #changed to the ~ same halfz of the source (after increasing its thickness)
 ##################
 # Select the volume to confine the source. For cryostat studies choose:
 
@@ -31,7 +29,9 @@
 ##################
 # particle type + energy spectrum
 
-/xenoScope/gun/energy 1 MeV
+#/xenoScope/gun/energytype Spectrum
+#/xenoScope/gun/energyspectrum alphaspectrum.dat 
+/xenoScope/gun/energy 5.486 MeV
 /xenoScope/gun/particle alpha
 
 # Co60
