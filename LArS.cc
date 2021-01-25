@@ -50,14 +50,16 @@ main(int argc, char **argv)
   bool bOpenGlVisualize = false;
   bool bHepRepVisualize = false;
   bool bPreInitFromFile = false;
+  bool bAcrylicWindow = false; //usually without a window (which means with LAr as its material, use -w to change it to with window)
+  bool bSample = false; //standard sample set to be the absorber, use -s argument "sample name" to change it
 	
   bool bRunMacro = false;
-  std::string hRunMacroFilename, hDataFilename, hPreInitFilename;
+  std::string hRunMacroFilename, hDataFilename, hPreInitFilename, hSamplename;
   std::string hCommand;
   int iNbEventsToSimulate = 0;
   
   // parse switches
-  while((c = getopt(argc,argv,"v:f:o:p:n:i")) != -1)
+  while((c = getopt(argc,argv,"v:f:o:p:n:i:w")) != -1)
   {
     switch(c)	{
 
@@ -98,12 +100,22 @@ main(int argc, char **argv)
       case 'i':
         bInteractive = true;
         break;
+
+      case 'w':
+        bAcrylicWindow = true;
+        break;
+
+      case 's':
+        hSamplename = optarg;
+        break;
         
       default:
         usage();
     }
   }
   
+  //if (bAcrylicWindow) std::cout<<"#\n#\n#\n#\n###### The acrylic window is now in the geometry -  ########\n#\n#\n#\n#\n#\n#\n#\n"<<bAcrylicWindow<<std::endl;
+
   if(hDataFilename.empty()) hDataFilename = "events.root";
   
   // create the run manager
@@ -111,7 +123,7 @@ main(int argc, char **argv)
 
   // Detector Construction
   G4String detectorRoot = hDataFilename+"_DET";
-  LArSDetectorConstruction *detCon = new LArSDetectorConstruction(detectorRoot); 
+  LArSDetectorConstruction *detCon = new LArSDetectorConstruction(detectorRoot);//, bAcrylicWindow); 
   pRunManager->SetUserInitialization(detCon);
 
   G4String physicsRoot = hDataFilename+"_PHYS";
@@ -171,7 +183,7 @@ main(int argc, char **argv)
     if(bVrmlVisualize)
       pUImanager->ApplyCommand("/vis/open VRML2FILE");
     if( (bOpenGlVisualize) || (bQtVisualize) )
-      pUImanager->ApplyCommand("/vis/open OGL");
+      pUImanager->ApplyCommand("/vis/open OGL 600x600-0+0");
     if(bHepRepVisualize)
       pUImanager->ApplyCommand("/vis/open HepRepFile");
 
