@@ -83,6 +83,8 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
       smoothness   = .5
     )
   );
+  fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
+      G4Material::GetMaterial("TPB")->GetMaterialPropertiesTable());//added by Gabriela
 
   // interface between TPB and Nylon =======================================================================
   surf_name = "TPBToNylon";
@@ -123,6 +125,19 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
     G4Material::GetMaterial("Tetratex")->GetMaterialPropertiesTable());
 
+  // interface between TPBOnTetratex and LAr (added by Gabriela) ============================================
+  surf_name = "LArToTPBOnTetratex";
+  fOpticalSurfaces.emplace(surf_name,
+    new G4OpticalSurface(
+      name         = surf_name + "_Surface",
+      model        = unified,
+      finish       = ground, // changed now from groundfrontpainted to ground
+      surface_type = dielectric_dielectric
+    )
+  );
+  fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
+    G4Material::GetMaterial("TPBOnTetratex")->GetMaterialPropertiesTable());
+
   // interface between Tetratex and LAr ====================================================================
   surf_name = "LArToTetratex";
   fOpticalSurfaces.emplace(surf_name,
@@ -136,7 +151,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
     G4Material::GetMaterial("Tetratex")->GetMaterialPropertiesTable());
   
-  // "Black" surface, using Metal Velvet
+  // "Black" surface, using Metal Velvet =====================================================
   // https://www.acktar.com/wp-content/uploads/2017/12/MAXiBLACK_Super_Black_Polymer-2.pdf
   const G4int num = 4;
   G4double Wavelength[num] = {100, 200, 301, 650};
@@ -156,7 +171,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
 
   for (G4int i=0; i < num; i++) {
     BlackPhotonEnergy[i] = LambdaE/(Wavelength[(num-1)-i]*nm);
-    BlackReflectivity[i] = 0.007;//low but not zero
+    BlackReflectivity[i] = 0.007;//low but not zero 0.007
     BlackEfficiencyEnergy[i]   = 0.0;
   }
 
@@ -165,6 +180,35 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   BlackTable->AddProperty("EFFICIENCY",   BlackPhotonEnergy, BlackEfficiencyEnergy,   num);
 
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(BlackTable);
+
+  // Al surface of the disk where the source is deposited (added by Gabriela) =========================================
+  const G4int num_ = 4;
+  G4double Wavelength_[num_] = {100, 200, 301, 650};
+  surf_name = "AlSource";
+  fOpticalSurfaces.emplace(surf_name,
+    new G4OpticalSurface(
+      name         = surf_name + "_Surface",
+      model        = unified,
+      finish       = ground,
+      surface_type = dielectric_metal
+    )
+  );
+
+  G4double AlSPhotonEnergy [num_];
+  G4double AlSReflectivity [num_];
+  G4double AlSEfficiencyEnergy   [num_];
+
+  for (G4int i=0; i < num_; i++) {
+    AlSPhotonEnergy[i] = LambdaE/(Wavelength_[(num_-1)-i]*nm);
+    AlSReflectivity[i] = 0.04;
+    AlSEfficiencyEnergy[i]   = 0.0;
+  }
+
+  auto AlSTable = new G4MaterialPropertiesTable();
+  AlSTable->AddProperty("REFLECTIVITY", AlSPhotonEnergy, AlSReflectivity, num_);
+  AlSTable->AddProperty("EFFICIENCY",   AlSPhotonEnergy, AlSEfficiencyEnergy,   num_);
+
+  fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(AlSTable);
 
   // interface between SiPM and fibers ====================================================================
   // SiPM "sensitive" surface.. this will be a border surface between the fibers and the upper shroud
