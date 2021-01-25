@@ -72,14 +72,14 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 {
 	  static const G4int NUMENTRIES = 69;
 	  const G4int num = 69;
-	  static const G4double temp = 88.5*kelvin;
+	  static const G4double temp = 87*kelvin; //Gabriela's edit: changed from 88.5 to 87K, but it seems it does not matter, since the properties of the LAr remain the same
 	  static const G4double LambdaE = twopi *1.973269602e-16 * m * GeV;
 
 	  /**
 	   * Nominal values for pure argon
 	   */
 	  G4double scint_yield = 23.6*eV;  // Nominal energy to produce a photon (measured)
-	  G4double photon_yield = 1.0*MeV/scint_yield;//42372 photons/MeV
+	  G4double photon_yield = 1.0*MeV/scint_yield;//42372 photons/MeV 
 	  G4double tau_s = 6.0*ns;
 	  G4double tau_l = 1590.0*ns;
 	  /*G4double yield_ratio = 0.23; // For gammas and electrons*/
@@ -152,19 +152,19 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	      myMPT1->AddProperty("FASTCOMPONENT",LAr_SCPP,LAr_SCIN,num);
 	      myMPT1->AddProperty("SLOWCOMPONENT",LAr_SCPP,LAr_SCIN,num);
 	  }
-	  myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield);
+	  myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield); 
 	  myMPT1->AddConstProperty("FASTTIMECONSTANT", tau_s);
 	  myMPT1->AddConstProperty("SLOWTIMECONSTANT",tau_l);
 	  // This is the value for electrons and gammas
 	  // For example, for nuclear recoils it should be 0.75
 	  // nominal value for electrons and gamas: 0.23
 	  // Value used was provided by F. Art
-	  myMPT1->AddConstProperty("YIELDRATIO",0.3);
+	  myMPT1->AddConstProperty("YIELDRATIO",0.3); // not implementet (?) //Gabriela
 
 	  // Scintillation yield
 	  // WArP data:
 	  /*
-	   * ScintillationYield (mean energy to produce a UV photon)
+	   * ScintillationYield (mean energy to produce a UV photon)myMP
 	   * dependent on the nature of the impinging particles
 	   *
 	   * for flat top response particles the mean energy to produce a photon:  is 19.5 eV
@@ -199,7 +199,7 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	   */
 
 	  G4double fano = 0.11;// Doke et al, NIM 134 (1976)353
-	  myMPT1->AddConstProperty("RESOLUTIONSCALE",fano);
+	  myMPT1->AddConstProperty("RESOLUTIONSCALE",fano); //not implemented? // Gabriela
     fArgonLiquid = G4Material::GetMaterial("Argon-Liq");
 	  fArgonLiquid->SetMaterialPropertiesTable(myMPT1);
 
@@ -536,7 +536,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
    * -Luigi Pertoldi
    */
 
-  G4double TPB_QuantumEff   = 1;//Changed it to 1 from 1.2 N.M.;
+  G4double TPB_QuantumEff   = 0.7;//Changed it to 1 from 1.2 N.M.;
   G4double TPB_TimeConstant = 0.01 *ns;
   G4double TPB_RefrIndex    = 1.635;
 
@@ -689,6 +689,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   TPBOnTetratexTable->AddProperty     ("WLSCOMPONENT",         ph_energies, TPBOnTetratex_emission, NUMENTRIES_2);
   TPBOnTetratexTable->AddConstProperty("WLSTIMECONSTANT",      TPB_TimeConstant);
   TPBOnTetratexTable->AddConstProperty("WLSMEANNUMBERPHOTONS", TPB_QuantumEff);
+  //TPBOnTetratexTable->AddProperty("REFLECTIVITY", ph_energies, refl_Tetratex, NUMENTRIES_2); 
   //TPBOnTetratexTable->AddConstProperty("SCINTILLATIONYIELD",   TPB_ScintYield);
   G4Material::GetMaterial("TPBOnTetratex")->SetMaterialPropertiesTable(TPBOnTetratexTable);
 
@@ -716,7 +717,7 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
 	      PEN -> AddElement(elO, 4);
 				
   }
-  G4double PEN_QuantumEff   = 0.36; 
+  G4double PEN_QuantumEff   = 0.20; //0.36
   G4double PEN_TimeConstant = 10.0 *ns; //
   G4double PEN_RefrIndex    = 1.638;
   G4double PEN_photon_yield = 3000; 
