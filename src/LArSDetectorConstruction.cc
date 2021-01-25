@@ -2,7 +2,8 @@
 
 std::map<G4String, G4double> LArSDetectorConstruction::m_hGeometryParameters;
 
-LArSDetectorConstruction::LArSDetectorConstruction(G4String fName){  
+LArSDetectorConstruction::LArSDetectorConstruction(G4String fName)
+{  
     m_pDetectorMessenger = new LArSDetectorMessenger(this);
     detRootFile = fName;
 }
@@ -16,7 +17,10 @@ G4double LArSDetectorConstruction::GetGeometryParameter(const char *szParameter)
 }
 
 
-G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
+G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  -> attempt to pass the bool for the window
+{
+
+  //std::cout<<bAcrylicWindow<<std::endl;
   //////////////// Define Materials //////////////////////
   LArSMaterials *Materials = new LArSMaterials();
   Materials->BuildAll();
@@ -57,8 +61,9 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
   lar->GetMotherVolume()->SetSensitiveDetector(LArSD);
   //*/
   ////////////////Construct PMT Cell////////////////////
+  bool bAcrylicWindow = false; // just a way to see how the bool can pass to pmtcell construct
   LArSPMTCell *pmtCell = new LArSPMTCell(this);
-  Mother_volume = pmtCell->Construct();
+  Mother_volume = pmtCell->Construct(bAcrylicWindow);
 
   //get physical volumes by name for optical boundries
   //Some physical boundries are between the LAr
@@ -88,6 +93,10 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct(){
     if(candidateList.contains("bottomCell")){
       new G4LogicalBorderSurface("bottomCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
       new G4LogicalBorderSurface(to_string(i)+"bottomCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+    }
+    if(candidateList.contains("alphaSource")){
+      new G4LogicalBorderSurface("alphaSource"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("AlSource"));
+      new G4LogicalBorderSurface(to_string(i)+"bottomCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("AlSource"));
     }
 
 
