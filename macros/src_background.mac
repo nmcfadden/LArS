@@ -10,7 +10,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 #################
 # seed
@@ -18,10 +18,10 @@
 
 #################
 # gun
-/xenoScope/gun/angtype iso
-#/xenoScope/gun/direction 0 0 0
-/xenoScope/gun/type    Volume  
-/xenoScope/gun/shape   Cylinder
+/LArS/gun/angtype iso
+#/LArS/gun/direction 0 0 0
+/LArS/gun/type    Volume  
+/LArS/gun/shape   Cylinder
 
 
 #################
@@ -29,25 +29,25 @@
 
 ### Bancground material confinement
 #gun confined to entire LXe volume
-/xenoScope/gun/center 0. 0. 0.  m 
-/xenoScope/gun/radius 0.5 m
-/xenoScope/gun/halfz  5. m
+/LArS/gun/center 0. 0. 0.  m 
+/LArS/gun/radius 0.5 m
+/LArS/gun/halfz  5. m
 ## select the volume to confine the source
-#/xenoScope/gun/confine Steel*
-/xenoScope/gun/confine Cu*
-#/xenoScope/gun/confine SiPM*
-#/xenoScope/gun/confine PMT*
-#/xenoScope/gun/confine Concrete*
+#/LArS/gun/confine Steel*
+/LArS/gun/confine Cu*
+#/LArS/gun/confine SiPM*
+#/LArS/gun/confine PMT*
+#/LArS/gun/confine Concrete*
 
 
 ##################
 # particle type + energy spectrum
 
-/xenoScope/gun/particle ion
-#/xenoScope/gun/ion 88 226 0 0 
-#/xenoScope/gun/ion 92 238 0 0
-/xenoScope/gun/ion 27 60 0 0 
-/xenoScope/gun/energy 0 keV
+/LArS/gun/particle ion
+#/LArS/gun/ion 88 226 0 0 
+#/LArS/gun/ion 92 238 0 0
+/LArS/gun/ion 27 60 0 0 
+/LArS/gun/energy 0 keV
 ##################
 # scintillation processes in the LXe
 /Xe/detector/setLXeScintillation false

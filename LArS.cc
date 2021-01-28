@@ -50,8 +50,6 @@ main(int argc, char **argv)
   bool bOpenGlVisualize = false;
   bool bHepRepVisualize = false;
   bool bPreInitFromFile = false;
-  bool bAcrylicWindow = false; //usually without a window (which means with LAr as its material, use -w to change it to with window)
-  bool bSample = false; //standard sample set to be the absorber, use -s argument "sample name" to change it
 	
   bool bRunMacro = false;
   std::string hRunMacroFilename, hDataFilename, hPreInitFilename, hSamplename;
@@ -101,10 +99,6 @@ main(int argc, char **argv)
         bInteractive = true;
         break;
 
-      case 'w':
-        bAcrylicWindow = true;
-        break;
-
       case 's':
         hSamplename = optarg;
         break;
@@ -114,7 +108,6 @@ main(int argc, char **argv)
     }
   }
   
-  //if (bAcrylicWindow) std::cout<<"#\n#\n#\n#\n###### The acrylic window is now in the geometry -  ########\n#\n#\n#\n#\n#\n#\n#\n"<<bAcrylicWindow<<std::endl;
 
   if(hDataFilename.empty()) hDataFilename = "events.root";
   
@@ -254,7 +247,7 @@ main(int argc, char **argv)
 
   auto stop = high_resolution_clock::now(); 
   auto duration = duration_cast<microseconds>(stop - start); 
-  cout << duration.count()/60000000 << endl; 
+  cout << duration.count()/1000000 << endl; 
 
   return 0;
 

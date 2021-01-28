@@ -61,9 +61,8 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  
   lar->GetMotherVolume()->SetSensitiveDetector(LArSD);
   //*/
   ////////////////Construct PMT Cell////////////////////
-  bool bAcrylicWindow = false; // just a way to see how the bool can pass to pmtcell construct
   LArSPMTCell *pmtCell = new LArSPMTCell(this);
-  Mother_volume = pmtCell->Construct(bAcrylicWindow);
+  Mother_volume = pmtCell->Construct();
 
   //get physical volumes by name for optical boundries
   //Some physical boundries are between the LAr
@@ -79,8 +78,18 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  
       new G4LogicalBorderSurface("PMTQE"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MgF2-PMT"));
     }
     if(candidateList.contains("wallCell")){
-      new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
-      new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+      if(UseTetratex()&& UsePEN()){
+        new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToTetratex"));
+        new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTetratex"));
+      }
+      else if(UseTPB()){
+        new G4LogicalBorderSurface("wallCell"+to_string(i),pmtCell->GetTPBVolume(),phys_vol,opSurfaces->GetOpticalSurface("TPBToTetratex"));
+        new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,pmtCell->GetTPBVolume(),opSurfaces->GetOpticalSurface("TPBToTetratex"));
+      }
+      else{
+        new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
+        new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("MetalVelvet"));
+      }
     }
     if(candidateList.contains("supportRod")){
       new G4LogicalBorderSurface("supportRod"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MetalVelvet"));
@@ -96,9 +105,20 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  
     }
     if(candidateList.contains("alphaSource")){
       new G4LogicalBorderSurface("alphaSource"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("AlSource"));
-      new G4LogicalBorderSurface(to_string(i)+"bottomCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("AlSource"));
+      new G4LogicalBorderSurface(to_string(i)+"alpha",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("AlSource"));
     }
-
+    if(UseAcrylicWindow() && (candidateList.contains("acrylic") || candidateList.contains("Acyrlic")) ){
+      new G4LogicalBorderSurface("acrylic"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToAcrylic"));
+      new G4LogicalBorderSurface(to_string(i)+"acrylic",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToAcrylic"));
+    }
+    if(UsePEN() && candidateList.contains("PEN")){
+      new G4LogicalBorderSurface("PEN"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToPEN"));
+      new G4LogicalBorderSurface(to_string(i)+"PEN",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToPEN"));
+    }
+    if(UseTPB() && candidateList.contains("TPB")){
+      new G4LogicalBorderSurface("TPB"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToTPB"));
+      new G4LogicalBorderSurface(to_string(i)+"TPB",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTPB"));
+    }
 
   }
 

@@ -41,12 +41,31 @@ LArSDetectorMessenger::LArSDetectorMessenger(LArSDetectorConstruction *pXeDetect
     m_pLXeRayScatterLengthCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
     
     // check for overlapping objetcs
-    m_pCheckOverlapCmd = new G4UIcmdWithABool("/xenoScope/detector/setCheckOverlap", this);
+    m_pCheckOverlapCmd = new G4UIcmdWithABool("/LArS/detector/setCheckOverlap", this);
     m_pCheckOverlapCmd->SetGuidance("Check for overlapping objects in the geometry.");
     m_pCheckOverlapCmd->SetParameterName("CheckOverlap", false); 
     m_pCheckOverlapCmd->AvailableForStates(G4State_PreInit);
     m_pXeDetector->SetCheckOverlap(false);
 
+    m_pSetAcrylicWindowCmd = new G4UIcmdWithABool("/LArS/detector/setAcrylicWindow",this);
+    m_pSetAcrylicWindowCmd->SetGuidance("Set Acrylic Window.");
+    m_pSetAcrylicWindowCmd->SetParameterName("AcrylicWindow", false);
+    m_pSetAcrylicWindowCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    m_pSetPENCmd  = new G4UIcmdWithABool("/LArS/detector/setPEN",this);
+    m_pSetPENCmd->SetGuidance("Set PEN.");
+    m_pSetPENCmd->SetParameterName("PEN", false);
+    m_pSetPENCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    m_pSetTetratexCmd  = new G4UIcmdWithABool("/LArS/detector/setTetratex",this);
+    m_pSetTetratexCmd->SetGuidance("Set Tetratex.");
+    m_pSetTetratexCmd->SetParameterName("Tetratex", false);
+    m_pSetTetratexCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    m_pSetTPBCmd  = new G4UIcmdWithABool("/LArS/detector/setTPB",this);
+    m_pSetTPBCmd->SetGuidance("Set TPB.");
+    m_pSetTPBCmd->SetParameterName("TPB", false);
+    m_pSetTPBCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
  
 //******************************************
@@ -99,12 +118,14 @@ LArSDetectorMessenger::LArSDetectorMessenger(LArSDetectorConstruction *pXeDetect
 
 LArSDetectorMessenger::~LArSDetectorMessenger()
 {
+
     delete m_pCheckOverlapCmd;
-  
+    delete m_pSetAcrylicWindowCmd;
+    delete m_pSetPENCmd;
+    delete m_pSetTetratexCmd;
+    delete m_pSetTPBCmd;
+
     // Added by Alex:
-  
-    delete m_pLXeLevelCmd;
-    delete m_pMaterCmd;
     delete m_pLXeMeshMaterialCmd;
     delete m_pGXeMeshMaterialCmd;
     delete m_pTeflonReflectivityCmd;
@@ -116,7 +137,6 @@ LArSDetectorMessenger::~LArSDetectorMessenger()
     delete m_pLXeRefractionIndexCmd;
     delete m_pLXeMeshTransparencyCmd;
     delete m_pGXeMeshTransparencyCmd;
-
     delete m_pDetectorDir;
 }
 
@@ -124,8 +144,21 @@ LArSDetectorMessenger::~LArSDetectorMessenger()
 
 void LArSDetectorMessenger::SetNewValue(G4UIcommand *pUIcommand, G4String hNewValue)
 {
-  if(pUIcommand == m_pCheckOverlapCmd)
-      m_pXeDetector->SetCheckOverlap(m_pCheckOverlapCmd->GetNewBoolValue(hNewValue));
+  if(pUIcommand == m_pCheckOverlapCmd){
+    m_pXeDetector->SetCheckOverlap(m_pCheckOverlapCmd->GetNewBoolValue(hNewValue));
+  }
+  else if(pUIcommand == m_pSetAcrylicWindowCmd){
+    m_pXeDetector->SetAcrylicWindow(m_pSetAcrylicWindowCmd->GetNewBoolValue(hNewValue));
+  }
+  else if(pUIcommand == m_pSetPENCmd){
+    m_pXeDetector->SetPEN(m_pSetPENCmd->GetNewBoolValue(hNewValue));
+  }
+  else if(pUIcommand == m_pSetTetratexCmd){
+    m_pXeDetector->SetTetratex(m_pSetTetratexCmd->GetNewBoolValue(hNewValue));
+  }
+  else if(pUIcommand == m_pSetTPBCmd){
+    m_pXeDetector->SetTPB(m_pSetTPBCmd->GetNewBoolValue(hNewValue));
+  }
 
     // Added by Alex:
 

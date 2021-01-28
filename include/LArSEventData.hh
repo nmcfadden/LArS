@@ -23,7 +23,6 @@ public:
 	int m_iPmtNumber;						//Pmt number
 	int m_iNbLSPmtHits;					// number of LS pmt hits
 	int m_iNbWaterPmtHits;					// number of water pmt hits
-	vector<int> *m_pPmtHits;				// number of photon hits per pmt
 	int m_iNbSteps;						// number of energy depositing steps
 	vector<int> *m_pParticleType;			// type of particle
 	vector<string> *m_pCreatorProcess;			// interaction
@@ -44,6 +43,7 @@ public:
 	vector<string> *m_pDepositingProcess;			// energy depositing process
 	vector<string> *m_pParentType;				// type of particle
 	float m_fTotalEnergyDeposited;				// total energy deposited in the SD
+  int m_nScintPhotons;
   
 
   //primary info
@@ -51,9 +51,12 @@ public:
   vector<float> *m_pXPrim;
   vector<float> *m_pYPrim;
   vector<float> *m_pZPrim;
-  vector<float> *m_pKErim;
-
+  vector<float> *m_pKEPrim;
+	
   //PMT specific Info
+  int m_pPmtHits;				// number of photon hits per pmt
+
+  //
 	int m_iNbTopPmtHits;					// number of top pmt hits
 
   //*******************

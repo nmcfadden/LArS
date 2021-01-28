@@ -4,7 +4,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 2
-/xenoScope/gun/verbose 2
+/LArS/gun/verbose 2
 
 #################
 #SEED
@@ -12,49 +12,49 @@
 
 ##################
 # isotropic emission
-/xenoScope/gun/angtype iso
+/LArS/gun/angtype iso
 
 # make sure the volume below is a bit larger than the object the source will be confined to
-/xenoScope/gun/type   Volume
-/xenoScope/gun/shape  Cylinder
-/xenoScope/gun/center 0. 0. -131.5 mm
-/xenoScope/gun/radius 50.0 mm
-/xenoScope/gun/halfz  50.0 mm
+/LArS/gun/type   Volume
+/LArS/gun/shape  Cylinder
+/LArS/gun/center 0. 0. -131.5 mm
+/LArS/gun/radius 50.0 mm
+/LArS/gun/halfz  50.0 mm
 
 ##################
 # Select the volume to confine the source. For cryostat studies choose:
 
-#/xenoScope/gun/confine Cu_FSR_Logical
-/xenoScope/gun/confine LAr_*
-#/xenoScope/gun/confine LXe_extra_filling_outside_Logical
-#/xenoScope/gun/confine LXe_Physical
+#/LArS/gun/confine Cu_FSR_Logical
+/LArS/gun/confine LAr_*
+#/LArS/gun/confine LXe_extra_filling_outside_Logical
+#/LArS/gun/confine LXe_Physical
 
 
 ##################
 # particle type + energy spectrum
 
-/xenoScope/gun/energy 10 eV
-/xenoScope/gun/particle opticalphoton
+/LArS/gun/energy 10 eV
+/LArS/gun/particle opticalphoton
 
 # Co60
-#/xenoScope/gun/ion 27 60 0 0
+#/LArS/gun/ion 27 60 0 0
 
 # K40
-#/xenoScope/gun/ion 19 40 0 0
+#/LArS/gun/ion 19 40 0 0
 
 # U238->Ra226
-#/xenoScope/gun/ion 92 238 0 0
+#/LArS/gun/ion 92 238 0 0
 #/grdm/nucleusLimits 238 230 92 90
 
 # Ar110m
-#/xenoScope/gun/ion 47 110 0 118.
+#/LArS/gun/ion 47 110 0 118.
 
 # Rb83->Kr83
-#/xenoScope/gun/ion 37 83 0 0 
+#/LArS/gun/ion 37 83 0 0 
 #/grdm/nucleusLimits 83 83 37 36
 
 # Kr85
-#/xenoScope/gun/ion 36 85 0 0 
+#/LArS/gun/ion 36 85 0 0 
 
 
 

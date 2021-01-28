@@ -71,6 +71,8 @@ class LArSOpticalMaterialProperties{
     void Register_Silica_Properties();
     void Register_VM2000();
     void Register_StainlessSteel();
+    void Register_Acrylic();
+    void Register_MgF2();
 
     TGraph* ReadSpectrumFromFile(G4String filename);
 

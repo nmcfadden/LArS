@@ -66,9 +66,17 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
   m_pTree->Branch("xPrim", "vector<float>", &m_pEventData->m_pXPrim);
   m_pTree->Branch("yPrim", "vector<float>", &m_pEventData->m_pYPrim);
   m_pTree->Branch("zPrim", "vector<float>", &m_pEventData->m_pZPrim);
+  m_pTree->Branch("KEPrim","vector<float>",&m_pEventData->m_pKEPrim);
+
+  //Event info
+  m_pTree->Branch("etot", &m_pEventData->m_fTotalEnergyDeposited, "etot/F");
+  m_pTree->Branch("nScintPhotons", &m_pEventData->m_nScintPhotons, "nScintPhotons/I");
+
 
   
   // PMT hits 
+  m_pTree->Branch("pmthits", &m_pEventData->m_pPmtHits,"m_pPmtHits/I");
+
   m_pTree->Branch("ntpmthits", &m_pEventData->m_iNbTopPmtHits, "ntpmthits/I");
   m_pTree->Branch("nrpmthits", &m_pEventData->m_iNbRingPmtHits, "nrpmthits/I");
   m_pTree->Branch("nbpmthits", &m_pEventData->m_iNbBottomPmtHits, "nbpmthits/I");
@@ -77,9 +85,7 @@ void LArSAnalysisManager::BeginOfRun(const G4Run *)
   m_pTree->Branch("PmtNb", &m_pEventData->m_iPmtNumber, "PmtNb/I");
 
 
-  m_pTree->Branch("pmthits", "vector<int>", &m_pEventData->m_pPmtHits);
 
-  m_pTree->Branch("etot", &m_pEventData->m_fTotalEnergyDeposited, "etot/F");
   m_pTree->Branch("nsteps", &m_pEventData->m_iNbSteps, "nsteps/I");
   m_pTree->Branch("type", "vector<int>", &m_pEventData->m_pParticleType);
   m_pTree->Branch("parenttype", "vector<string>", &m_pEventData->m_pParentType);
@@ -276,21 +282,23 @@ void LArSAnalysisManager::EndOfEvent(const G4Event *pEvent){
 
 
 
+  /*
   for(G4int i=0; i<iNbPmtHits; i++)
   {
     (*(m_pEventData->m_pPmtHits))[(*pPmtHitsCollection)[i]->GetPmtNb()]++; //? 
     G4cout << "PMTID " << (*pPmtHitsCollection)[i]->GetPmtNb() << G4endl;  
     m_pEventData->m_iPmtNumber = (*pPmtHitsCollection)[i]->GetPmtNb();
-  }   
+  } 
+  */
 
 
-  m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
+  //m_pEventData->m_iNbBottomPmtHits = accumulate(m_pEventData->m_pPmtHits->begin(), m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, 0);
   //m_pEventData->m_iNbTopPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, 0);
-  m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
+  //m_pEventData->m_iNbRingPmtHits = accumulate(m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts, m_pEventData->m_pPmtHits->begin()+iNbBottomPmts+iNbTopPmts+iNbRingPmts, 0);
   //  // also write the header information + primary vertex of the empty events....
   m_pEventData->m_iNbSteps = iNbSteps;
   m_pEventData->m_iLScintNbSteps = iLScintNbSteps;
-  m_pEventData->m_fTotalEnergyDeposited = fTotalEnergyDeposited;
+  //m_pEventData->m_fTotalEnergyDeposited = fTotalEnergyDeposited;
   m_pEventData->m_fLScintTotalEnergyDeposited = fLScintTotalEnergyDeposited;
 
 
@@ -335,6 +343,7 @@ void LArSAnalysisManager::Step(const G4Step *step)
     m_pEventData->m_pXPrim->push_back(position.x());
     m_pEventData->m_pYPrim->push_back(position.y() );
     m_pEventData->m_pZPrim->push_back(position.z());
+    m_pEventData->m_pKEPrim->push_back(kineticE);
     
   }
   if(fPastTrackPrimaryID != track->GetTrackID()){
@@ -383,6 +392,10 @@ void LArSAnalysisManager::Step(const G4Step *step)
   }
 
   G4ThreeVector localPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform().TransformPoint(position);
+  //count scintillation photons that were created
+  if(creatorName == "Scintillation" && iStep == 1){
+    m_pEventData->m_nScintPhotons++;
+  }
 
   //Do not write all steps
   if(eDep == 0) return;
@@ -398,10 +411,13 @@ void LArSAnalysisManager::Step(const G4Step *step)
   m_pEventData->m_pParentId->push_back(parentTrackID);
   m_pEventData->m_pDepositingProcess->push_back(procName);
   m_pEventData->m_pParticleType->push_back(pid);
-  m_pEventData->m_fTotalEnergyDeposited += eDep;
+  if( G4ParticleTable::GetParticleTable()->FindParticle("opticalphoton") != track->GetDefinition() ) m_pEventData->m_fTotalEnergyDeposited += eDep;
 
-  if(physVolName.contains("pmt") || physVolName.contains("PMT")) m_pEventData->m_iNbTopPmtHits++;
+  //PMT specific information
+  if(physVolName.contains("pmt") || physVolName.contains("PMT")){
+    m_pEventData->m_pPmtHits++;
 
+  }
 
 
 

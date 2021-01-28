@@ -4,7 +4,8 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
+
 
 #################
 #SEED
@@ -12,47 +13,47 @@
 
 ##################
 # isotropic emission
-/xenoScope/gun/angtype iso
+/LArS/gun/angtype iso
 
-/xenoScope/gun/type   Point
-#/xenoScope/gun/type   Surface
-/xenoScope/gun/shape  Cylinder
-#/xenoScope/gun/center 0. 0. -181.5 mm
-/xenoScope/gun/center 0. 0. -185.489 mm # source position z= -185.499 mm
-/xenoScope/gun/radius 2.00 # increased radius
-/xenoScope/gun/halfz  0.00499 mm #changed to the ~ same halfz of the source (after increasing its thickness)
+/LArS/gun/type   Point
+#/LArS/gun/type   Surface
+/LArS/gun/shape  Cylinder
+#/LArS/gun/center 0. 0. -181.5 mm
+/LArS/gun/center 0. 0. -185.489 mm # source position z= -185.499 mm
+/LArS/gun/radius 2.00 # increased radius
+/LArS/gun/halfz  0.00499 mm #changed to the ~ same halfz of the source (after increasing its thickness)
 ##################
 # Select the volume to confine the source. For cryostat studies choose:
 
-/xenoScope/gun/confine LAr*
+/LArS/gun/confine LAr*
 
 ##################
 # particle type + energy spectrum
 
-#/xenoScope/gun/energytype Spectrum
-#/xenoScope/gun/energyspectrum alphaspectrum.dat 
-/xenoScope/gun/energy 5.486 MeV
-/xenoScope/gun/particle alpha
+#/LArS/gun/energytype Spectrum
+#/LArS/gun/energyspectrum alphaspectrum.dat 
+/LArS/gun/energy 5.486 MeV
+/LArS/gun/particle alpha
 
 # Co60
-#/xenoScope/gun/ion 27 60 0 0
+#/LArS/gun/ion 27 60 0 0
 
 # K40
-#/xenoScope/gun/ion 19 40 0 0
+#/LArS/gun/ion 19 40 0 0
 
 # U238->Ra226
-#/xenoScope/gun/ion 92 238 0 0
+#/LArS/gun/ion 92 238 0 0
 #/grdm/nucleusLimits 238 230 92 90
 
 # Ar110m
-#/xenoScope/gun/ion 47 110 0 118.
+#/LArS/gun/ion 47 110 0 118.
 
 # Rb83->Kr83
-#/xenoScope/gun/ion 37 83 0 0 
+#/LArS/gun/ion 37 83 0 0 
 #/grdm/nucleusLimits 83 83 37 36
 
 # Kr85
-#/xenoScope/gun/ion 36 85 0 0 
+#/LArS/gun/ion 36 85 0 0 
 
 
 

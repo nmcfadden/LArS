@@ -4,7 +4,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 
 #################
@@ -13,20 +13,20 @@
 
 ##################
 # isotropic emission
-/xenoScope/gun/angtype iso
+/LArS/gun/angtype iso
 
 # make sure the volume below is a bit larger than the object the source will be confined to
-/xenoScope/gun/type   Point
-/xenoScope/gun/center 0. 0. 100. cm
+/LArS/gun/type   Point
+/LArS/gun/center 0. 0. 100. cm
 
 ##################
 # particle type + energy spectrum
 
-/xenoScope/gun/energy 0 keV
-/xenoScope/gun/particle ion
+/LArS/gun/energy 0 keV
+/LArS/gun/particle ion
 
 # Co60
-/xenoScope/gun/ion 27 60 0 0
+/LArS/gun/ion 27 60 0 0
 
 
 ##################

@@ -4,7 +4,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 2
-/xenoScope/gun/verbose 2
+/LArS/gun/verbose 2
 
 #################
 #SEED
@@ -12,43 +12,43 @@
 
 ##################
 # isotropic emission
-/xenoScope/gun/angtype iso
+/LArS/gun/angtype iso
 
 # make sure the volume below is a bit larger than the object the source will be confined to
-/xenoScope/gun/type   Volume  
-/xenoScope/gun/shape  Cylinder
+/LArS/gun/type   Volume  
+/LArS/gun/shape  Cylinder
 
 # custom confine: 
 # PMT window
-#/xenoScope/gun/center 0. 0. -71.45 mm
-#/xenoScope/gun/radius 100 mm
-#/xenoScope/gun/halfz 1 mm
+#/LArS/gun/center 0. 0. -71.45 mm
+#/LArS/gun/radius 100 mm
+#/LArS/gun/halfz 1 mm
 
 #All of LArS
-/xenoScope/gun/center 0. 0. 0. m
-/xenoScope/gun/radius 0.18 m
-/xenoScope/gun/halfz 0.26 m
+/LArS/gun/center 0. 0. 0. m
+/LArS/gun/radius 0.18 m
+/LArS/gun/halfz 0.26 m
 
 ##################
-# Select the volume to confine the source. E.g. /xenoScope/gun/confine LXe*
-#/xenoScope/gun/confine Steel_inner_cryostat_physical
-#/xenoScope/gun/confine Vacuum_volume_physical
-#/xenoScope/gun/confine Steel_outer_cryostat_physical
-#/xenoScope/gun/confine Air_volume_physical
-#/xenoScope/gun/confine LAr_physical
-/xenoScope/gun/confine topCell_physical
-/xenoScope/gun/confine wallCell_physical
-/xenoScope/gun/confine bottomCell_physical
-#/xenoScope/gun/confine supportRod_physical*
-/xenoScope/gun/confine pmtWindow_physical
-/xenoScope/gun/confine acrylicWindow_physical
+# Select the volume to confine the source. E.g. /LArS/gun/confine LXe*
+#/LArS/gun/confine Steel_inner_cryostat_physical
+#/LArS/gun/confine Vacuum_volume_physical
+#/LArS/gun/confine Steel_outer_cryostat_physical
+#/LArS/gun/confine Air_volume_physical
+#/LArS/gun/confine LAr_physical
+/LArS/gun/confine topCell_physical
+/LArS/gun/confine wallCell_physical
+/LArS/gun/confine bottomCell_physical
+#/LArS/gun/confine supportRod_physical*
+/LArS/gun/confine pmtWindow_physical
+/LArS/gun/confine acrylicWindow_physical
 
 
 ##################
-#/xenoScope/gun/energytype Spectrum
-#/xenoScope/gun/energyspectrum ./macros/spectra/neutron/flat.dat
-#/xenoScope/gun/particle gamma 
-/xenoScope/gun/particle geantino
+#/LArS/gun/energytype Spectrum
+#/LArS/gun/energyspectrum ./macros/spectra/neutron/flat.dat
+#/LArS/gun/particle gamma 
+/LArS/gun/particle geantino
 
 ##################
 # MC acceleration techniques for gammas. AP playground: if false it is not used

@@ -75,6 +75,18 @@ public:
         void SetLXeRayScatterLength(G4double dRayScatterLength);
         void SetLXeRefractionIndex(G4double dRefractionIndex);
         
+        inline void SetAcrylicWindow(G4bool val){pAcrylicWindow = val;};
+        inline bool UseAcrylicWindow(){return pAcrylicWindow;};
+
+        inline void SetPEN(G4bool val){pPen = val;};
+        inline bool UsePEN(){return pPen;};
+
+        inline void SetTetratex(G4bool val){pTetretex = val;};
+        inline bool UseTetratex(){return pTetretex;};
+       
+        inline void SetTPB(G4bool val){pTPB = val;};
+        inline bool UseTPB(){return pTPB;};
+
         void SetLXeMeshTransparency(G4double dTransparency); 
         void SetGXeMeshTransparency(G4double dTransparency); 
     
@@ -111,9 +123,10 @@ private:
     LArSDetectorMessenger *m_pDetectorMessenger;
     G4String    detRootFile;
     G4bool   pCheckOverlap; 
-
-    
-  
+    G4bool pAcrylicWindow = false; 
+    G4bool pPen = false;
+    G4bool pTetretex = false;
+    G4bool pTPB = false;
 };
 
 #endif

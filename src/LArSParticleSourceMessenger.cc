@@ -31,16 +31,16 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pParticleTable = G4ParticleTable::GetParticleTable();
 
 	// create directory
-	m_pDirectory = new G4UIdirectory("/xenoScope/gun/");
+	m_pDirectory = new G4UIdirectory("/LArS/gun/");
 	m_pDirectory->SetGuidance("Particle Source control commands.");
 
 	// list available particles
-	m_pListCmd = new G4UIcmdWithoutParameter("/xenoScope/gun/List", this);
+	m_pListCmd = new G4UIcmdWithoutParameter("/LArS/gun/List", this);
 	m_pListCmd->SetGuidance("List available particles.");
 	m_pListCmd->SetGuidance(" Invoke G4ParticleTable.");
 
 	// set particle  
-	m_pParticleCmd = new G4UIcmdWithAString("/xenoScope/gun/particle", this);
+	m_pParticleCmd = new G4UIcmdWithAString("/LArS/gun/particle", this);
 	m_pParticleCmd->SetGuidance("Set particle to be generated.");
 	m_pParticleCmd->SetGuidance(" (geantino is default)");
 	m_pParticleCmd->SetGuidance(" (ion can be specified for shooting ions)");
@@ -58,25 +58,25 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pParticleCmd->SetCandidates(candidateList);
 
 	// particle direction
-	m_pDirectionCmd = new G4UIcmdWith3Vector("/xenoScope/gun/direction", this);
+	m_pDirectionCmd = new G4UIcmdWith3Vector("/LArS/gun/direction", this);
 	m_pDirectionCmd->SetGuidance("Set momentum direction.");
 	m_pDirectionCmd->SetGuidance("Direction needs not to be a unit vector.");
 	m_pDirectionCmd->SetParameterName("Px", "Py", "Pz", true, true);
 	m_pDirectionCmd->SetRange("Px != 0 || Py != 0 || Pz != 0");
 
 	// particle energy
-	m_pEnergyCmd = new G4UIcmdWithADoubleAndUnit("/xenoScope/gun/energy", this);
+	m_pEnergyCmd = new G4UIcmdWithADoubleAndUnit("/LArS/gun/energy", this);
 	m_pEnergyCmd->SetGuidance("Set kinetic energy.");
 	m_pEnergyCmd->SetParameterName("Energy", true, true);
 	m_pEnergyCmd->SetDefaultUnit("GeV");
 
-	m_pPositionCmd = new G4UIcmdWith3VectorAndUnit("/xenoScope/gun/position", this);
+	m_pPositionCmd = new G4UIcmdWith3VectorAndUnit("/LArS/gun/position", this);
 	m_pPositionCmd->SetGuidance("Set starting position of the particle.");
 	m_pPositionCmd->SetParameterName("X", "Y", "Z", true, true);
 	m_pPositionCmd->SetDefaultUnit("cm");
 
 	// ion 
-	m_pIonCmd = new G4UIcommand("/xenoScope/gun/ion", this);
+	m_pIonCmd = new G4UIcommand("/LArS/gun/ion", this);
 	m_pIonCmd->SetGuidance("Set properties of ion to be generated.");
 	m_pIonCmd->SetGuidance("[usage] /gun/ion Z A Q E");
 	m_pIonCmd->SetGuidance("        Z:(int) AtomicNumber");
@@ -100,7 +100,7 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pIonCmd->SetParameter(param);
 
 	// source distribution type
-	m_pTypeCmd = new G4UIcmdWithAString("/xenoScope/gun/type", this);
+	m_pTypeCmd = new G4UIcmdWithAString("/LArS/gun/type", this);
 	m_pTypeCmd->SetGuidance("Sets source distribution type.");
 	m_pTypeCmd->SetGuidance("Either Point, Volume or Surface");
 	m_pTypeCmd->SetParameterName("DisType", true, true);
@@ -108,56 +108,56 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pTypeCmd->SetCandidates("Point Volume Surface");
 
 	// source shape
-	m_pShapeCmd = new G4UIcmdWithAString("/xenoScope/gun/shape", this);
+	m_pShapeCmd = new G4UIcmdWithAString("/LArS/gun/shape", this);
 	m_pShapeCmd->SetGuidance("Sets source shape type.");
 	m_pShapeCmd->SetParameterName("Shape", true, true);
 	m_pShapeCmd->SetDefaultValue("NULL");
 	m_pShapeCmd->SetCandidates("Sphere Cylinder Box");
 
 	// center coordinates
-	m_pCenterCmd = new G4UIcmdWith3VectorAndUnit("/xenoScope/gun/center", this);
+	m_pCenterCmd = new G4UIcmdWith3VectorAndUnit("/LArS/gun/center", this);
 	m_pCenterCmd->SetGuidance("Set center coordinates of source.");
 	m_pCenterCmd->SetParameterName("X", "Y", "Z", true, true);
 	m_pCenterCmd->SetDefaultUnit("cm");
 	m_pCenterCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// half x of source(if source shape is Box)
-	m_pHalfxCmd = new G4UIcmdWithADoubleAndUnit("/xenoScope/gun/halfx", this);
+	m_pHalfxCmd = new G4UIcmdWithADoubleAndUnit("/LArS/gun/halfx", this);
 	m_pHalfxCmd->SetGuidance("Set x half length of source.");
 	m_pHalfxCmd->SetParameterName("Halfx", true, true);
 	m_pHalfxCmd->SetDefaultUnit("cm");
 	m_pHalfxCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// half y of source (if source shape is Box)
-	m_pHalfyCmd = new G4UIcmdWithADoubleAndUnit("/xenoScope/gun/halfy", this);
+	m_pHalfyCmd = new G4UIcmdWithADoubleAndUnit("/LArS/gun/halfy", this);
 	m_pHalfyCmd->SetGuidance("Set y half length of source.");
 	m_pHalfyCmd->SetParameterName("Halfy", true, true);
 	m_pHalfyCmd->SetDefaultUnit("cm");
 	m_pHalfyCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// half height of source
-	m_pHalfzCmd = new G4UIcmdWithADoubleAndUnit("/xenoScope/gun/halfz", this);
+	m_pHalfzCmd = new G4UIcmdWithADoubleAndUnit("/LArS/gun/halfz", this);
 	m_pHalfzCmd->SetGuidance("Set z half length of source.");
 	m_pHalfzCmd->SetParameterName("Halfz", true, true);
 	m_pHalfzCmd->SetDefaultUnit("cm");
 	m_pHalfzCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// radius of source  
-	m_pRadiusCmd = new G4UIcmdWithADoubleAndUnit("/xenoScope/gun/radius", this);
+	m_pRadiusCmd = new G4UIcmdWithADoubleAndUnit("/LArS/gun/radius", this);
 	m_pRadiusCmd->SetGuidance("Set radius of source.");
 	m_pRadiusCmd->SetParameterName("Radius", true, true);
 	m_pRadiusCmd->SetDefaultUnit("cm");
 	m_pRadiusCmd->SetUnitCandidates("nm mum mm cm m km");
 
 	// confine to volume(s)
-	m_pConfineCmd = new G4UIcmdWithAString("/xenoScope/gun/confine", this);
+	m_pConfineCmd = new G4UIcmdWithAString("/LArS/gun/confine", this);
 	m_pConfineCmd->SetGuidance("Confine source to volume(s) (NULL to unset).");
 	m_pConfineCmd->SetGuidance("usage: confine VolName1 VolName2 ...");
 	m_pConfineCmd->SetParameterName("VolName", true, true);
 	m_pConfineCmd->SetDefaultValue("NULL");
 
 	// angular distribution
-	m_pAngTypeCmd = new G4UIcmdWithAString("/xenoScope/gun/angtype", this);
+	m_pAngTypeCmd = new G4UIcmdWithAString("/LArS/gun/angtype", this);
 	m_pAngTypeCmd->SetGuidance("Sets angular source distribution type");
 	m_pAngTypeCmd->SetGuidance("Possible variables are: iso direction");
 	m_pAngTypeCmd->SetParameterName("AngDis", true, true);
@@ -165,7 +165,7 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pAngTypeCmd->SetCandidates("iso direction");
 
 	// energy distribution
-	m_pEnergyTypeCmd = new G4UIcmdWithAString("/xenoScope/gun/energytype", this);
+	m_pEnergyTypeCmd = new G4UIcmdWithAString("/LArS/gun/energytype", this);
 	m_pEnergyTypeCmd->SetGuidance("Sets energy distribution type");
 	m_pEnergyTypeCmd->SetGuidance("Possible variables are: Mono");
 	m_pEnergyTypeCmd->SetParameterName("EnergyDis", true, true);
@@ -173,12 +173,12 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
 	m_pEnergyTypeCmd->SetCandidates("Mono Spectrum");
 
 	// energy distribution file
-	m_pEnergyFileCmd = new G4UIcmdWithAString("/xenoScope/gun/energyspectrum", this);
+	m_pEnergyFileCmd = new G4UIcmdWithAString("/LArS/gun/energyspectrum", this);
 	m_pEnergyFileCmd->SetGuidance("File containing energy spectrum");
 	m_pEnergyFileCmd->SetParameterName("EnergySpectrum", false);
 
 	// verbosity
-	m_pVerbosityCmd = new G4UIcmdWithAnInteger("/xenoScope/gun/verbose", this);
+	m_pVerbosityCmd = new G4UIcmdWithAnInteger("/LArS/gun/verbose", this);
 	m_pVerbosityCmd->SetGuidance("Set Verbose level for gun");
 	m_pVerbosityCmd->SetGuidance(" 0 : Silent");
 	m_pVerbosityCmd->SetGuidance(" 1 : Limited information");
@@ -188,7 +188,7 @@ LArSParticleSourceMessenger::LArSParticleSourceMessenger(LArSParticleSource *pPa
     
     // number of particles to be generated per event
     m_pNumberOfParticlesToBeGeneratedCmd =
-        new G4UIcmdWithAnInteger("/xenoScope/gun/numberofparticles", this);
+        new G4UIcmdWithAnInteger("/LArS/gun/numberofparticles", this);
     m_pNumberOfParticlesToBeGeneratedCmd->SetGuidance(
         "Number of particles generated in one event");
     m_pNumberOfParticlesToBeGeneratedCmd->SetParameterName("NumParticles", true,
@@ -323,7 +323,7 @@ LArSParticleSourceMessenger::SetNewValue(G4UIcommand * command, G4String newValu
 		}
 		else
 		{
-			G4cout << "Set /xenoScope/gun/particle to ion before using /xenoScope/gun/ion command";
+			G4cout << "Set /LArS/gun/particle to ion before using /LArS/gun/ion command";
 			G4cout << G4endl;
 		}
 	}

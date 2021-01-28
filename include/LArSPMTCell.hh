@@ -34,6 +34,7 @@ public:
     G4LogicalVolume* GetMotherVolume();
     void PrintGeometryInformation();
     inline G4VPhysicalVolume* GetPhysicalVolume(){return pmtWindow_physical;};
+    inline G4VPhysicalVolume* GetTPBVolume() {return TPB_physical;};
 
 private:
 
@@ -52,7 +53,9 @@ private:
     G4VPhysicalVolume *supportRod_Physical1;
     G4VPhysicalVolume *supportRod_Physical2;
     G4VPhysicalVolume *bottomCell_physical;
+    G4VPhysicalVolume *PEN_physical;
     G4VPhysicalVolume *alphaSource_physical;
+    G4VPhysicalVolume *TPB_physical;
     
     
 };

@@ -9,5 +9,8 @@
 
 
 #run overlapCheck
-/xenoScope/detector/setCheckOverlap true
-
+/LArS/detector/setCheckOverlap true
+/LArS/detector/setAcrylicWindow false
+/LArS/detector/setPEN false
+/LArS/detector/setTPB true
+/LArS/detector/setTetratex true

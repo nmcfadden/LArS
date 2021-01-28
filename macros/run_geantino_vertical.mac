@@ -4,7 +4,7 @@
 /run/verbose 2
 /event/verbose 2
 /tracking/verbose 2
-/xenoScope/gun/verbose 2
+/LArS/gun/verbose 2
 
 #################
 #SEED
@@ -12,10 +12,10 @@
 
 ##################
 # isotropic emission
-/xenoScope/gun/type  Point
-/xenoScope/gun/center 0. 0. 4000. mm
-/xenoScope/gun/angtype direction
-/xenoScope/gun/direction  0 0 -1 
+/LArS/gun/type  Point
+/LArS/gun/center 0. 0. 4000. mm
+/LArS/gun/angtype direction
+/LArS/gun/direction  0 0 -1 
 
 
 ##################
@@ -23,10 +23,10 @@
 # InnerCryostat - for the inner vessel
 # OuterCryostat - for the outer vessel
 # HexapodPlatformPhysical  HexapodLegPhysical_1 HexapodLegPhysical_2 - for the Hexapod (platform and legs)
-#/xenoScope/gun/confine PMT*
+#/LArS/gun/confine PMT*
 
 ##################
-/xenoScope/gun/particle geantino
+/LArS/gun/particle geantino
 
 
 ##################

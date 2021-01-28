@@ -19,7 +19,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 #################
 # seed
@@ -27,16 +27,16 @@
 
 #################
 # gun
-/xenoScope/gun/angtype iso
-/xenoScope/gun/type    Point 
-/xenoScope/gun/center 0. -122. -35.75 mm
-/xenoScope/gun/numberofparticles 1
+/LArS/gun/angtype iso
+/LArS/gun/type    Point 
+/LArS/gun/center 0. -122. -35.75 mm
+/LArS/gun/numberofparticles 1
 
 ##################
 # particle type + energy spectrum
-/xenoScope/gun/energy   0 keV
-/xenoScope/gun/particle ion
-/xenoScope/gun/ion 27 60 0 0
+/LArS/gun/energy   0 keV
+/LArS/gun/particle ion
+/LArS/gun/ion 27 60 0 0
 
 ##################
 # scintillation processes in the LXe

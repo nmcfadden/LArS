@@ -96,6 +96,11 @@ class LArSDetectorMessenger: public G4UImessenger
 		G4UIcmdWithADouble *m_pLXeMeshTransparencyCmd;
 		G4UIcmdWithADouble *m_pGXeMeshTransparencyCmd;
 
+    //Commands for LArS
+    G4UIcmdWithABool *m_pSetAcrylicWindowCmd;
+    G4UIcmdWithABool *m_pSetPENCmd;
+    G4UIcmdWithABool *m_pSetTetratexCmd;
+    G4UIcmdWithABool *m_pSetTPBCmd;
 };
 
 #endif

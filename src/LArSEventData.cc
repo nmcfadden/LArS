@@ -9,7 +9,6 @@ LArSEventData::LArSEventData()
 	m_iNbLSPmtHits = 0;
 	m_iNbWaterPmtHits = 0;
 	m_iPmtNumber = -1;
-	m_pPmtHits = new vector<int>;
 
 	m_fTotalEnergyDeposited = 0.;
 	m_iNbSteps = 0;
@@ -35,8 +34,12 @@ LArSEventData::LArSEventData()
   m_pXPrim = new vector<float>;
   m_pYPrim = new vector<float>;
   m_pZPrim = new vector<float>;
+  m_pKEPrim = new vector<float>;
 
-	// DR 20161012 - Branches to save incoming and outcoming energy in LXe. Useful for analysis of the single scatter events in the active volume.
+  //PMT Specific Info
+	m_pPmtHits = 0;//new vector<int>;
+	
+  // DR 20161012 - Branches to save incoming and outcoming energy in LXe. Useful for analysis of the single scatter events in the active volume.
 	m_pPreMomDirX = new vector<float>;
 	m_pPreMomDirY = new vector<float>;
 	m_pPreMomDirZ = new vector<float>;
@@ -48,6 +51,7 @@ LArSEventData::LArSEventData()
 
 	// DR 20160906 - Branches for the hits in the LScint vessels
 	m_fLScintTotalEnergyDeposited = 0.;
+  m_nScintPhotons = 0;
 	m_iLScintNbSteps = 0;
 	m_pLScintTrackId = new vector<int>;
 	m_pLScintParentId = new vector<int>;
@@ -89,7 +93,6 @@ LArSEventData::LArSEventData()
 
 LArSEventData::~LArSEventData()
 {
-	delete m_pPmtHits;
 
 	delete m_pTrackId;
 	delete m_pParentId;
@@ -109,7 +112,8 @@ LArSEventData::~LArSEventData()
   delete m_pVolPrim;
   delete m_pXPrim; 
   delete m_pYPrim; 
-  delete m_pZPrim; 
+  delete m_pZPrim;
+  delete m_pKEPrim;
 	
   delete m_pPreMomDirX;
 	delete m_pPreMomDirY;
@@ -160,9 +164,10 @@ LArSEventData::Clear()
 	m_iNbLSPmtHits = 0;
 	m_iNbWaterPmtHits = 0;
 	m_iPmtNumber = -1; 
-	m_pPmtHits->clear();
+	m_pPmtHits = 0;
 
 	m_fTotalEnergyDeposited = 0.0;
+  m_nScintPhotons = 0;
 	m_iNbSteps = 0;
 	m_pTrackId->clear();
 	m_pParentId->clear();
@@ -186,6 +191,7 @@ LArSEventData::Clear()
   m_pXPrim->clear();
   m_pYPrim->clear();
   m_pZPrim->clear();
+  m_pKEPrim->clear();
 
 	m_pPreMomDirX->clear();
 	m_pPreMomDirY->clear();

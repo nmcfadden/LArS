@@ -59,6 +59,8 @@ void LArSOpticalMaterialProperties::ConstructionOpticalProperties()
   //Register_Germanium_Properties();
   //Register_Silicon_Properties();
   Register_Teflon_Properties();
+  Register_Acrylic();
+  Register_MgF2();
   //Register_Silica_Properties();
   //Register_VM2000();
   //Register_StainlessSteel();
@@ -712,12 +714,11 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
   G4Material* PEN;
   if(G4Material::GetMaterial("PEN") == NULL ){
     PEN = new G4Material("PEN", 1.3*g/cm3, 3, kStateSolid);
-              PEN -> AddElement(elH, 10);
-	      PEN -> AddElement(elC, 14);
-	      PEN -> AddElement(elO, 4);
-				
+    PEN -> AddElement(elH, 10);
+    PEN -> AddElement(elC, 14);
+    PEN -> AddElement(elO, 4);
   }
-  G4double PEN_QuantumEff   = 0.20; //0.36
+  G4double PEN_QuantumEff   = 0.36;
   G4double PEN_TimeConstant = 10.0 *ns; //
   G4double PEN_RefrIndex    = 1.638;
   G4double PEN_photon_yield = 3000; 
@@ -954,6 +955,57 @@ void LArSOpticalMaterialProperties::Register_Fiber_Cladding_Properties()
   //G4cout << " Constructed Fiber Cladding Properties"<< G4endl;
 }
 
+void LArSOpticalMaterialProperties::Register_Acrylic()
+{
+  G4NistManager*   nist = G4NistManager::Instance();
+  G4Element* elH = nist->FindOrBuildElement("H");
+  G4Element* elC = nist->FindOrBuildElement("C");
+  G4Element* elO = nist->FindOrBuildElement("O");
+
+  G4Material* Acrylic;
+  if(G4Material::GetMaterial("Acrylic") != NULL){
+    Acrylic = G4Material::GetMaterial("Acrylic");
+  }
+  else{
+    Acrylic  = new G4Material("Acrylic",1.18*g/cm3,3,kStateSolid);
+    Acrylic->AddElement(elH,8);
+    Acrylic->AddElement(elC,5);
+    Acrylic->AddElement(elO,2);
+  }
+  //Data is in wavelength (nm) and absorption length (mm)
+  //Taken from https://wiki.bnl.gov/dayabay/upload/Acrylic_Transmittance_Sep14.pdf
+  auto acrylicAbsorptionGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicAbsorption.dat"));
+  auto acrylicIndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicIndex.dat"));
+  G4double acrylic_absorption[NUMENTRIES_2];
+  G4double acrylic_index[NUMENTRIES_2];
+  for (int i = 0; i < NUMENTRIES_2; i++) {
+    auto r = acrylicAbsorptionGraph->Eval(LambdaE/(ph_energies[i])/nm)*mm;
+    if(LambdaE/(ph_energies[i])/nm < 200) r = 10*nm;
+    acrylic_absorption[i] = r >= 0 ? r : 0;
+    auto index = acrylicIndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    acrylic_index[i] = index;
+    //G4cout<<"Abs length "<<acrylic_absorption[i]<<" index "<<acrylic_index[i]<<", wavelenght "<<LambdaE/(ph_energies[i])/nm<<G4endl;
+  }
+
+  auto acrylicTable = new G4MaterialPropertiesTable();
+  acrylicTable->AddProperty("RINDEX"   , ph_energies, acrylic_index, NUMENTRIES_2);
+  acrylicTable->AddProperty("ABSLENGTH", ph_energies, acrylic_absorption, NUMENTRIES_2);
+  G4Material::GetMaterial("Acrylic")->SetMaterialPropertiesTable(acrylicTable);
+  
+}
+
+void LArSOpticalMaterialProperties::Register_MgF2(){
+  auto IndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("MgF2Index.dat"));
+  G4double index[NUMENTRIES_2];
+  for (int i = 0; i < NUMENTRIES_2; i++) {
+    auto ind = IndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    index[i] = ind;
+  }
+
+  auto MgF2Table = new G4MaterialPropertiesTable();
+  MgF2Table->AddProperty("RINDEX"   , ph_energies, index, NUMENTRIES_2);
+  G4Material::GetMaterial("MgF2")->SetMaterialPropertiesTable(MgF2Table);
+}
 //copied from GEGeometryLArInstrumentation.cc
 void LArSOpticalMaterialProperties::Register_Nylon_Properties()
 {

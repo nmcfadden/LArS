@@ -10,7 +10,7 @@
 /run/verbose 1
 /event/verbose 1
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 #################
 # seed
@@ -18,18 +18,18 @@
 
 #################
 # gun
-/xenoScope/gun/angtype iso
-/xenoScope/gun/type    Volume  
-/xenoScope/gun/shape   Cylinder
+/LArS/gun/angtype iso
+/LArS/gun/type    Volume  
+/LArS/gun/shape   Cylinder
 
 
 #################
 #gun confined to entire LXe volume
-/xenoScope/gun/center 0. 0. 0.0  m 
-/xenoScope/gun/radius 5. m
-/xenoScope/gun/halfz  5. m
+/LArS/gun/center 0. 0. 0.0  m 
+/LArS/gun/radius 5. m
+/LArS/gun/halfz  5. m
 ## select the volume to confine the source
-/xenoScope/gun/confine PTFE*
+/LArS/gun/confine PTFE*
 
 
 
@@ -39,9 +39,9 @@
 
 
 #for Rn-226
-/xenoScope/gun/particle ion
-/xenoScope/gun/ion 86 226 0 0
-/xenoScope/gun/energy 0 keV
+/LArS/gun/particle ion
+/LArS/gun/ion 86 226 0 0
+/LArS/gun/energy 0 keV
 ##################
 # scintillation processes in the LXe
 #/Xe/detector/setLXeScintillation true

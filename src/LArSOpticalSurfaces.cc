@@ -86,6 +86,20 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
       G4Material::GetMaterial("TPB")->GetMaterialPropertiesTable());//added by Gabriela
 
+  // interface between TPB and LAr =======================================================================
+  surf_name = "LArToAcrylic";
+  fOpticalSurfaces.emplace(surf_name,
+    new G4OpticalSurface(
+      name         = surf_name + "_Surface",
+      model        = unified,
+      finish       = ground,
+      surface_type = dielectric_dielectric,
+      smoothness   = .05
+    )
+  );
+  fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
+      G4Material::GetMaterial("Acrylic")->GetMaterialPropertiesTable());
+
   // interface between TPB and Nylon =======================================================================
   surf_name = "TPBToNylon";
   fOpticalSurfaces.emplace(surf_name,
@@ -172,7 +186,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   for (G4int i=0; i < num; i++) {
     BlackPhotonEnergy[i] = LambdaE/(Wavelength[(num-1)-i]*nm);
     BlackReflectivity[i] = 0.007;//low but not zero 0.007
-    BlackEfficiencyEnergy[i]   = 0.0;
+    BlackEfficiencyEnergy[i]   = 1.0;
   }
 
   auto BlackTable = new G4MaterialPropertiesTable();
@@ -201,7 +215,8 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   for (G4int i=0; i < num_; i++) {
     AlSPhotonEnergy[i] = LambdaE/(Wavelength_[(num_-1)-i]*nm);
     AlSReflectivity[i] = 0.04;
-    AlSEfficiencyEnergy[i]   = 0.0;
+    AlSEfficiencyEnergy[i]   = 1.0;//changed by neil from 0 to 1.. If it is 0, no energy is deposited, 
+                                   //if it is less than 1 and greater than 0, then G4 rolls a dice to see if energy is deposited
   }
 
   auto AlSTable = new G4MaterialPropertiesTable();

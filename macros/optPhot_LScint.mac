@@ -4,24 +4,24 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 #################
 #SEED
 /run/random/setRandomSeed 0
 
-#/xenoScope/gun/type  Point
-#/xenoScope/gun/center 1250. 0. 0. mm
-#/xenoScope/gun/angtype direction
-#/xenoScope/gun/direction 1 1 0
+#/LArS/gun/type  Point
+#/LArS/gun/center 1250. 0. 0. mm
+#/LArS/gun/angtype direction
+#/LArS/gun/direction 1 1 0
 
 # make sure the volume below is a bit larger than the object the source will be confined to
-/xenoScope/gun/type Volume
-/xenoScope/gun/shape Cylinder
-/xenoScope/gun/center 0. 0. 0. cm
-/xenoScope/gun/radius 1600 mm
-/xenoScope/gun/halfz  2000 mm
-/xenoScope/gun/confine LScintVessel
+/LArS/gun/type Volume
+/LArS/gun/shape Cylinder
+/LArS/gun/center 0. 0. 0. cm
+/LArS/gun/radius 1600 mm
+/LArS/gun/halfz  2000 mm
+/LArS/gun/confine LScintVessel
 
 ##################
 # Select the volume to confine the source. For cryostat studies choose:
@@ -34,11 +34,11 @@
 
 ##################
 # particle type + energy spectrum
-/xenoScope/gun/energytype Spectrum
-/xenoScope/gun/energyspectrum ./macros/spectra/optPhoton/bis-MSB_1cm.dat
-#/xenoScope/gun/energy   6.98 eV
-#/xenoScope/gun/energy   2.88 eV
-/xenoScope/gun/particle opticalphoton
+/LArS/gun/energytype Spectrum
+/LArS/gun/energyspectrum ./macros/spectra/optPhoton/bis-MSB_1cm.dat
+#/LArS/gun/energy   6.98 eV
+#/LArS/gun/energy   2.88 eV
+/LArS/gun/particle opticalphoton
 
 
 ##################

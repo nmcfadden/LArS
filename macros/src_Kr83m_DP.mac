@@ -25,7 +25,7 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/xenoScope/gun/verbose 0
+/LArS/gun/verbose 0
 
 #################
 # seed
@@ -33,9 +33,9 @@
 
 #################
 # gun
-/xenoScope/gun/angtype iso
-/xenoScope/gun/type    Volume  
-/xenoScope/gun/shape   Cylinder
+/LArS/gun/angtype iso
+/LArS/gun/type    Volume  
+/LArS/gun/shape   Cylinder
 
 
 #################
@@ -43,29 +43,29 @@
 
 ### S1
 #gun confined to entire LXe volume
-#/xenoScope/gun/center 0. 0. -1. m 
-#/xenoScope/gun/radius 0.08 m
-#/xenoScope/gun/halfz  3 m
+#/LArS/gun/center 0. 0. -1. m 
+#/LArS/gun/radius 0.08 m
+#/LArS/gun/halfz  3 m
 ## select the volume to confine the source
-#/xenoScope/gun/confine LXe*
+#/LArS/gun/confine LXe*
 
 ### S2
 #gun confined to entire LXe volume
-/xenoScope/gun/center 0. 0. 0.0  m 
-/xenoScope/gun/radius 0.8 cm
-/xenoScope/gun/halfz  0.8 cm
+/LArS/gun/center 0. 0. 0.0  m 
+/LArS/gun/radius 0.8 cm
+/LArS/gun/halfz  0.8 cm
 ## select the volume to confine the source
-#/xenoScope/gun/confine LXe*
+#/LArS/gun/confine LXe*
 
 
 
 ##################
 # particle type + energy spectrum
-/xenoScope/gun/energy 0 keV
-/xenoScope/gun/particle ion
+/LArS/gun/energy 0 keV
+/LArS/gun/particle ion
 
 #for Rn-220
-/xenoScope/gun/ion 86 220 0 0
+/LArS/gun/ion 86 220 0 0
 
 ##################
 # scintillation processes in the LXe
