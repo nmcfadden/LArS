@@ -116,7 +116,7 @@ main(int argc, char **argv)
 
   // Detector Construction
   G4String detectorRoot = hDataFilename+"_DET";
-  LArSDetectorConstruction *detCon = new LArSDetectorConstruction(detectorRoot);//, bAcrylicWindow); 
+  LArSDetectorConstruction *detCon = new LArSDetectorConstruction(detectorRoot); 
   pRunManager->SetUserInitialization(detCon);
 
   G4String physicsRoot = hDataFilename+"_PHYS";
@@ -132,7 +132,7 @@ main(int argc, char **argv)
   // create an analysis manager object
   LArSAnalysisManager *pAnalysisManager = new LArSAnalysisManager(pPrimaryGeneratorAction);
   pAnalysisManager->SetDataFilename(hDataFilename);
-  //pAnalysisManager->SetVersionTag(git_tag);    
+  pAnalysisManager->SetDectorConstructor(detCon);
 
   
   // Visualization Manager

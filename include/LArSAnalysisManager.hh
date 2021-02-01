@@ -11,10 +11,6 @@
 
 //LARS header files
 #include "LArSDetectorConstruction.hh"
-#include "LArSPmtSensitiveDetector.hh"
-#include "LArSLXeHit.hh"
-#include "LArSPmtHit.hh"
-//#include "LArSLScintHit.hh"
 #include "LArSPrimaryGeneratorAction.hh"
 #include "LArSEventData.hh"
 
@@ -26,6 +22,10 @@
 
 
 //G4 Header Files
+#include <G4VUserDetectorConstruction.hh>
+#include "G4OpBoundaryProcess.hh"
+#include "G4OpticalPhoton.hh"
+#include "G4TrackStatus.hh"
 #include <G4SDManager.hh>
 #include <G4Run.hh>
 #include <G4Event.hh>
@@ -52,6 +52,7 @@ class TTree;
 
 class LArSEventData;
 class LArSPrimaryGeneratorAction;
+class LArSDetectorConstruction;
 
 class LArSAnalysisManager
 {
@@ -64,21 +65,17 @@ public:
   virtual void EndOfRun(const G4Run *pRun); 
   virtual void BeginOfEvent(const G4Event *pEvent); 
   virtual void EndOfEvent(const G4Event *pEvent); 
-  virtual void Step(const G4Step *pStep);	
+  virtual void Step(const G4Step *pStep);
+
   
   void SetDataFilename(const G4String &hFilename) { m_hDataFilename = hFilename; }
   void SetNbEventsToSimulate(G4int iNbEventsToSimulate) { m_iNbEventsToSimulate = iNbEventsToSimulate;}
+  void OpticalBoundaryInformation(const G4Step *step);
 
-  void FillParticleInSave(G4int flag, G4int partPDGcode, G4ThreeVector pos, G4ThreeVector dir, G4float nrg, G4float time, G4int trackID);
+  void inline SetDectorConstructor(LArSDetectorConstruction *detCon){m_pDetCon = detCon;};
+
 
 private:
-  G4bool FilterEvent(LArSEventData *pEventData);
-
-private:
-  G4int m_iLXeHitsCollectionID;
-  G4int m_iPmtHitsCollectionID;
-  G4int m_iLScintHitsCollectionID;
-
   G4int fPastTrackPrimaryID = -1;
   
   G4String m_hDataFilename;
@@ -89,16 +86,20 @@ private:
   TDirectory *_events;
 
   TParameter<int> *m_pNbEventsToSimulateParameter;
-  // TParameter<double> *nRejectParameter;
-  // TParameter<double> *nAcceptParameter;
 
   LArSPrimaryGeneratorAction *m_pPrimaryGeneratorAction;
 
   LArSEventData *m_pEventData;
-  G4bool            plotPhysics;
 
   G4Timer *runTime;
   G4bool            writeEmptyEvents;
+
+  LArSDetectorConstruction* m_pDetCon;
+  // a map of physical volume pointers to sensitive ids:
+  std::map<G4VPhysicalVolume*, int> m_pSensitiveIDOfPhysicalVol;
+
+  G4OpBoundaryProcessStatus fExpectedNextStatus;
+
 };
 
 #endif // __LARSANALYSISMANAGER_H__

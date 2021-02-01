@@ -4,14 +4,12 @@
 // LARS header files
 #include "LArSMaterials.hh"
 #include "LArSDetectorMessenger.hh"
-#include "LArSPmtSensitiveDetector.hh"
 #include "LArSOpticalSurfaces.hh"
 
 
 // Detector components
 #include "LArSConstructLab.hh"
 #include "LArSConstructCryostat.hh"
-#include "LArSConstructTPC.hh"
 #include "LArSActiveVolume.hh"
 #include "LArSPMTCell.hh"
 
@@ -60,66 +58,49 @@ public:
 
     G4VPhysicalVolume* Construct();
     void SetCheckOverlap(G4bool dCheckOverlap){pCheckOverlap = dCheckOverlap;};
-    
-    // Added by Alex:
-        void SetTeflonReflectivity(G4double dReflectivity);
-        void SetGXeTeflonReflectivity(G4double dGXeReflectivity);
-        void SetSS304LSteelReflectivity(G4double dReflectivity);
-        void SetLXeScintillation(G4bool dScintillation);
-        void SetLXeLevel(G4double dlevel);
-        void SetMaterial (const G4String&);
-        void SetLXeMeshMaterial (const G4String&);
-        void SetGXeMeshMaterial (const G4String&);
-        void SetLXeAbsorbtionLength(G4double dAbsorbtionLength);
-        void SetGXeAbsorbtionLength(G4double dAbsorbtionLength);
-        void SetLXeRayScatterLength(G4double dRayScatterLength);
-        void SetLXeRefractionIndex(G4double dRefractionIndex);
-        
-        inline void SetAcrylicWindow(G4bool val){pAcrylicWindow = val;};
-        inline bool UseAcrylicWindow(){return pAcrylicWindow;};
 
-        inline void SetPEN(G4bool val){pPen = val;};
-        inline bool UsePEN(){return pPen;};
+    inline void SetAcrylicWindow(G4bool val){pAcrylicWindow = val;};
+    inline bool UseAcrylicWindow(){return pAcrylicWindow;};
 
-        inline void SetTetratex(G4bool val){pTetretex = val;};
-        inline bool UseTetratex(){return pTetretex;};
-       
-        inline void SetTPB(G4bool val){pTPB = val;};
-        inline bool UseTPB(){return pTPB;};
+    inline void SetPEN(G4bool val){pPen = val;};
+    inline bool UsePEN(){return pPen;};
 
-        void SetLXeMeshTransparency(G4double dTransparency); 
-        void SetGXeMeshTransparency(G4double dTransparency); 
-    
-        static G4double GetGeometryParameter(const char *szParameter);
-        G4LogicalVolume* GetMotherVolumeLogical(){return Mother_volume;};
-        inline void SetMotherVolumeLogical(G4LogicalVolume* vol){Mother_volume = vol;}
+    inline void SetTetratex(G4bool val){pTetretex = val;};
+    inline bool UseTetratex(){return pTetretex;};
+
+    inline void SetTPB(G4bool val){pTPB = val;};
+    inline bool UseTPB(){return pTPB;};
+
+
+    static G4double GetGeometryParameter(const char *szParameter);
+    G4LogicalVolume* GetMotherVolumeLogical(){return Mother_volume;};
+    inline void SetMotherVolumeLogical(G4LogicalVolume* vol){Mother_volume = vol;}
+
+    int SetSensitiveVolumes(G4String volName);
 
     // LOGICAL VOLUMES
-        G4LogicalVolume *Steel_cryostat_logical;
-        G4LogicalVolume *Mother_volume;
-        G4LogicalVolume *LXe_TPC_logical;
-        G4LogicalVolume *LAr_logical;
+    G4LogicalVolume *Mother_volume;
 
     // PHYSICAL VOLUMES
-        G4VPhysicalVolume *World_volume_physical;
-        G4VPhysicalVolume *Steel_cryostat_physical;
-        G4VPhysicalVolume *LXe_TPC_physical;
-        G4VPhysicalVolume *LAr_physical;
+    G4VPhysicalVolume *World_volume_physical;
+    G4VPhysicalVolume *Steel_cryostat_physical;
+    G4VPhysicalVolume *LXe_TPC_physical;
+    G4VPhysicalVolume *LAr_physical;
 
 
 private:
-        void ConstructLaboratory();	
-        void PrintGeometryInformation();
-        void SecondOverlapCheck();
-        void VolumesHierarchy();
+    void ConstructLaboratory();	
+    void PrintGeometryInformation();
+    void SecondOverlapCheck();
+    void VolumesHierarchy();
 
     // PARAMETERS
 
-        static std::map<G4String, G4double> m_hGeometryParameters;
-        void DefineGeometryParameters();
+    static std::map<G4String, G4double> m_hGeometryParameters;
+    void DefineGeometryParameters();
 
 
-/////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
     LArSDetectorMessenger *m_pDetectorMessenger;
     G4String    detRootFile;
     G4bool   pCheckOverlap; 

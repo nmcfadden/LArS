@@ -7,3 +7,7 @@ src/.nfs*
 include/.nfs*
 bin/*
 build/
+src/*swp
+include/*.swp
+*swp
+macros/*swp

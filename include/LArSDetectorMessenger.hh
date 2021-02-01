@@ -49,52 +49,18 @@ class G4UIcmdWithoutParameter;
 class LArSDetectorMessenger: public G4UImessenger
 {
   public:
-    LArSDetectorMessenger(LArSDetectorConstruction *pXeDetector);
+    LArSDetectorMessenger(LArSDetectorConstruction *pLArSDetector);
     ~LArSDetectorMessenger();
 
     void     SetNewValue(G4UIcommand *pUIcommand, G4String hString);
-  
+
   private:
-   LArSDetectorConstruction *m_pXeDetector;
+    LArSDetectorConstruction *m_pLArSDetector;
 
     G4UIdirectory *m_pDetectorDir;
 
-    G4UIcmdWithADouble *m_pTeflonReflectivityCmd;
-    G4UIcmdWithABool *m_pLXeScintillationCmd;
-    G4UIcmdWithABool *m_pGdLScintScintillationCmd;
-    G4UIcmdWithADoubleAndUnit *m_pLXeAbsorbtionLengthCmd;
-    G4UIcmdWithADoubleAndUnit *m_pLXeRayScatterLengthCmd;
-  
-    // SERENA.....
-  
-    // APC 25-07-2011
-	//
-	// In order to run with different materials and wall thicknesses
-	//
-    G4UIcmdWithAString        *m_pCryostatTypeCmd;
-    G4UIcmdWithAString        *m_pCryostatMaterialCmd;
-    G4UIcmdWithAString        *m_pNeutronSourceSurroundingsCmd;
-    G4UIcmdWithADoubleAndUnit *m_pCryostatOuterWallCmd;
-    G4UIcmdWithADoubleAndUnit *m_pCryostatInnerWallCmd;
-    G4UIcmdWithADoubleAndUnit *m_pCryostatInnerODCmd;
-    G4UIcmdWithADoubleAndUnit *m_pCryostatOuterODCmd;
-    
-
     // do we want tot check for overlapping objects?
     G4UIcmdWithABool          *m_pCheckOverlapCmd;
-    G4UIcmdWithABool          *m_pSetTPCCmd;
-    
-    // Added by Alex
-    G4UIcmdWithADoubleAndUnit *m_pLXeLevelCmd;
-		G4UIcmdWithAString	*m_pMaterCmd;
-		G4UIcmdWithAString	*m_pLXeMeshMaterialCmd;
-		G4UIcmdWithAString	*m_pGXeMeshMaterialCmd;
-		G4UIcmdWithADouble *m_pGXeTeflonReflectivityCmd;
-		G4UIcmdWithADoubleAndUnit *m_pGXeAbsorbtionLengthCmd;
-		G4UIcmdWithADouble *m_pLXeRefractionIndexCmd;
-		G4UIcmdWithADouble *m_pGridMeshTransparencyCmd;
-		G4UIcmdWithADouble *m_pLXeMeshTransparencyCmd;
-		G4UIcmdWithADouble *m_pGXeMeshTransparencyCmd;
 
     //Commands for LArS
     G4UIcmdWithABool *m_pSetAcrylicWindowCmd;
