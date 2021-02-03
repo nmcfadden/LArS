@@ -72,6 +72,8 @@ void LArSOpticalMaterialProperties::ConstructionOpticalProperties()
 /// Optical properties of LAr in several places
 void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 {
+
+
 	  static const G4int NUMENTRIES = 69;
 	  const G4int num = 69;
 	  static const G4double temp = 87*kelvin; //Gabriela's edit: changed from 88.5 to 87K, but it seems it does not matter, since the properties of the LAr remain the same
@@ -80,8 +82,22 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  /**
 	   * Nominal values for pure argon
 	   */
-	  G4double scint_yield = 23.6*eV;  // Nominal energy to produce a photon (measured)
-	  G4double photon_yield = 1.0*MeV/scint_yield;//42372 photons/MeV 
+
+	
+	  // values from Doke et al 2002. For other particles, see paper
+	  //G4double q_factor_betas=0.8; // (non relativistic)
+	  G4double q_factor_alphas=0.72; // value for 5.5MeV alphas: flat LET response for several energies
+	  G4double scint_yield = 19.5*eV;  
+	  G4double photon_yield;
+
+	  bool is_alpha=true; // quick fix to make sure that user knows that parameters are set for alphas
+	  if (is_alpha) 
+	  {
+		photon_yield= 1.0*MeV/(scint_yield/q_factor_alphas);
+		G4cout<<" Argon scintillation properties set for: ALPHA PARTICLES - Photon yield/MeV: "<<photon_yield<<G4endl;
+	  }
+	  else { G4cout<<"set the parameters ( is_alpha, q_factor, yieldratio) for betas first "<<G4endl;}
+
 	  G4double tau_s = 6.0*ns;
 	  G4double tau_l = 1590.0*ns;
 	  /*G4double yield_ratio = 0.23; // For gammas and electrons*/
@@ -161,7 +177,7 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  // For example, for nuclear recoils it should be 0.75
 	  // nominal value for electrons and gamas: 0.23
 	  // Value used was provided by F. Art
-	  myMPT1->AddConstProperty("YIELDRATIO",0.3); // not implementet (?) //Gabriela
+	  myMPT1->AddConstProperty("YIELDRATIO",0.7); // it does not change anything for now
 
 	  // Scintillation yield
 	  // WArP data:
@@ -205,7 +221,7 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
     fArgonLiquid = G4Material::GetMaterial("Argon-Liq");
 	  fArgonLiquid->SetMaterialPropertiesTable(myMPT1);
 
-	  fArgonLiquid->GetIonisation()->SetBirksConstant(5.1748e-4*cm/MeV);
+	  //fArgonLiquid->GetIonisation()->SetBirksConstant(5.1748e-4*cm/MeV);
 
 }
 
