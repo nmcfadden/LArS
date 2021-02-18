@@ -608,6 +608,10 @@ void LArSMaterials::BuildMaterials()
     LGNDMaterial->AddElement(G4Element::GetElement("Hydrogen"),10);
     LGNDMaterial->AddElement(G4Element::GetElement("Oxygen"),4);
 
+   /* LGNDMaterial = new G4Material("Tetratex_TPB",density=0.401*g/cm3,2);
+    LGNDMaterial->AddElement(C, 0.240183);
+    LGNDMaterial->AddElement(F, 0.759817);*/
+
     LGNDMaterial = new G4Material("Ultem", 1.27*g/cm3, 4);
     LGNDMaterial->AddElement(G4Element::GetElement("Carbon"),37);
     LGNDMaterial->AddElement(G4Element::GetElement("Hydrogen"),24);

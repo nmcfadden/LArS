@@ -27,8 +27,14 @@ To run alphas on the bottom of the PMT cell do:
 ./bin/LArS -p macros/preinit.mac -f macros/run_alpha.mac -n 1
 
 ## Simple online root visualization: 
--  TFile *pFile = new TFile(inputfile+".root");
--  TDirectoryFile *pDir = (TDirectoryFile *) pFile->Get("events");
--  TTree *pTree = (TTree *) pDir->Get("events");
--  pTree->Draw("xp_pri:yp_pri:zp_pri");
+TFile *pFile = new TFile(inputfile+".root");
+TDirectoryFile *pDir = (TDirectoryFile *) pFile->Get("events");
+
+TDirectoryFile *pDir = (TDirectoryFile *) _file0->Get("events");
+TTree *pTree = (TTree *) pDir->Get("events");
+pTree->Draw("ntpmthits");
+c1->SetLogy();
+
+
+
 # LArS

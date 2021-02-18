@@ -4,8 +4,6 @@
 /run/verbose 0
 /event/verbose 0
 /tracking/verbose 0
-/LArS/gun/verbose 0
-
 
 #################
 #SEED
@@ -15,7 +13,7 @@
 # isotropic emission
 /LArS/gun/angtype iso
 
-/LArS/gun/type   Point
+/LArS/gun/type   Point # changed the source from volume to point (Gabriela)
 #/LArS/gun/type   Surface
 /LArS/gun/shape  Cylinder
 #/LArS/gun/center 0. 0. -181.5 mm
@@ -65,6 +63,6 @@
 #/Xe/detector/setLXeScintillation false
 
 # Tree Filling options
-/run/writeEmpty true
+#/run/writeEmpty true
 
 

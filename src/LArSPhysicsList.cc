@@ -1,5 +1,9 @@
 //XENON Header Files
 #include "LArSPhysicsList.hh"
+#include "FTFP_BERT.hh"
+#include "G4Scintillation.hh"
+#include "G4EmSaturation.hh"
+#include "G4LossTableManager.hh"
 	
 
 
@@ -9,7 +13,7 @@ LArSPhysicsList::LArSPhysicsList(G4String fName):G4VModularPhysicsList()
   VerboseLevel = 0;
   SetVerboseLevel(VerboseLevel);
   
-  defaultCutValue = 1.0 * mm;
+  defaultCutValue = 0.01*mm; //0.1mm seems to be to high -> changed to 10 um
   cutForGamma    = defaultCutValue;
   cutForElectron = defaultCutValue;
   cutForPositron = defaultCutValue;
@@ -25,8 +29,19 @@ LArSPhysicsList::LArSPhysicsList(G4String fName):G4VModularPhysicsList()
   //
   //  and adds the following physical processes to these particles:
   //     G4OpAbsorption, G4OpRayleigh, G4OpMieHG, G4OpBoundaryProcess, G4OpWLS, G4Scintillation, G4Cerenkov
-  RegisterPhysics( X1TG4OpticalPhysics = new G4OpticalPhysics(VerboseLevel) );
+
+  RegisterPhysics( X1TG4OpticalPhysics = new G4OpticalPhysics(0) );
   ( (G4OpticalPhysics*) X1TG4OpticalPhysics )->Configure( kCerenkov, m_bCerenkov );
+  
+  /*//attempt to stop saturation of 5MeV alphas when setting scintillationbyparticletype
+  G4EmParameters::Instance()->SetBirksActive(0);
+  G4EmParameters::Instance()->SetEmSaturation(0); 
+  G4Scintillation *scint= new G4Scintillation(); scint->SetScintillationByParticleType(true); scint->RemoveSaturation();*/
+
+  /*G4VModularPhysicsList*  physicsList= new FTFP_BERT; 
+  G4OpticalPhysics* opticalPhysics= new G4OpticalPhysics(1);
+  RegisterPhysics(opticalPhysics);*/
+ //-------------------------------------------------
   
   G4cout<<"/n WARNING::DO not forget to turn on Neutron Physics! /n"<<endl;
   /*
@@ -91,6 +106,8 @@ LArSPhysicsList::LArSPhysicsList(G4String fName):G4VModularPhysicsList()
     G4String msg = " Available choices are: <emstandard> <emlivermore (default)> <empenelope>";
     G4Exception("LArSPhysicsList::LArSPhysicsList()","PhysicsList",FatalException,msg);
   }
+
+
   
   /// G4EmExtraPhysics
   //  creates the following particles:
@@ -121,7 +138,7 @@ LArSPhysicsList::LArSPhysicsList(G4String fName):G4VModularPhysicsList()
   /// G4StoppingPhysics
   //  like G4CaptureAtRestPhysics, but uses G4MuonMinusCaptureAtRest for muons
   RegisterPhysics( new G4StoppingPhysics(VerboseLevel) );
-  
+
   physRootFile = fName;
 }
 
@@ -155,7 +172,7 @@ void LArSPhysicsList::SetCuts()
   SetCutValue(1*um, "proton"),
   SetCutValue(cutForElectron, "e-");
   SetCutValue(cutForPositron, "e+");
-  SetCutValue(cutForGamma, "gamma");      
+  SetCutValue(cutForGamma, "gamma");     
 }
 
 //__________________________________________________________________________________________________________
@@ -209,7 +226,7 @@ LArSPhysicsList::MakePhysicsPlots()
   //
   // plotting range on a xlog-scale
   //
-  G4double emin=0.001;  // 
+  G4double emin=0.00001;  // 
   G4double emax=20.00; // 20 MeV
   emin = std::log10(emin);
   emax = std::log10(emax);

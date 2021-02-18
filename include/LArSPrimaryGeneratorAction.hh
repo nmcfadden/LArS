@@ -20,6 +20,7 @@
 #include <G4GeneralParticleSource.hh>
 #include <G4ParticleGun.hh>
 #include <G4EmCalculator.hh>
+#include <G4GeneralParticleSource.hh>
 
 //G4 Header Files
 #include <G4RunManagerKernel.hh>
@@ -107,7 +108,7 @@ private:
   G4int            VarianceReductionMode;
   G4ThreeVector    m_hForcedPositionOfPrimary;
   G4ParticleTable* particleTable;
-  G4ParticleGun*   particleGun;
+  G4GeneralParticleSource *   particleGun;//G4ParticleGun*   particleGun; edit by Gabriela
   G4Navigator*     theNavigator;
 
   // survival probability cut 

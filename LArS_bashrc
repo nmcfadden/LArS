@@ -1,0 +1,11 @@
+export LARSDIR=~/Desktop/Doctorate/LArs_meas/LArS_sim/new_sim/LArS
+export LARSOPTICALDATA=$LARSDIR/opticalData
+
+#export G4_INSTALL_DIR=/cern/geant_4.10.05.01
+#source $G4_INSTALL_DIR/share/Geant4-10.5.1/geant4make/geant4make.sh
+#export LD_LIBRARY_PATH=$G4_INSTALL_DIR/lib64:$LD_LIBRARY_PATH
+
+export G4_INSTALL_DIR=~/geant4/geant4.10.07-install
+source ~/geant4/geant4.10.07-install/bin/geant4.sh
+export LD_LIBRARY_PATH=$G4_INSTALL_DIR/lib:$LD_LIBRARY_PATH
+

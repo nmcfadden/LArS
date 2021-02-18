@@ -13,6 +13,8 @@
 #include "LArSDetectorConstruction.hh"
 #include "LArSPrimaryGeneratorAction.hh"
 #include "LArSEventData.hh"
+#include "LArSAnalysisManagerMessenger.hh"
+
 
 //Additional Header Files
 #include <globals.hh>
@@ -54,6 +56,8 @@ class LArSEventData;
 class LArSPrimaryGeneratorAction;
 class LArSDetectorConstruction;
 
+class LArSAnalysisManagerMessenger;
+
 class LArSAnalysisManager
 {
 public:
@@ -73,6 +77,8 @@ public:
   void OpticalBoundaryInformation(const G4Step *step);
 
   void inline SetDectorConstructor(LArSDetectorConstruction *detCon){m_pDetCon = detCon;};
+  inline void SetFastSim(G4bool val){pFastSim = val;}; //function used to redefine value of bool pFastSim (after getting it from UI command defined in the messenger file)
+  inline bool UseFastSim(){return pFastSim;};
 
 
 private:
@@ -99,6 +105,9 @@ private:
   std::map<G4VPhysicalVolume*, int> m_pSensitiveIDOfPhysicalVol;
 
   G4OpBoundaryProcessStatus fExpectedNextStatus;
+  
+  LArSAnalysisManagerMessenger *m_pAnalysisManagerMessenger;
+  G4bool pFastSim = false; 
 
 };
 

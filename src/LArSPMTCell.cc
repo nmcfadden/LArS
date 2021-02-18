@@ -95,7 +95,7 @@ G4LogicalVolume* LArSPMTCell::Construct ( ){
 
   //TODO No alpha source added as a material, will assume it is black // new edit (Gabriela):I kept the material as aluminum and added a surface with a specific reflectivity for the alpha source
   //Alpha source used to in particle generator macro to confine alpha to small volume
-  G4double alphaDiameter = 5*mm;//I changed the dimension of the source (Gabriela)
+  G4double alphaDiameter = 5*mm;// changed the dimension of the source (Gabriela)
   G4double alphaThickness = 0.01*mm;
   G4Tubs* alphaSource_solid = new G4Tubs("alphaSource_solid",0,alphaDiameter/2,alphaThickness/2,0,360*deg);
   G4LogicalVolume * alphaSource_logical = new G4LogicalVolume(alphaSource_solid,G4Material::GetMaterial("Aluminum"),"alphaSource_Logical",0,0,0);

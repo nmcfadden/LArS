@@ -1,16 +1,44 @@
-# Preinit macro for Xebra G4 MC - as of: 15.11.2018
-
+# Preinit macro for LArS
 
 # physics list to select
-/run/physics/setEMlowEnergyModel emlivermore
+/run/physics/setEMlowEnergyModel emlivermore 
 /run/physics/setHadronicModel    QGSP_BERT_HP
 /run/physics/setCerenkov         false
 
-
-
 #run overlapCheck
 /LArS/detector/setCheckOverlap true
+
+# detector construction options
 /LArS/detector/setAcrylicWindow false
 /LArS/detector/setPEN false
-/LArS/detector/setTPB true
-/LArS/detector/setTetratex true
+/LArS/detector/setTPB false
+/LArS/detector/setTetratex false
+
+# simulation options
+/LArS/analysismanager/setFastSim true
+
+# Parameters dependent on particle type
+/process/optical/scintillation/setByParticleType true 
+
+# for debugging purposes
+#/process/optical/scintillation/verbose 2
+#/process/optical/absorption/verbose 1
+#/process/optical/boundary/verbose 1
+#/LArS/gun/verbose 2
+/process/optical/printParameters
+/process/had/verbose 0
+/process/em/verbose 0
+
+
+# to be used later for PSD
+#/process/optical/scintillation/setYieldFactor
+#/process/optical/scintillation/setExcitationRatio
+
+
+# add produced optical photons to the stack (the alternative is to kill them) -> What?
+/process/optical/scintillation/setStackPhotons true
+
+
+
+
+

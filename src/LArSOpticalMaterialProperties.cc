@@ -76,31 +76,35 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 
 	  static const G4int NUMENTRIES = 69;
 	  const G4int num = 69;
-	  static const G4double temp = 87*kelvin; //Gabriela's edit: changed from 88.5 to 87K, but it seems it does not matter, since the properties of the LAr remain the same
+	  static const G4double temp = 87*kelvin; //Temperature may be higher since we were overpressure - this may only slightly affect values such as the rayleigh scattering length
 	  static const G4double LambdaE = twopi *1.973269602e-16 * m * GeV;
 
 	  /**
-	   * Nominal values for pure argon
-	   */
+	   * Nominal values for pure argon from Doke et al 2002. For other particles, see paper
+	  */
+	  G4double q_factor_electron=0.8; // (non relativistic)
+	  G4double q_factor_alpha=0.72; // value for 5.5MeV alphas: flat LET response for several energies
+	  G4double scint_yield = 19.5*eV; // mean energy necessary to produce a photon in LAr
+	  G4double photon_yield_alpha= 1.0/(scint_yield/q_factor_alpha);
+	  G4double photon_yield_electron= 1.0/(scint_yield/q_factor_electron);
 
-	
-	  // values from Doke et al 2002. For other particles, see paper
-	  //G4double q_factor_betas=0.8; // (non relativistic)
-	  G4double q_factor_alphas=0.72; // value for 5.5MeV alphas: flat LET response for several energies
-	  G4double scint_yield = 19.5*eV;  
-	  G4double photon_yield;
+	  static const G4int energy_entries=10000;
+	 G4double SCY_Energy_alpha[energy_entries]; G4double SCY_Energy_electron[energy_entries];
+	 G4double SCY_alpha[energy_entries]; G4double SCY_electron[energy_entries];
 
-	  bool is_alpha=true; // quick fix to make sure that user knows that parameters are set for alphas
-	  if (is_alpha) 
-	  {
-		photon_yield= 1.0*MeV/(scint_yield/q_factor_alphas);
-		G4cout<<" Argon scintillation properties set for: ALPHA PARTICLES - Photon yield/MeV: "<<photon_yield<<G4endl;
-	  }
-	  else { G4cout<<"set the parameters ( is_alpha, q_factor, yieldratio) for betas first "<<G4endl;}
+	// defining light yield for alphas and electrons using constant values for now 
+	  for (int i=0; i<energy_entries; i++) {
+		double step = i*0.001;
+		SCY_Energy_alpha[i]=(0.0001+step)*MeV;
+		SCY_alpha[i]=SCY_Energy_alpha[i]*photon_yield_alpha;
+		SCY_Energy_electron[i]=(0.0001+step)*MeV;
+		SCY_electron[i]=SCY_Energy_electron[i]*photon_yield_electron;
+	}
+
+	//continue with for loop
 
 	  G4double tau_s = 6.0*ns;
 	  G4double tau_l = 1590.0*ns;
-	  /*G4double yield_ratio = 0.23; // For gammas and electrons*/
 
 	  G4int ji;
 	  G4double e;
@@ -125,11 +129,11 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
       LAr_PPCK[ji] = e;
       LAr_RIND[ji] = LArRefIndex((LambdaE / e));
       LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
-      /* Uncomment for debugging purposes
-         G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
+      //Uncomment for debugging purposes
+       /*  G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
          G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
-         LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
-         */
+         LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;*/
+      
 
       if (((LambdaE / e)/nm) < 200.0) {
         LAr_ABSL[ji] =LAr_ABSL_xuv;
@@ -160,6 +164,11 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 
 	  G4MaterialPropertiesTable* myMPT1 = new G4MaterialPropertiesTable();
 
+	  myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield_alpha); //set now to photon yield alpha
+	  myMPT1->AddProperty("ALPHASCINTILLATIONYIELD",SCY_Energy_alpha, SCY_alpha, energy_entries); 
+	  myMPT1->AddProperty("ELECTRONSCINTILLATIONYIELD",SCY_Energy_electron, SCY_electron, energy_entries); 
+	  //myMPT1->AddProperty("PROTONSCINTILLATIONYIELD",SCY_Energy_alpha, SCY_alpha, energy_entries); 
+
 	  myMPT1->AddProperty("RINDEX",        LAr_PPCK, LAr_RIND, NUMENTRIES);
 	  myMPT1->AddProperty("RAYLEIGH",      LAr_PPCK, LAr_RAYL, NUMENTRIES);
 	  myMPT1->AddProperty("ABSLENGTH",     LAr_PPCK, LAr_ABSL, NUMENTRIES);
@@ -170,41 +179,15 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	      myMPT1->AddProperty("FASTCOMPONENT",LAr_SCPP,LAr_SCIN,num);
 	      myMPT1->AddProperty("SLOWCOMPONENT",LAr_SCPP,LAr_SCIN,num);
 	  }
-	  myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield); 
+
 	  myMPT1->AddConstProperty("FASTTIMECONSTANT", tau_s);
 	  myMPT1->AddConstProperty("SLOWTIMECONSTANT",tau_l);
+
 	  // This is the value for electrons and gammas
 	  // For example, for nuclear recoils it should be 0.75
 	  // nominal value for electrons and gamas: 0.23
 	  // Value used was provided by F. Art
-	  myMPT1->AddConstProperty("YIELDRATIO",0.7); // it does not change anything for now
-
-	  // Scintillation yield
-	  // WArP data:
-	  /*
-	   * ScintillationYield (mean energy to produce a UV photon)myMP
-	   * dependent on the nature of the impinging particles
-	   *
-	   * for flat top response particles the mean energy to produce a photon:  is 19.5 eV
-	   *  Y =  1/19.5 eV
-	   *
-	   * ScintillationYield dependent also on:
-	   *  - Field configuration
-	   *  - Quencher impurities
-	   *
-	   * @ zero E field:
-	   *  Y_e = 0.8 Y
-	   *  Y_alpha = 0.7 Y
-	   *  Y_recoils = 0.2-0.4
-	   *
-	   *  These scales should be added to the physics list
-	   *
-	   *
-	   * G4double scint_yield=1.0/(19.5*eV);
-	   * myMPT1->AddConstProperty("SCINTILLATIONYIELD",scint_yield);
-	   */
-
-
+	  myMPT1->AddConstProperty("YIELDRATIO",1.); // it does not change anything for now
 
 
 	  /**
@@ -213,182 +196,34 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	   *
 	   * LAr Fano factor = 0.11 ( Doke et al, NIM 134 (1976)353 )
 	   *
-	   *
 	   */
 
-	  G4double fano = 0.11;// Doke et al, NIM 134 (1976)353
+	  G4double fano =0.11;// 0.11;// Doke et al, NIM 134 (1976)353
 	  myMPT1->AddConstProperty("RESOLUTIONSCALE",fano); //not implemented? // Gabriela
-    fArgonLiquid = G4Material::GetMaterial("Argon-Liq");
+    	  fArgonLiquid = G4Material::GetMaterial("Argon-Liq"); 
+
+	 // uncomment for debugging purposes 
+	 //myMPT1->DumpTable();//bool exists = myMPT1->ConstPropertyExists(""); // myMPT1->RemoveConstProperty("");
 	  fArgonLiquid->SetMaterialPropertiesTable(myMPT1);
 
-	  //fArgonLiquid->GetIonisation()->SetBirksConstant(5.1748e-4*cm/MeV);
+	  //fArgonLiquid->GetIonisation()->SetBirksConstant(5.1748e-4*cm/MeV); 
 
 }
 
-//Assume that all Ar 128 nm is converted to 175 nm (100-1000 ppm)
-//long attenuation length
-//light yeild is the same
-void LArSOpticalMaterialProperties::RegisterXeDopedArgonOpticalProperties()
-{
-    static const G4int NUMENTRIES = 65;
-    const G4int num = 65;
-    static const G4double temp = 88.5*kelvin;
-    static const G4double LambdaE = twopi *1.973269602e-16 * m * GeV;
-
-    /**
-     * Nominal values for pure argon
-     */
-    G4double scint_yield = 23.6*eV;  // Nominal energy to produce a photon (measured)
-    G4double photon_yield = 1.0*MeV/scint_yield;
-    G4double tau_s = 6.0*ns;
-    G4double tau_l = 240.*ns;
-    /*G4double yield_ratio = 0.23; // For gammas and electrons*/
-
-
-    // New value based on the triplet lifetime from Mark Heisel
-    // Redefine the values to res-scale according to Mark's calculation
-    // TODO - what is the correct yield value?
-    // G4double LAr_LY_scale = fDetectorDB->GetLArInstArgonLYScale();
-    // photon_yield = 28120. * LAr_LY_scale;
-    /*
-    ** TODO - 
-    G4double LAr_att_scale = fDetectorDB->GetLArInstArgonAbsLScale();
-    if (LAr_att_scale != 1.0) {
-      G4cout << "Scaling XUV argon attenuation length by a factor of " << LAr_att_scale << G4endl;
-    }
-
-    G4cout << "LAr Optical parameters: " << G4endl;
-    G4cout << "     Scintillation yield : " << photon_yield << " ph/MeV" << G4endl;
-    G4cout << "     Singlet lifetime : " << tau_s/ns << " ns" << G4endl;
-    G4cout << "     Triplet lifetime : " << tau_l/ns << " ns" << G4endl;
-
-    */
-    G4int ji;
-    G4double e;
-    G4double ee;
-
-    G4double PPCKOVHighE = LambdaE / (115*nanometer);
-    G4double PPCKOVLowE = LambdaE / (240*nanometer);
-    G4double de = ((PPCKOVHighE - PPCKOVLowE) / ((G4double)(NUMENTRIES-1)));
-
-    // liquid argon (LAr)
-    G4double LAr_PPCK[(NUMENTRIES)];
-    G4double LAr_RIND[(NUMENTRIES)];
-    G4double LAr_RAYL[(NUMENTRIES)];
-    G4double LAr_ABSL[(NUMENTRIES)];
-
-    //Transparent at 175 nm
-    G4double LAr_ABSL_xuv = 60.*cm;
-    G4double XeD_ABSL_vuv = 5*m;
-    G4double LAr_ABSL_vis = 10*m;
-    //TODO
-    //LAr_ABSL_xuv *= LAr_att_scale;
-
-    //G4cout  << "Rayleigh scattering lenght [m]:" << G4endl;
-    for (ji = 0; ji < NUMENTRIES; ji++){
-      e = PPCKOVLowE + ((G4double)ji) * de;
-      LAr_PPCK[ji] = e;
-      LAr_RIND[ji] = LArRefIndex((LambdaE / e));
-      LAr_RAYL[ji] = LArRayLength((LambdaE / e), temp);
-      //G4cout << (LambdaE/LAr_PPCK[ji])/nm <<", "<< LAr_RAYL[ji] << G4endl;
-      /* Uncomment for debugging purposes
-        G4cout << " WL: " << (LambdaE/LAr_PPCK[ji])/nm<< " nm Energy: " << LAr_PPCK[ji]/eV << " eV; Refr: " <<
-      LAr_RIND[ji] << " ; Rayleigh l. " << LAr_RAYL[ji]/m << " m" << G4endl;
-         */
-
-      if (((LambdaE / e)/nm) < 140.0) {
-        LAr_ABSL[ji] = LAr_ABSL_xuv;
-      }
-      else if(((LambdaE / e)/nm) >= 140 && ((LambdaE / e)/nm) < 200.0){
-        LAr_ABSL[ji] = XeD_ABSL_vuv;
-      }
-      else {
-        LAr_ABSL[ji] = LAr_ABSL_vis;
-      }
-    }
-
-    G4double PPSCHighE = LambdaE /(115*nanometer);
-    G4double PPSCLowE = LambdaE /(240*nanometer);
-    G4double dee = ((PPSCHighE - PPSCLowE) / ((G4double)(num-1)));
-    G4double LAr_SCIN[num];
-    G4double LAr_SCPP[num];
-    //fraction of light being converted from Xe to Ar
-    G4double ratio = 0.8;
-    for (ji = 0; ji < num; ji++){
-      ee=PPSCLowE+ ((G4double)ji) * dee;
-      LAr_SCPP[ji]=ee;
-      LAr_SCIN[ji]=XeDopedArScintillationSpectrum((LambdaE/ee)/nanometer,ratio);
-    }
-
-    G4MaterialPropertiesTable* myMPT1 = new G4MaterialPropertiesTable();
-
-    myMPT1->AddProperty("RINDEX",        LAr_PPCK, LAr_RIND, NUMENTRIES);
-    myMPT1->AddProperty("RAYLEIGH",      LAr_PPCK, LAr_RAYL, NUMENTRIES);
-    myMPT1->AddProperty("ABSLENGTH",     LAr_PPCK, LAr_ABSL, NUMENTRIES);
-
-    // Fast and slow components of the scintillation
-    // They should both be the same
-    if ( (LAr_SCPP[0] >= PPCKOVLowE) && (LAr_SCPP[(sizeof(LAr_SCPP)/sizeof(G4double) - 1)] <= PPCKOVHighE) ){
-      myMPT1->AddProperty("FASTCOMPONENT",LAr_SCPP,LAr_SCIN,num);
-      myMPT1->AddProperty("SLOWCOMPONENT",LAr_SCPP,LAr_SCIN,num);
-    }
-    myMPT1->AddConstProperty("SCINTILLATIONYIELD",photon_yield);
-    myMPT1->AddConstProperty("FASTTIMECONSTANT", tau_s);
-    myMPT1->AddConstProperty("SLOWTIMECONSTANT",tau_l);
-    // This is the value for electrons and gammas
-    // For example, for nuclear recoils it should be 0.75
-    // nominal value for electrons and gamas: 0.23
-    // Value used was provided by F. Art
-    myMPT1->AddConstProperty("YIELDRATIO",0.3);
-
-    G4double fano = 0.11;// Doke et al, NIM 134 (1976)353
-    myMPT1->AddConstProperty("RESOLUTIONSCALE",fano);
-    /*
-    fArgonLiquid = G4Material::GetMaterial("Argon-Liq");
-    fArgonLiquid->SetMaterialPropertiesTable(myMPT1);
-    */
-    fXenonArgonLiquid = G4Material::GetMaterial("Xenon-Doped-Argon-Liq");
-    fXenonArgonLiquid->SetMaterialPropertiesTable(myMPT1);
-    fXenonArgonLiquid->GetIonisation()->SetBirksConstant(5.1748e-4*cm/MeV);
-}
-
-G4double LArSOpticalMaterialProperties::XeDopedArScintillationSpectrum(const G4double kk, G4double Ratio){
-  G4double waveL;
-  waveL = Ratio*exp(-0.5*((kk-175.0)/(8.6))*((kk-175.0)/(8.6))) + (1-Ratio)*exp(-0.5*((kk-128.0)/(2.929))*((kk-128.0)/(2.929)));
-  return waveL;
-}
-
+// Calculates the refractive index of LAr from the Sellmeier formula.
 G4double LArSOpticalMaterialProperties::LArRefIndex(const G4double lambda)
 {
-  return ( sqrt(LArEpsilon(lambda)) ); // square root of dielectric constant
+
+	G4double a_0=0.334, a_uv=0.100, a_ir=0.008; //Sellmeier coefficients from ArXiv 2002.09346
+	G4double lambda_uv=106.6*nanometer, lambda_ir=908.3*nanometer; // poles at lambda_uv and lambda_ir.
+
+	G4double x_ri=a_0+a_uv*pow(lambda,2)/(pow(lambda,2)-pow(lambda_uv,2))+a_ir*pow(lambda,2)/(pow(lambda,2)-pow(lambda_ir,2));
+	G4double n_index_LAr= sqrt(1+3*x_ri/(3-x_ri));
+  
+	return (n_index_LAr);
+  //return ( sqrt(LArEpsilon(lambda)) ); // square root of dielectric constant
 }
 
-// Calculates the dielectric constant of LAr from the Bideau-Sellmeier formula.
-// See : A. Bideau-Mehu et al., "Measurement of refractive indices of Ne, Ar,
-// Kr and Xe ...", J. Quant. Spectrosc. Radiat. Transfer, Vol. 25 (1981), 395
-
-G4double LArSOpticalMaterialProperties::LArEpsilon(const G4double lambda)
-{
-  G4double epsilon;
-  if (lambda < 110*nanometer) return 1.0e4; // lambda MUST be > 110.0 nm
-  epsilon = lambda / micrometer; // switch to micrometers
-  epsilon = 1.0 / (epsilon * epsilon); // 1 / (lambda)^2
-  epsilon = 1.2055e-2 * ( 0.2075 / (91.012 - epsilon) +
-                          0.0415 / (87.892 - epsilon) +
-                          4.3330 / (214.02 - epsilon) );
-  epsilon *= (8./12.); // Bideau-Sellmeier -> Clausius-Mossotti
-  G4double LArRho = 1.396*g/cm3;
-  G4double GArRho = 1.66e-03*g/cm3;
-  epsilon *= (LArRho / GArRho); // density correction (Ar gas -> LAr liquid)
-  if (epsilon < 0.0 || epsilon > 0.999999) return 4.0e6;
-  epsilon = (1.0 + 2.0 * epsilon) / (1.0 - epsilon); // solve Clausius-Mossotti
-  return epsilon;
-}
-
-//-------------------------------------------------------------------------><
-// Calculates the Rayleigh scattering length using equations given in
-// G. M. Seidel at al., "Rayleigh scattering in rare-gas liquids",
-// arXiv:hep-ex/0111054 v2 22 Apr 2002
 
 G4double LArSOpticalMaterialProperties::LArRayLength(const G4double lambda,const
 				   G4double temp)
@@ -397,7 +232,7 @@ G4double LArSOpticalMaterialProperties::LArRayLength(const G4double lambda,const
   static const G4double LArKT = 2.18e-10 * cm2/dyne; // LAr isothermal compressibility
   static const G4double k = 1.380658e-23 * joule/kelvin; // the Boltzmann constant
   G4double h;
-  h = LArEpsilon(lambda);
+  h = pow(LArRefIndex(lambda),2); //h = LArEpsilon(lambda); 
   if (h < 1.00000001) h = 1.00000001; // just a precaution
   h = (h - 1.0) * (h + 2.0); // the "dielectric constant" dependance
   h *= h; // take the square
@@ -737,7 +572,7 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
   G4double PEN_QuantumEff   = 0.36;
   G4double PEN_TimeConstant = 10.0 *ns; //
   G4double PEN_RefrIndex    = 1.638;
-  G4double PEN_photon_yield = 3000; 
+  //G4double PEN_photon_yield = 3000; 
 
   G4double PEN_refraction[NUMENTRIES_2];
   G4double PEN_absorption[NUMENTRIES_2];
@@ -765,7 +600,7 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
   PENTable->AddProperty     ("WLSCOMPONENT",         ph_energies, PEN_emission,   NUMENTRIES_2);
   PENTable->AddConstProperty("WLSTIMECONSTANT",      PEN_TimeConstant);
   PENTable->AddConstProperty("WLSMEANNUMBERPHOTONS", PEN_QuantumEff);
-  PENTable->AddConstProperty("SCINTILLATIONYIELD",PEN_photon_yield);
+  //PENTable->AddConstProperty("SCINTILLATIONYIELD",PEN_photon_yield);
   G4Material::GetMaterial("PEN")->SetMaterialPropertiesTable(PENTable);
 }
 //copied from GEGSLArGeOptical.cc

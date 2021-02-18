@@ -1,8 +1,11 @@
 #include "LArSAnalysisManager.hh"
+#include "G4Scintillation.hh"
 
 
 LArSAnalysisManager::LArSAnalysisManager(LArSPrimaryGeneratorAction *pPrimaryGeneratorAction){
   runTime = new G4Timer();
+
+   m_pAnalysisManagerMessenger = new LArSAnalysisManagerMessenger(this);
   
   // default output file name (which should be redifined in the main class)
   m_hDataFilename = "events.root";
@@ -17,10 +20,12 @@ LArSAnalysisManager::LArSAnalysisManager(LArSPrimaryGeneratorAction *pPrimaryGen
 }
 
 LArSAnalysisManager::~LArSAnalysisManager(){
+    delete m_pAnalysisManagerMessenger;
 }
 
 void LArSAnalysisManager::BeginOfRun(const G4Run *)
 {
+
   // start a timer for this run....
   runTime->Start();
   // do we write empty events or not?
@@ -167,6 +172,7 @@ void LArSAnalysisManager::Step(const G4Step *step){
     G4ThreeVector position = preStepPoint->GetPosition();
     G4ThreeVector localPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform().TransformPoint(position);
     G4ThreeVector momentum = preStepPoint->GetMomentumDirection();
+   
     m_pEventData->m_pVolPrim->push_back(physVolName);
     m_pEventData->m_pXPrim->push_back(position.x());
     m_pEventData->m_pYPrim->push_back(position.y() );
@@ -215,14 +221,38 @@ void LArSAnalysisManager::Step(const G4Step *step){
   }
 
   G4ThreeVector localPosition = step->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform().TransformPoint(position);
+  
   //count scintillation photons that were created
   if(creatorName == "Scintillation" && iStep == 1){
     m_pEventData->m_nScintPhotons++;
   }
 
+ // alternative way to count scintillation photons (not restricted to istep==1) -> just a cross check: it yields the same value
+ /*G4int photons = 0;
+ G4SteppingManager* fpSteppingManager = G4EventManager::GetEventManager()->GetTrackingManager()->GetSteppingManager();
+ G4StepStatus stepStatus = fpSteppingManager->GetfStepStatus();
+ if (stepStatus != fAtRestDoItProc) 
+ {
+	G4ProcessVector* procPost = fpSteppingManager->GetfPostStepDoItVector();
+	size_t MAXofPostStepLoops = fpSteppingManager->GetMAXofPostStepLoops();
+	for (size_t i3 = 0; i3 < MAXofPostStepLoops; i3++) 
+	{
+		if ((*procPost)[i3]->GetProcessName() == "Scintillation") 
+		{
+			G4Scintillation* proc1 = (G4Scintillation*) (*procPost)[i3];
+			proc1->RemoveSaturation(); 
+			photons += proc1->GetNumPhotons	();
+	  		if (proc1->GetNumPhotons()>0) cout<<iStep<<" ** N scint photons:"<<proc1->GetNumPhotons()<<" "<<photons<<endl;
+		}
+	}
+	m_pEventData->m_nScintPhotons+=photons;
+  }*/
   //Do not write all steps
   if(eDep == 0 || sensVolID == 0) return;
 
+//not writing the data when running fast simulations
+if (!UseFastSim())
+{
   m_pEventData->m_pVol->push_back(physVolName);
   m_pEventData->m_pX->push_back(position.x()/mm);
   m_pEventData->m_pY->push_back(position.y()/mm);
@@ -237,6 +267,8 @@ void LArSAnalysisManager::Step(const G4Step *step){
   m_pEventData->m_pCreatorProcess->push_back(creatorName);
   m_pEventData->m_pStepLength->push_back(stepLength);
   m_pEventData->m_pTotalStepLength += stepLength;
+}
+
   if( G4ParticleTable::GetParticleTable()->FindParticle("opticalphoton") != track->GetDefinition() ) m_pEventData->m_fTotalEnergyDeposited += eDep;
 
   //PMT specific information

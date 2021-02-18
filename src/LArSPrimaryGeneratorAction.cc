@@ -22,7 +22,7 @@ LArSPrimaryGeneratorAction::LArSPrimaryGeneratorAction(G4String fName)
   G4cout <<"LArSPrimaryGeneratorAction:: MC with variance reduction = "<<VarianceReduction<<G4endl;
   G4cout <<"LArSPrimaryGeneratorAction::               survival cut = "<<p_survive_cut<<G4endl;
   // for use with ForcedTransport of gammas
-  particleGun  = new G4ParticleGun();
+  particleGun  = new G4GeneralParticleSource();
   
   theNavigator = G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking();
   // forced transport target volume cylinder
@@ -238,17 +238,17 @@ LArSPrimaryGeneratorAction::GeneratePrimariesAccelerated(void){ //modified by Pa
   // change the origin of our particle
   G4double Length = 0;
   if        (VarianceReductionMode == KILL_FT_EDGE){
-    //    G4cout <<"EDGE MODE"<<G4endl;
+        G4cout <<"EDGE MODE"<<G4endl;
     Length       = ft_cyl_intersect_s[0];
     weight  = ComputeForcedTransportWeight(m_hPositionOfPrimary, m_hDirectionOfPrimary, 
                                            Length,m_dEnergyOfPrimary);
   } else if (VarianceReductionMode == KILL_FT_PATH){
-    //G4cout <<"PATH MODE"<<G4endl;
+    G4cout <<"PATH MODE"<<G4endl;
     Length       = ft_cyl_intersect_s[0] * CLHEP::HepRandom::getTheEngine()->flat();
     weight  = ComputeForcedTransportWeight(m_hPositionOfPrimary, m_hDirectionOfPrimary, 
                                            Length,m_dEnergyOfPrimary);
   } else {
-    //G4cout <<"OTHER MODE "<<VarianceReductionMode<<G4endl;
+    G4cout <<"OTHER MODE "<<VarianceReductionMode<<G4endl;
     Length       = 0;
     weight  = 1;
   }

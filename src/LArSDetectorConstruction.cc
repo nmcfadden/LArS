@@ -17,10 +17,9 @@ G4double LArSDetectorConstruction::GetGeometryParameter(const char *szParameter)
 }
 
 
-G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  -> attempt to pass the bool for the window
+G4VPhysicalVolume* LArSDetectorConstruction::Construct()
 {
 
-  //std::cout<<bAcrylicWindow<<std::endl;
   //////////////// Define Materials //////////////////////
   LArSMaterials *Materials = new LArSMaterials();
   Materials->BuildAll();
@@ -101,7 +100,7 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  
     }
     if(UseAcrylicWindow() && (candidateList.contains("acrylic") || candidateList.contains("Acyrlic")) ){
       new G4LogicalBorderSurface("acrylic"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToAcrylic"));
-      new G4LogicalBorderSurface(to_string(i)+"acrylic",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToAcrylic"));
+      new G4LogicalBorderSurface(to_string(i)+"acrylic",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToAcrylic"));//here should be PMT to acrylic, no?
     }
     if(UsePEN() && candidateList.contains("PEN")){
       new G4LogicalBorderSurface("PEN"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToPEN"));
@@ -109,7 +108,7 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()//bool bAcrylicWindow)  
     }
     if(UseTPB() && candidateList.contains("TPB")){
       new G4LogicalBorderSurface("TPB"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToTPB"));
-      new G4LogicalBorderSurface(to_string(i)+"TPB",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTPB"));
+      new G4LogicalBorderSurface(to_string(i)+"TPB",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTPB")); //here one should be TPB to TTX
     }
 
   }

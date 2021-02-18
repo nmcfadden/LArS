@@ -2,7 +2,7 @@
 #VERBOSITY
 /control/verbose 0
 /run/verbose 0
-/event/verbose 0
+/event/verbose 1
 /tracking/verbose 2
 /LArS/gun/verbose 2
 
@@ -15,7 +15,7 @@
 /LArS/gun/angtype iso
 
 # make sure the volume below is a bit larger than the object the source will be confined to
-/LArS/gun/type   Volume  
+/LArS/gun/type   Point # Volume  
 /LArS/gun/shape  Cylinder
 
 # custom confine: 
@@ -24,10 +24,14 @@
 #/LArS/gun/radius 100 mm
 #/LArS/gun/halfz 1 mm
 
+/LArS/gun/center 0. 0. -185.489 mm # source position z= -185.499 mm
+/LArS/gun/radius 2.00 # increased radius
+/LArS/gun/halfz  0.00499 mm #changed to the ~ same halfz of the source (after increasing its thickness)
+
 #All of LArS
-/LArS/gun/center 0. 0. 0. m
-/LArS/gun/radius 0.18 m
-/LArS/gun/halfz 0.26 m
+#/LArS/gun/center 0. 0. 0. m
+#/LArS/gun/radius 0.05 m
+#/LArS/gun/halfz 0.26 m
 
 ##################
 # Select the volume to confine the source. E.g. /LArS/gun/confine LXe*
@@ -36,19 +40,22 @@
 #/LArS/gun/confine Steel_outer_cryostat_physical
 #/LArS/gun/confine Air_volume_physical
 #/LArS/gun/confine LAr_physical
-/LArS/gun/confine topCell_physical
-/LArS/gun/confine wallCell_physical
-/LArS/gun/confine bottomCell_physical
+#/LArS/gun/confine topCell_physical
+#/LArS/gun/confine wallCell_physical
+#/LArS/gun/confine bottomCell_physical
 #/LArS/gun/confine supportRod_physical*
-/LArS/gun/confine pmtWindow_physical
-/LArS/gun/confine acrylicWindow_physical
-
+#/LArS/gun/confine pmtWindow_physical
+#/LArS/gun/confine acrylicWindow_physical
+/LArS/gun/confine LAr*
 
 ##################
-#/LArS/gun/energytype Spectrum
+/LArS/gun/energytype Spectrum
 #/LArS/gun/energyspectrum ./macros/spectra/neutron/flat.dat
 #/LArS/gun/particle gamma 
-/LArS/gun/particle geantino
+#/LArS/gun/particle geantino
+/LArS/gun/energy 0.1 MeV
+/LArS/gun/particle alpha
+
 
 ##################
 # MC acceleration techniques for gammas. AP playground: if false it is not used

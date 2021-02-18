@@ -80,21 +80,21 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
       model        = unified,
       finish       = ground,
       surface_type = dielectric_dielectric,
-      smoothness   = .5
+      smoothness   = .1 // smoothness 0.5 seemed too high, lowered to 0.1
     )
   );
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
       G4Material::GetMaterial("TPB")->GetMaterialPropertiesTable());//added by Gabriela
 
-  // interface between TPB and LAr =======================================================================
+  // interface between LAr and acrylic =======================================================================
   surf_name = "LArToAcrylic";
   fOpticalSurfaces.emplace(surf_name,
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
       model        = unified,
-      finish       = ground,
-      surface_type = dielectric_dielectric,
-      smoothness   = .05
+      finish       = polished, //changed to polished
+      surface_type = dielectric_dielectric
+      //smoothness   = .05 //removed smoothness 
     )
   );
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
@@ -132,7 +132,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
       model        = unified,
-      finish       = groundfrontpainted, // only lambertian spike reflection
+      finish       = ground, // changed to ground
       surface_type = dielectric_dielectric
     )
   );
@@ -140,17 +140,18 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
     G4Material::GetMaterial("Tetratex")->GetMaterialPropertiesTable());
 
   // interface between TPBOnTetratex and LAr (added by Gabriela) ============================================
-  surf_name = "LArToTPBOnTetratex";
+  // not in use now, since I am simulating them separately 
+  /*  surf_name = "LArToTPBOnTetratex"; 
   fOpticalSurfaces.emplace(surf_name,
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
       model        = unified,
-      finish       = ground, // changed now from groundfrontpainted to ground
+      finish       = groundfrontpainted, 
       surface_type = dielectric_dielectric
     )
   );
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(
-    G4Material::GetMaterial("TPBOnTetratex")->GetMaterialPropertiesTable());
+    G4Material::GetMaterial("TPBOnTetratex")->GetMaterialPropertiesTable());*/
 
   // interface between Tetratex and LAr ====================================================================
   surf_name = "LArToTetratex";
@@ -158,7 +159,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
       model        = unified,
-      finish       = groundfrontpainted, // only lambertian spike reflection
+      finish       = ground, // changed to ground
       surface_type = dielectric_dielectric
     )
   );
@@ -202,28 +203,39 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   fOpticalSurfaces.emplace(surf_name,
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
-      model        = unified,
+      model        = unified, //only applies to dielectric_dielectric?
       finish       = ground,
       surface_type = dielectric_metal
+      //roughness    = 0.5 // setting roughness or smoothness here did not change anything...
     )
   );
 
   G4double AlSPhotonEnergy [num_];
   G4double AlSReflectivity [num_];
   G4double AlSEfficiencyEnergy   [num_];
+  G4double AlS_SS[num_], AlS_SL[num_], AlS_BS[num_], AlS_SA[num_];
 
   for (G4int i=0; i < num_; i++) {
     AlSPhotonEnergy[i] = LambdaE/(Wavelength_[(num_-1)-i]*nm);
-    AlSReflectivity[i] = 0.04;
+    AlSReflectivity[i] = 0.8;
     AlSEfficiencyEnergy[i]   = 1.0;//changed by neil from 0 to 1.. If it is 0, no energy is deposited, 
                                    //if it is less than 1 and greater than 0, then G4 rolls a dice to see if energy is deposited
+    AlS_SS[i]=0.2; AlS_SL[i]=0.1; AlS_BS[i]=0.0; 
+    AlS_SA[i]=0.01;
+
+
   }
 
   auto AlSTable = new G4MaterialPropertiesTable();
-  AlSTable->AddProperty("REFLECTIVITY", AlSPhotonEnergy, AlSReflectivity, num_);
+  AlSTable->AddProperty("REFLECTIVITY", AlSPhotonEnergy, AlSReflectivity, num_); //default: T=0, A=1-R-T 
   AlSTable->AddProperty("EFFICIENCY",   AlSPhotonEnergy, AlSEfficiencyEnergy,   num_);
+  AlSTable->AddProperty("SPECULARLOBECONSTANT", AlSPhotonEnergy, AlS_SL, num_);
+  AlSTable->AddProperty("SPECULARSPIKECONSTANT",AlSPhotonEnergy, AlS_SS, num_);
+  AlSTable->AddProperty("BACKSCATTERCONSTANT", AlSPhotonEnergy, AlS_BS, num_);
 
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(AlSTable);
+  //AlSTable->DumpTable();
+
 
   // interface between SiPM and fibers ====================================================================
   // SiPM "sensitive" surface.. this will be a border surface between the fibers and the upper shroud

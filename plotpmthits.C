@@ -1,27 +1,27 @@
+void plotpmthits()
+{
 
+TCanvas *c1 = new TCanvas("c1", "c1", 900, 600); c1->Divide(2, 1);
+TDirectoryFile *pDir = (TDirectoryFile *) _file0->Get("events");
+TTree *pTree = (TTree *) pDir->Get("events");
+c1->cd(1)->SetLogy();
+pTree->Draw("pmthits");
+c1->cd(2)->SetLogy();
+pTree->Draw("nScintPhotons");
 
-void example (void) {
-
-/////////////////////////////////////////////////////////////////
-///// Inititalize ROOT Input
-/////////////////////////////////////////////////////////////////
-	
-	// Load Input file and Input Tree //
-	TFile *inFile = new TFile("events.root");
-	TTree *inTree = (TTree*) inFile->Get("events/events");
-
-
+}
+/*
 	// Defining entries in the Tree //
 	Long64_t nentries = inTree -> GetEntriesFast();
 
 	// Defining variables in the Tree //
-        float xp_pri;
-        float yp_pri;
-        float zp_pri;
+        float xp;
+        float yp;
+        float zp;
 
-  	inTree->SetBranchAddress("xp_pri", &xp_pri);
-	inTree->SetBranchAddress("yp_pri", &yp_pri);
-	inTree->SetBranchAddress("zp_pri", &zp_pri);
+  	inTree->SetBranchAddress("xp", &xp);
+	inTree->SetBranchAddress("yp", &yp);
+	inTree->SetBranchAddress("zp", &zp);
 
 ///////////////////////////////////////////////////////////////////
 ///// Definig Vectors for the parameters
@@ -37,13 +37,13 @@ vector<float> z_position;
 
     for(Long64_t jentry = 0; jentry<nentries; jentry++){
 
-        //cout<<"entrie  "<<jentry<<endl;
+        if (jentry<200) cout<<"entrie  "<<jentry<<" "<<xp<<" "<<yp<<endl;
 
         inTree->GetEntry(jentry);
 
-         x_position.push_back(xp_pri);
-         y_position.push_back(yp_pri);
-         z_position.push_back(zp_pri);
+         x_position.push_back(xp);
+         y_position.push_back(yp);
+         z_position.push_back(zp);
 
       }
 
@@ -63,8 +63,4 @@ gr->GetYaxis()->SetTitle(" y [mm]");
 gr->GetXaxis()->SetTitle(" x [mm]");
 gr->SetMarkerStyle(6);
 gr->SetMarkerColor(4);
-gr->Draw("AP");
-
-
-
-}
+gr->Draw("AP");*/
