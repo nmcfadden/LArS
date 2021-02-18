@@ -11,3 +11,7 @@ src/*swp
 include/*.swp
 *swp
 macros/*swp
+todo
+readdata.C
+plotpmthits.C
+spectra/*
