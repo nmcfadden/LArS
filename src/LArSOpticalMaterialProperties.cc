@@ -52,15 +52,16 @@ void LArSOpticalMaterialProperties::ConstructionOpticalProperties()
   //RegisterXeDopedArgonOpticalProperties();
   Register_TPB_Properties();
   Register_PEN_Properties();
+  Register_Acrylic();
+  Register_MgF2();
+
   //Register_Fiber_Properties();
   //Register_Fiber_Cladding_Properties();
   //Register_Nylon_Properties();
   //Register_Copper_Properties();
   //Register_Germanium_Properties();
   //Register_Silicon_Properties();
-  Register_Teflon_Properties();
-  Register_Acrylic();
-  Register_MgF2();
+  //Register_Teflon_Properties();
   //Register_Silica_Properties();
   //Register_VM2000();
   //Register_StainlessSteel();
@@ -280,40 +281,6 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   G4Material* TPBOnTetratex = new G4Material("TPBOnTetratex", 1.08*g/cm3, 2, kStateSolid);
               TPBOnTetratex -> AddElement(elH, 22);
               TPBOnTetratex -> AddElement(elC, 28);
-  ////////////
-  // VM2000 //
-  ////////////
-
-  //VM2000 will NOT be used in LEGEND because Tetratex is more radio pure, it is added here just to have it...
-  /** Reflectivity taken from https://www.osti.gov/servlets/purl/1184400
-   * "Reflectivity spectra for commonly used reflectors" by M. Janacek
-   *
-   * Seems to be a well-done measurement, done using an integrating sphere and taking
-   * into account the (even little) fluorescence. He uses a 65um thick foil without the
-   * glue on the back. The results he shows are already normalized by the reflectivity
-   * of the reference PTFE sample (-> absolute reflectivity!)
-   *
-   * EDIT: I found this paper: arXiv:1304.6117 in which people measure the reflectivity
-   *       of VM2000 with TPB evaporated on it, and it's a bit different. The measurement
-   *       seems to be done properly as they take into account the effect of TPB's emission
-   *       spectrum. The measurement seems to be pretty independent on the TPB layer thickness
-   *
-   *       The old reflectivity values can be found in 'Reflectivity_VM2000.dat'
-   *  -Luigi Pertoldi
-   */
-
-    //auto VM2000ReflGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_VM2000.dat"));
-  auto VM2000ReflGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_TPBCoatedVM2000.dat"));
-  G4double refl_VM2000[NUMENTRIES_2];
-
-  for (int i = 0; i < NUMENTRIES_2; i++) {
-    auto r = VM2000ReflGraph->Eval(LambdaE/(ph_energies[i])/nm);
-    refl_VM2000[i] = r >= 0 ? r : 0;
-  }
-
-  G4MaterialPropertiesTable* VM2000OpTable = new G4MaterialPropertiesTable();
-  VM2000OpTable->AddProperty("REFLECTIVITY", ph_energies, refl_VM2000, NUMENTRIES_2);
-  G4Material::GetMaterial("VM2000")->SetMaterialPropertiesTable(VM2000OpTable);
 
   //////////////
   // Tetratex //
@@ -347,13 +314,17 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   G4double pdTeflonBackscatter[NUMENTRIES_2];  
   //G4double absLength[NUMENTRIES_2];
 
+ G4String s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/TTX_ref.dat";
+ std::ofstream outfile_ttx(s_outfile.c_str());
   for (int i = 0; i < NUMENTRIES_2; i++) {
     auto r = TetratexReflGraph->Eval(LambdaE/(ph_energies[i])/nm);
     //refl_Tetratex[i] = r >= 0 ? r : 0;
     refl_Tetratex[i] = r >= 0 ? r : 0;
+    outfile_ttx<<LambdaE/ph_energies[i]/nm<<" "<<refl_Tetratex[i]<<G4endl;
+
     rindex_Tetratex[i] = 1.51;// Molded Unpolished PTFE https://arxiv.org/pdf/0910.1056.pdf
     eff_Tetratex[i] = 1.;
-    pdTeflonSpecularLobe[i] = 1.0;
+    pdTeflonSpecularLobe[i] = 0.01; //changed to 0.01 since most of the reflection is lambertian
     pdTeflonSpecularSpike[i] = 0.01; 
     pdTeflonBackscatter[i] = 0.01;
     //if(LambdaE/(ph_energies[i])/nm < 150) absLength[i] = 1.0*nm;//don't want photons going through the material
@@ -401,16 +372,25 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   auto TPBEmissionGraph   = std::unique_ptr<TGraph>(ReadSpectrumFromFile("TPBEmission.dat"));
   // read absorption from file (lengths in nanometers)
   auto TPBAbsorptionGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("TPBAbsorption.dat"));
-  for (int i = 0; i < NUMENTRIES_2; i++) {
+  
+ s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/tpb_em.dat"; std::ofstream outfile(s_outfile.c_str());
+ s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/tpb_abs.dat"; std::ofstream outfile2(s_outfile.c_str());
+
+ for (int i = 0; i < NUMENTRIES_2; i++) {
     TPB_refraction[i] = TPB_RefrIndex;
 
     // use emission spectrum from file
     auto e = TPBEmissionGraph->Eval(LambdaE/(ph_energies[i])/nm);
-    TPB_emission[i] = e >= 0 ? e : 0;
+    TPB_emission[i] = e >= 0 ? e : 0; 
+    G4double wl=LambdaE/ph_energies[i]/nm;
+    if (wl<350. || wl >680.) TPB_emission[i] =0; // it is unphysical to extrapolate TPB's emission further down/up
+    outfile<<wl<<" "<<TPB_emission[i]<<G4endl;
 
     // use absorption length from file
     auto a = TPBAbsorptionGraph->Eval(LambdaE/(ph_energies[i])/nm) *nm;
     TPB_absorption[i] = a >= 0 ? a : 0;
+    //TODO: this extrapolation seems to be going too far, check whether necessary to restrict it
+    outfile2<<wl<<" "<<TPB_absorption[i]<<G4endl;
   }
 
   auto TPBTable = new G4MaterialPropertiesTable();
@@ -420,6 +400,49 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   TPBTable->AddConstProperty("WLSTIMECONSTANT",      TPB_TimeConstant);
   TPBTable->AddConstProperty("WLSMEANNUMBERPHOTONS", TPB_QuantumEff);
   G4Material::GetMaterial("TPB")->SetMaterialPropertiesTable(TPBTable);
+
+  /////////////////////
+  // TPB on Tetratex //
+  /////////////////////
+
+  /** Emission spectrum
+   *
+   * Taken from (our) publication: arXiv:1503.05349
+   * Seems that the TPB is dip-coated (0.9 mg/cm2 ~ 8 um thickness) on the Tetratex
+   * so here I'm taking the red curve in Fig. 4 (without the peak), which actually is
+   * measured for 0.17 mg/cm2. In principle the thickness affects the shape of the
+   * emission spectrum, as the efficiency of the reabsorption effect increases with
+   * the thickness of the layer. However, I didn't find other measurements around...
+   *  -Luigi Pertoldi
+   * See material TPB for the other properties
+   */
+
+  G4double TPBOnTetratex_emission[NUMENTRIES_2];
+
+  // read emission spectrum from file
+  auto TetratexSpecGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("TPBOnTetratexEmission.dat"));
+
+ s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/tpb_ttx_em.dat"; std::ofstream outfile_tpbttx(s_outfile.c_str());
+
+  for (int i = 0; i < NUMENTRIES_2; i++) {
+    // use emission from file
+    auto e = TetratexSpecGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    TPBOnTetratex_emission[i] = e >= 0 ? e : 0;
+    G4double wl=LambdaE/ph_energies[i]/nm;
+    if (wl<350. || wl >680.) TPB_emission[i] =0; // it is unphysical to extrapolate TPB's emission further down/up
+    outfile_tpbttx<<wl<<" "<<TPB_emission[i]<<G4endl;
+
+  }
+
+  G4MaterialPropertiesTable *TPBOnTetratexTable = new G4MaterialPropertiesTable();
+  TPBOnTetratexTable->AddProperty     ("RINDEX",               ph_energies, TPB_refraction,         NUMENTRIES_2);
+  TPBOnTetratexTable->AddProperty     ("WLSABSLENGTH",         ph_energies, TPB_absorption,         NUMENTRIES_2);
+  TPBOnTetratexTable->AddProperty     ("WLSCOMPONENT",         ph_energies, TPBOnTetratex_emission, NUMENTRIES_2);
+  TPBOnTetratexTable->AddConstProperty("WLSTIMECONSTANT",      TPB_TimeConstant);
+  TPBOnTetratexTable->AddConstProperty("WLSMEANNUMBERPHOTONS", TPB_QuantumEff);
+  //TPBOnTetratexTable->AddProperty("REFLECTIVITY", ph_energies, refl_Tetratex, NUMENTRIES_2); 
+  //TPBOnTetratexTable->AddConstProperty("SCINTILLATIONYIELD",   TPB_ScintYield);
+  G4Material::GetMaterial("TPBOnTetratex")->SetMaterialPropertiesTable(TPBOnTetratexTable);
 
   //////////////////
   // TPB On Nylon //
@@ -439,6 +462,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
    *  -Luigi Pertoldi
    */
 
+/*
   G4double TPBOnNylon_emission   [NUMENTRIES_2];
   //Need attenuation length and WLS-attenuation because both physical properties exist
   G4double TPBOnNylon_absorption [NUMENTRIES_2];
@@ -468,6 +492,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   TPBOnNylonTable->AddConstProperty("WLSMEANNUMBERPHOTONS", 0.84);
   //TPBOnNylonTable->AddConstProperty("SCINTILLATIONYIELD",   TPB_ScintYield);
   G4Material::GetMaterial("TPBOnNylon")->SetMaterialPropertiesTable(TPBOnNylonTable);
+*/
 
   ///////////////////
   // TPB on VM2000 //
@@ -490,6 +515,7 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
    * See material TPB for the other properties
    */
 
+/*
   G4double TPBOnVM2000_emission  [NUMENTRIES_2];
 
   auto TPBOnVM2000SpecGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("TPBOnVM2000Emission-87K.dat"));
@@ -508,43 +534,45 @@ void LArSOpticalMaterialProperties::Register_TPB_Properties()
   TPBOnVM2000Table->AddConstProperty("WLSMEANNUMBERPHOTONS", TPB_QuantumEff);
   //TPBOnVM2000Table->AddConstProperty("SCINTILLATIONYIELD",   TPB_ScintYield);
   G4Material::GetMaterial("TPBOnVM2000")->SetMaterialPropertiesTable(TPBOnVM2000Table);
+*/
 
-  /////////////////////
-  // TPB on Tetratex //
-  /////////////////////
+  ////////////
+  // VM2000 //
+  ////////////
 
-  /** Emission spectrum
+  //VM2000 will NOT be used in LEGEND because Tetratex is more radio pure, it is added here just to have it...
+  /** Reflectivity taken from https://www.osti.gov/servlets/purl/1184400
+   * "Reflectivity spectra for commonly used reflectors" by M. Janacek
    *
-   * Taken from (our) publication: arXiv:1503.05349
-   * Seems that the TPB is dip-coated (0.9 mg/cm2 ~ 8 um thickness) on the Tetratex
-   * so here I'm taking the red curve in Fig. 4 (without the peak), which actually is
-   * measured for 0.17 mg/cm2. In principle the thickness affects the shape of the
-   * emission spectrum, as the efficiency of the reabsorption effect increases with
-   * the thickness of the layer. However, I didn't find other measurements around...
+   * Seems to be a well-done measurement, done using an integrating sphere and taking
+   * into account the (even little) fluorescence. He uses a 65um thick foil without the
+   * glue on the back. The results he shows are already normalized by the reflectivity
+   * of the reference PTFE sample (-> absolute reflectivity!)
+   *
+   * EDIT: I found this paper: arXiv:1304.6117 in which people measure the reflectivity
+   *       of VM2000 with TPB evaporated on it, and it's a bit different. The measurement
+   *       seems to be done properly as they take into account the effect of TPB's emission
+   *       spectrum. The measurement seems to be pretty independent on the TPB layer thickness
+   *
+   *       The old reflectivity values can be found in 'Reflectivity_VM2000.dat'
    *  -Luigi Pertoldi
-   * See material TPB for the other properties
    */
 
-  G4double TPBOnTetratex_emission[NUMENTRIES_2];
-
-  // read emission spectrum from file
-  auto TetratexSpecGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("TPBOnTetratexEmission.dat"));
+    //auto VM2000ReflGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_VM2000.dat"));
+/*
+  auto VM2000ReflGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_TPBCoatedVM2000.dat"));
+  G4double refl_VM2000[NUMENTRIES_2];
 
   for (int i = 0; i < NUMENTRIES_2; i++) {
-    // use emission from file
-    auto e = TetratexSpecGraph->Eval(LambdaE/(ph_energies[i])/nm);
-    TPBOnTetratex_emission[i] = e >= 0 ? e : 0;
+    auto r = VM2000ReflGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    refl_VM2000[i] = r >= 0 ? r : 0;
   }
 
-  G4MaterialPropertiesTable *TPBOnTetratexTable = new G4MaterialPropertiesTable();
-  TPBOnTetratexTable->AddProperty     ("RINDEX",               ph_energies, TPB_refraction,         NUMENTRIES_2);
-  TPBOnTetratexTable->AddProperty     ("WLSABSLENGTH",         ph_energies, TPB_absorption,         NUMENTRIES_2);
-  TPBOnTetratexTable->AddProperty     ("WLSCOMPONENT",         ph_energies, TPBOnTetratex_emission, NUMENTRIES_2);
-  TPBOnTetratexTable->AddConstProperty("WLSTIMECONSTANT",      TPB_TimeConstant);
-  TPBOnTetratexTable->AddConstProperty("WLSMEANNUMBERPHOTONS", TPB_QuantumEff);
-  //TPBOnTetratexTable->AddProperty("REFLECTIVITY", ph_energies, refl_Tetratex, NUMENTRIES_2); 
-  //TPBOnTetratexTable->AddConstProperty("SCINTILLATIONYIELD",   TPB_ScintYield);
-  G4Material::GetMaterial("TPBOnTetratex")->SetMaterialPropertiesTable(TPBOnTetratexTable);
+  G4MaterialPropertiesTable* VM2000OpTable = new G4MaterialPropertiesTable();
+  VM2000OpTable->AddProperty("REFLECTIVITY", ph_energies, refl_VM2000, NUMENTRIES_2);
+  G4Material::GetMaterial("VM2000")->SetMaterialPropertiesTable(VM2000OpTable);
+*/
+
 
 }
   /////////////////////
@@ -582,16 +610,25 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
   auto PENEmissionGraph   = std::unique_ptr<TGraph>(ReadSpectrumFromFile("PENEmission.dat"));
   // read absorption from file (lengths in nanometers)
   auto PENAbsorptionGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("PENAbsorption.dat"));
+
+ G4String s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/pen_em.dat"; std::ofstream outfile_pen_em(s_outfile.c_str());
+ s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/pen_abs.dat"; std::ofstream outfile_pen_abs(s_outfile.c_str());
+
   for (int i = 0; i < NUMENTRIES_2; i++) {
     PEN_refraction[i] = PEN_RefrIndex;
 
     // use emission spectrum from file
     auto e = PENEmissionGraph->Eval(LambdaE/(ph_energies[i])/nm);
     PEN_emission[i] = e >= 0 ? e : 0;
+    G4double wl=LambdaE/ph_energies[i]/nm;
+    //if (wl<330. || wl >680.) PEN_emission[i] =0; // it is unphysical to extrapolate PEN's emission further down/up
+    outfile_pen_em<<wl<<" "<<PEN_emission[i]<<G4endl;
 
     // use absorption length from file
     auto a = PENAbsorptionGraph->Eval(LambdaE/(ph_energies[i])/nm) *nm;
     PEN_absorption[i] = a >= 0 ? a : 0;
+    outfile_pen_abs<<wl<<" "<<PEN_absorption[i]<<G4endl;
+
   }
 
   auto PENTable = new G4MaterialPropertiesTable();
@@ -603,7 +640,70 @@ void LArSOpticalMaterialProperties::Register_PEN_Properties()
   //PENTable->AddConstProperty("SCINTILLATIONYIELD",PEN_photon_yield);
   G4Material::GetMaterial("PEN")->SetMaterialPropertiesTable(PENTable);
 }
+
+void LArSOpticalMaterialProperties::Register_MgF2(){
+  auto IndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("MgF2Index.dat"));
+  G4String s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/MgF2Index.dat"; std::ofstream outfile(s_outfile.c_str());
+  G4double index[NUMENTRIES_2];
+  for (int i = 0; i < NUMENTRIES_2; i++) {
+    auto ind = IndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    index[i] = ind;
+    outfile<<LambdaE/(ph_energies[i])/nm<<" "<<index[i]<<G4endl;
+  }
+
+  auto MgF2Table = new G4MaterialPropertiesTable();
+  MgF2Table->AddProperty("RINDEX"   , ph_energies, index, NUMENTRIES_2);
+  G4Material::GetMaterial("MgF2")->SetMaterialPropertiesTable(MgF2Table);
+}
+
+void LArSOpticalMaterialProperties::Register_Acrylic()
+{
+  G4NistManager*   nist = G4NistManager::Instance();
+  G4Element* elH = nist->FindOrBuildElement("H");
+  G4Element* elC = nist->FindOrBuildElement("C");
+  G4Element* elO = nist->FindOrBuildElement("O");
+
+  G4Material* Acrylic;
+  if(G4Material::GetMaterial("Acrylic") != NULL){
+    Acrylic = G4Material::GetMaterial("Acrylic");
+  }
+  else{
+    Acrylic  = new G4Material("Acrylic",1.18*g/cm3,3,kStateSolid);
+    Acrylic->AddElement(elH,8);
+    Acrylic->AddElement(elC,5);
+    Acrylic->AddElement(elO,2);
+  }
+  //Data is in wavelength (nm) and absorption length (mm)
+  //Taken from https://wiki.bnl.gov/dayabay/upload/Acrylic_Transmittance_Sep14.pdf
+  auto acrylicAbsorptionGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicAbsorption.dat"));
+  auto acrylicIndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicIndex.dat"));
+
+  G4String s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/Acryl_abs.dat"; std::ofstream outfile(s_outfile.c_str());
+  s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/Acryl_index.dat"; std::ofstream outfile2(s_outfile.c_str());
+
+
+  G4double acrylic_absorption[NUMENTRIES_2];
+  G4double acrylic_index[NUMENTRIES_2];
+  for (int i = 0; i < NUMENTRIES_2; i++) {
+    auto r = acrylicAbsorptionGraph->Eval(LambdaE/(ph_energies[i])/nm)*mm;
+    if(LambdaE/(ph_energies[i])/nm < 200) r = 10*nm;
+    acrylic_absorption[i] = r >= 0 ? r : 0;
+    auto index = acrylicIndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
+    acrylic_index[i] = index;
+
+    outfile<<LambdaE/(ph_energies[i])/nm<<" "<<acrylic_absorption[i]<<G4endl;
+    outfile2<<LambdaE/(ph_energies[i])/nm<<" "<<acrylic_index[i]<<G4endl;
+  }
+
+  auto acrylicTable = new G4MaterialPropertiesTable();
+  acrylicTable->AddProperty("RINDEX"   , ph_energies, acrylic_index, NUMENTRIES_2);
+  acrylicTable->AddProperty("ABSLENGTH", ph_energies, acrylic_absorption, NUMENTRIES_2);
+  G4Material::GetMaterial("Acrylic")->SetMaterialPropertiesTable(acrylicTable);
+  
+}
+
 //copied from GEGSLArGeOptical.cc
+/*
 G4double LArSOpticalMaterialProperties::TPBEmissionSpectrum(G4double energy)
 {
   if (fSuccessfulInitialization)
@@ -640,7 +740,9 @@ G4double LArSOpticalMaterialProperties::PENEmissionSpectrum(G4double energy)
     return 0.2;
   }
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_Fiber_Properties()
 {
   //Stolen from gerdageometry/src/GEGeometryLArInstHybrid.cc
@@ -672,6 +774,7 @@ void LArSOpticalMaterialProperties::Register_Fiber_Properties()
   // Fibers Polystyrene //
   ////////////////////////
 
+*/
   /** Absorption spectrum
    *
    * The data sheet from Saint Gobain at
@@ -699,6 +802,7 @@ void LArSOpticalMaterialProperties::Register_Fiber_Properties()
    * WLS time constant: from the Saint-Gobain data sheets
    * -Luigi Pertoldi
    */
+/*
 
   // read absorption spectrum from file
   auto FibersAbsorptionGr = std::unique_ptr<TGraph>(ReadSpectrumFromFile("FibersAbsorption.dat"));
@@ -743,8 +847,10 @@ void LArSOpticalMaterialProperties::Register_Fiber_Properties()
   G4Material::GetMaterial("PolystyreneFiber")->SetMaterialPropertiesTable(fiberTable);
 
 }
-
+*/
 //Copied from GEGeometryLArInstHybrid.cc
+
+/*
 void LArSOpticalMaterialProperties::Register_Fiber_Cladding_Properties()
 {
   //--------------------------------------------------
@@ -805,58 +911,9 @@ void LArSOpticalMaterialProperties::Register_Fiber_Cladding_Properties()
   fFiber_claddingOuter_material->SetMaterialPropertiesTable(claddingOuterTable);
   //G4cout << " Constructed Fiber Cladding Properties"<< G4endl;
 }
+*/
 
-void LArSOpticalMaterialProperties::Register_Acrylic()
-{
-  G4NistManager*   nist = G4NistManager::Instance();
-  G4Element* elH = nist->FindOrBuildElement("H");
-  G4Element* elC = nist->FindOrBuildElement("C");
-  G4Element* elO = nist->FindOrBuildElement("O");
-
-  G4Material* Acrylic;
-  if(G4Material::GetMaterial("Acrylic") != NULL){
-    Acrylic = G4Material::GetMaterial("Acrylic");
-  }
-  else{
-    Acrylic  = new G4Material("Acrylic",1.18*g/cm3,3,kStateSolid);
-    Acrylic->AddElement(elH,8);
-    Acrylic->AddElement(elC,5);
-    Acrylic->AddElement(elO,2);
-  }
-  //Data is in wavelength (nm) and absorption length (mm)
-  //Taken from https://wiki.bnl.gov/dayabay/upload/Acrylic_Transmittance_Sep14.pdf
-  auto acrylicAbsorptionGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicAbsorption.dat"));
-  auto acrylicIndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("AcrylicIndex.dat"));
-  G4double acrylic_absorption[NUMENTRIES_2];
-  G4double acrylic_index[NUMENTRIES_2];
-  for (int i = 0; i < NUMENTRIES_2; i++) {
-    auto r = acrylicAbsorptionGraph->Eval(LambdaE/(ph_energies[i])/nm)*mm;
-    if(LambdaE/(ph_energies[i])/nm < 200) r = 10*nm;
-    acrylic_absorption[i] = r >= 0 ? r : 0;
-    auto index = acrylicIndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
-    acrylic_index[i] = index;
-    //G4cout<<"Abs length "<<acrylic_absorption[i]<<" index "<<acrylic_index[i]<<", wavelenght "<<LambdaE/(ph_energies[i])/nm<<G4endl;
-  }
-
-  auto acrylicTable = new G4MaterialPropertiesTable();
-  acrylicTable->AddProperty("RINDEX"   , ph_energies, acrylic_index, NUMENTRIES_2);
-  acrylicTable->AddProperty("ABSLENGTH", ph_energies, acrylic_absorption, NUMENTRIES_2);
-  G4Material::GetMaterial("Acrylic")->SetMaterialPropertiesTable(acrylicTable);
-  
-}
-
-void LArSOpticalMaterialProperties::Register_MgF2(){
-  auto IndexGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("MgF2Index.dat"));
-  G4double index[NUMENTRIES_2];
-  for (int i = 0; i < NUMENTRIES_2; i++) {
-    auto ind = IndexGraph->Eval(LambdaE/(ph_energies[i])/nm);
-    index[i] = ind;
-  }
-
-  auto MgF2Table = new G4MaterialPropertiesTable();
-  MgF2Table->AddProperty("RINDEX"   , ph_energies, index, NUMENTRIES_2);
-  G4Material::GetMaterial("MgF2")->SetMaterialPropertiesTable(MgF2Table);
-}
+/*
 //copied from GEGeometryLArInstrumentation.cc
 void LArSOpticalMaterialProperties::Register_Nylon_Properties()
 {
@@ -867,9 +924,9 @@ void LArSOpticalMaterialProperties::Register_Nylon_Properties()
   // Nylon //
   ///////////
 
-  /**
-   * Absorption length from arXiv:1704.02291
-   */
+  
+   // Absorption length from arXiv:1704.02291
+   
 
   // lengths are in m in the file
   auto NylonAbsGraph = std::unique_ptr<TGraph>(ReadSpectrumFromFile("NylonAbsorption.dat"));
@@ -891,7 +948,9 @@ void LArSOpticalMaterialProperties::Register_Nylon_Properties()
   NylonTable->AddProperty("ABSLENGTH", ph_energies, Nylon_absorption, NUMENTRIES_2);
   G4Material::GetMaterial("Nylon")->SetMaterialPropertiesTable(NylonTable);
 }
+*/
 
+/*
 //stolen from gerdageometry/src/GEGeometryLArInstrumentation.cc for MetalCopper
 //TODO Not sure optical proper electroformed copper but for now assuming the same as metal coppper
 void LArSOpticalMaterialProperties::Register_Copper_Properties()
@@ -901,9 +960,9 @@ void LArSOpticalMaterialProperties::Register_Copper_Properties()
   // Copper //
   ////////////
 
-  /* Measurements from Anne Wegmann's thesis:
-   * https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
-  */
+  // Measurements from Anne Wegmann's thesis:
+  // https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
+  
 
   auto CuReflGr = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_Cu.dat"));
 
@@ -930,13 +989,16 @@ void LArSOpticalMaterialProperties::Register_Copper_Properties()
   G4Material::GetMaterial("Copper-EF")->SetMaterialPropertiesTable(CuOptTable);
 
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_Germanium_Properties()
 {
   ///////////////
   // Germanium //
   ///////////////
 
+*/
   /*** Optical properties of Germanium
    * Needs to be attached to all deadlayer logical surfaces.
    *
@@ -949,6 +1011,7 @@ void LArSOpticalMaterialProperties::Register_Germanium_Properties()
    * It quotes a reflectivity quite high for UV light (~60-70%), but strongly
    * dependent on the incident angle and surface roughness
   */
+/*
 
   auto GeReflGr = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_Ge.dat"));
 
@@ -981,16 +1044,18 @@ void LArSOpticalMaterialProperties::Register_Germanium_Properties()
   germanium = G4Material::GetMaterial("Germanium-Nat");
   germanium->SetMaterialPropertiesTable(geOptTable);
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_Silicon_Properties()
 {
   /////////////
   // Silicon //
   /////////////
 
-  /* Measurements from Anne Wegmann's thesis:
-   * https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
-   */
+  // Measurements from Anne Wegmann's thesis:
+  // https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
+   
 
   auto SiReflGr = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_Si.dat"));
 
@@ -1011,7 +1076,9 @@ void LArSOpticalMaterialProperties::Register_Silicon_Properties()
   siOptTable->AddProperty("REFLECTIVITY", PhotonEnergySi, ReflectivitySi, n_points_si);
 
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_Teflon_Properties()
 {
 
@@ -1019,9 +1086,9 @@ void LArSOpticalMaterialProperties::Register_Teflon_Properties()
   // Teflon //
   /////////////
 
-  /* Measurements from Anne Wegmann's thesis:
-   * https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
-   */
+   // Measurements from Anne Wegmann's thesis:
+   // https://www.mpi-hd.mpg.de/gerda/public/2017/phd2017-anneWegmann.pdf
+   
 
   auto TeflonReflGr = std::unique_ptr<TGraph>(ReadSpectrumFromFile("Reflectivity_Teflon.dat"));
 
@@ -1042,7 +1109,9 @@ void LArSOpticalMaterialProperties::Register_Teflon_Properties()
 
   G4Material::GetMaterial("Teflon")->SetMaterialPropertiesTable(TeflonOptTable);
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_Silica_Properties()
 {
   G4MaterialPropertiesTable *silicaOptTable = new G4MaterialPropertiesTable;
@@ -1065,7 +1134,9 @@ void LArSOpticalMaterialProperties::Register_Silica_Properties()
   silicaOptTable->AddProperty("ABSLENGTH",energy,absorbptionlength,npoints);
   G4Material::GetMaterial("Silica")->SetMaterialPropertiesTable(silicaOptTable);
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_VM2000()
 {
   G4MaterialPropertiesTable *vm2000OptTable = new G4MaterialPropertiesTable;
@@ -1103,7 +1174,9 @@ void LArSOpticalMaterialProperties::Register_VM2000()
 
   G4Material::GetMaterial("VM2000")->SetMaterialPropertiesTable(vm2000OptTable);
 }
+*/
 
+/*
 void LArSOpticalMaterialProperties::Register_StainlessSteel()
 {
     // Attach properties to the other materials
@@ -1156,6 +1229,7 @@ void LArSOpticalMaterialProperties::Register_StainlessSteel()
   G4Material *ssteel = G4Material::GetMaterial("Steel");
   ssteel->SetMaterialPropertiesTable(ssOptTable);
 }
+*/
 
 TGraph* LArSOpticalMaterialProperties::ReadSpectrumFromFile(G4String filename) {
 

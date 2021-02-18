@@ -49,6 +49,9 @@
 #include "CLHEP/Units/PhysicalConstants.h"
 #include "G4OpticalSurface.hh"
 
+// ROOT headers
+#include "TGraph.h"
+
 #ifndef _LARSOpticalSurfaces_HH
 #define _LARSOpticalSurfaces_HH
 
@@ -80,5 +83,7 @@ private:
   // hash table to store optical surfaces
   static std::map<std::string, G4OpticalSurface*> fOpticalSurfaces;
 };
+
+ TGraph* ReadData(G4String filename);
 //
 #endif

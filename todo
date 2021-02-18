@@ -3,7 +3,7 @@
 0) number of produced scintillation photons match the value expected (37keV). PMT hits for no source reflection roughly match the one calculated by Vera using the solid angle (discrepancy only due to wrong distance). However, this value is much higher than the measured one. 
 
 2) which parameters to change and how in order to match observed PE value: 
-
+plotpmthits.C
    ** First: only mean value matching for both absorber and TTX (100 events)
 	- input values in tables to be read, so that program does not need to be built everytime
 		- AlS reflection (%) (0-30%, 5% step) and (SS/SL/BS)  // no much difference between SS and SL, so I will keep SL fixed at 0.1, vary SS from 0. to 0.5, BS from 0. to 0.3 -> Total: 6x6X4=144 x 100 events: ~15Gb
@@ -11,7 +11,7 @@
 		- q_factor LY
 
 ---> To run it in batch (without building again): make it read from different spectrum data files for each time it runs (running in paralell) or sequential batch (change spectrum txt files and read again, run after run)
-	* bash script that:
+	* script that:
 		i) copies opticaldata main file to sim/opticaldata_i, 
 		ii) varies values of ALS_r, QE, LY,
 		iv) sources standard bashrc
@@ -22,6 +22,7 @@
 	- produce plots of vary value vs mean PE value 
 	- is 200 PE enough? if so, do I have space? - Maybe start with 200 only for PE matching and then go for higher N and shape matching.
 
+- work on spectra (see figures and notes on output_spectra/)
 
 - mgf2_LAr Surface needs to be implemented (or it is going to be taken as smooth and use the refractive indexes to calculater R?) -> For the simple case of a perfectly smooth interface between two dielectric materials, all the user needs to provide are the refractive indices (RINDEX) of the two materials stored in their respective G4MaterialPropertiesTables.
 

@@ -236,7 +236,6 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(AlSTable);
   //AlSTable->DumpTable();
 
-
   // interface between SiPM and fibers ====================================================================
   // SiPM "sensitive" surface.. this will be a border surface between the fibers and the upper shroud
   // Set sensitivity to 100% to collect all photons and correct for Q.E. off line 
@@ -312,6 +311,9 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
   );
   const G4int npointsPMT = 17;
   //Only have one QE value for Vis light, 27.38% at 420nm, assume 0 QE at 100 nm and 700 nm
+  //  auto TPBEmissionGraph   = std::unique_ptr<TGraph>(ReadData("TPBEmission.dat"));
+
+
   G4double PMTWL[npointsPMT] =           {100.*nm,117.*nm,119.*nm,122.*nm,124.*nm,
                                           126.*nm,128.*nm,130.*nm,132.*nm,134.*nm,
                                           138.*nm,145.*nm,165.*nm,185.*nm,210.*nm,
@@ -417,4 +419,30 @@ std::vector<std::string> LArSOpticalSurfaces::GetListOfSurfaces() {
   std::vector<std::string> v;
   for (auto& _s : fOpticalSurfaces) v.push_back(_s.first);
   return v;
+}
+
+TGraph* ReadData(G4String filename) {
+
+  //G4cout << "Looking for " << filename << " file" << G4endl;
+  G4String pathFile;
+  if (!getenv("LARSOPTICALDATA")) {
+    G4cout << "LARSOPTICALDATA environment variable not set! Setting it to '.'" << G4endl;
+    pathFile = ".";
+  }
+  else pathFile = G4String(getenv("LARSOPTICALDATA"));
+  pathFile += "/" + filename;
+  if(!std::ifstream(pathFile).is_open()) {
+    G4cout << "Could not find " << pathFile << ". please set the LARSOPTICALDATA variable." << G4endl;
+  }
+
+  auto _g = new TGraph(pathFile.data());
+
+  if (!_g->IsZombie() and _g->GetN() > 0 ) {
+    G4cout << "Spectrum/data (" << _g->GetN()
+                   << " points) successfully loaded from " << filename << G4endl;
+  } else {
+    G4cout << "could not read data from from " << pathFile.data() << G4endl;
+  }
+
+  return _g;
 }
