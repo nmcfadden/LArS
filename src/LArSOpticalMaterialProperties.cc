@@ -86,7 +86,11 @@ void LArSOpticalMaterialProperties::RegisterArgonOpticalProperties()
 	  G4double q_factor_electron=0.8; // (non relativistic)
 	  G4double q_factor_alpha=0.72; // value for 5.5MeV alphas: flat LET response for several energies
 	  G4double scint_yield = 19.5*eV; // mean energy necessary to produce a photon in LAr
-	  G4double photon_yield_alpha= 1.0/(scint_yield/q_factor_alpha);
+
+	  // an extra factor to lower the light yield was introduced, so that the simulation PMThits matches the measured value
+	  G4double extra_qFactor = *( (*std::unique_ptr<TGraph>(ReadSpectrumFromFile("qFactor_LAr.dat"))).GetY() );
+
+	  G4double photon_yield_alpha= 1.0/(scint_yield/q_factor_alpha) * extra_qFactor;
 	  G4double photon_yield_electron= 1.0/(scint_yield/q_factor_electron);
 
 	  static const G4int energy_entries=10000;

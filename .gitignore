@@ -11,8 +11,9 @@ src/*swp
 include/*.swp
 *swp
 macros/*swp
-todo
 readdata.C
 plotpmthits.C
 spectra/*
 output_spectra/*
+log/*
+sim* 

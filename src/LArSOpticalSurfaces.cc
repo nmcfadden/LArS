@@ -196,9 +196,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
 
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(BlackTable);
 
-  // Al surface of the disk where the source is deposited (added by Gabriela) =========================================
-  const G4int num_ = 4;
-  G4double Wavelength_[num_] = {100, 200, 301, 650};
+  // Al surface of the disk where the source is deposited =========================================
   surf_name = "AlSource";
   fOpticalSurfaces.emplace(surf_name,
     new G4OpticalSurface(
@@ -210,20 +208,31 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
     )
   );
 
+
+  auto AlSrefGraph = std::unique_ptr<TGraph>(ReadData("AlS_reflectivity.dat", "%lg %lg"));
+  G4double *AlSWL=AlSrefGraph->GetX();
+  G4double *AlSReflectivity=AlSrefGraph->GetY();
+
+  auto AlSrefGraph_SS = std::unique_ptr<TGraph>(ReadData("AlS_reflectivity.dat", "%lg %*lg %lg"));
+  G4double *AlS_SS = AlSrefGraph_SS->GetY();
+
+  auto AlSrefGraph_SL = std::unique_ptr<TGraph>(ReadData("AlS_reflectivity.dat", "%lg %*lg %*lg %lg"));
+  G4double *AlS_SL = AlSrefGraph_SL->GetY();
+
+  auto AlSrefGraph_BS = std::unique_ptr<TGraph>(ReadData("AlS_reflectivity.dat", "%lg %*lg %*lg %*lg %lg"));
+  G4double *AlS_BS = AlSrefGraph_BS->GetY();
+
+  const G4int num_ = 4;
   G4double AlSPhotonEnergy [num_];
-  G4double AlSReflectivity [num_];
-  G4double AlSEfficiencyEnergy   [num_];
-  G4double AlS_SS[num_], AlS_SL[num_], AlS_BS[num_], AlS_SA[num_];
+  G4double AlSEfficiencyEnergy [num_];
+  
+  G4String s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/AlS_ref.dat"; std::ofstream outfile_AlS(s_outfile.c_str());
 
   for (G4int i=0; i < num_; i++) {
-    AlSPhotonEnergy[i] = LambdaE/(Wavelength_[(num_-1)-i]*nm);
-    AlSReflectivity[i] = 0.8;
+    AlSPhotonEnergy[i] = LambdaE/(AlSWL[i]*nm);
     AlSEfficiencyEnergy[i]   = 1.0;//changed by neil from 0 to 1.. If it is 0, no energy is deposited, 
-                                   //if it is less than 1 and greater than 0, then G4 rolls a dice to see if energy is deposited
-    AlS_SS[i]=0.2; AlS_SL[i]=0.1; AlS_BS[i]=0.0; 
-    AlS_SA[i]=0.01;
-
-
+                                   //if it is less than 1 and greater than 0, then G4 rolls a dice to see if energy is 
+   outfile_AlS<<LambdaE/AlSPhotonEnergy[i]/nm<<" "<<AlSReflectivity[i]<<" "<<AlS_SS[i]<<" "<<AlS_SL[i]<<" "<<AlS_BS[i]<<G4endl;
   }
 
   auto AlSTable = new G4MaterialPropertiesTable();
@@ -309,31 +318,27 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
       surface_type = dielectric_metal
     )
   );
+
+
   const G4int npointsPMT = 17;
   //Only have one QE value for Vis light, 27.38% at 420nm, assume 0 QE at 100 nm and 700 nm
-  //  auto TPBEmissionGraph   = std::unique_ptr<TGraph>(ReadData("TPBEmission.dat"));
 
-
-  G4double PMTWL[npointsPMT] =           {100.*nm,117.*nm,119.*nm,122.*nm,124.*nm,
-                                          126.*nm,128.*nm,130.*nm,132.*nm,134.*nm,
-                                          138.*nm,145.*nm,165.*nm,185.*nm,210.*nm,
-                                          420.*nm,700.*nm};
-  G4double PMTEfficiencyWavelength[npointsPMT] =
-                                         {0.00   ,  0.158,  0.184,  0.215,  0.214,
-                                          0.218  ,  0.228,  0.240,  0.250,  0.262,
-                                          0.268  ,  0.259,  0.297,  0.378,  0.325,
-                                          0.2738,0};
-  //G4double PMTCEfficiencyWavelength[npointsPMT] =   {1.0,1.,1.,1.,1,1,1,1,1,1,1};
-  G4double PMTEfficiencyEnergy[npointsPMT];
-  G4double PMTReflectivity[npointsPMT];// = {0.0,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00};
+  auto PMTQEGraph   = std::unique_ptr<TGraph>(ReadData("PMTQE.dat", "%lg %lg"));
+  G4double *PMTWL=PMTQEGraph->GetX();
+  G4double *PMTEfficiency=PMTQEGraph->GetY();
+  G4double PMTReflectivity[npointsPMT];
   G4double PMTPhotonEnergy[npointsPMT];
+
+  s_outfile = G4String(getenv("LARSDIR"))+"/output_spectra/PMTQE.dat"; std::ofstream outfile(s_outfile.c_str());
+
   for (G4int ji=0; ji < npointsPMT; ji++){
-    PMTPhotonEnergy[ji] = LambdaE/(PMTWL[(npointsPMT-1)-ji]);
+ 
+    PMTPhotonEnergy[ji] = LambdaE/((PMTWL[ji]*nm));
     PMTReflectivity[ji] = 0.0; 
-    PMTEfficiencyEnergy[ji] = PMTEfficiencyWavelength[(npointsPMT-1)-ji]; // Quantum efficiency of the PMTC. 
+    outfile<<LambdaE/PMTPhotonEnergy[ji]/nm<<" "<<PMTEfficiency[ji]<<G4endl;
   }
   auto PMTOptTable = new G4MaterialPropertiesTable();
-  PMTOptTable->AddProperty("EFFICIENCY",PMTPhotonEnergy,PMTEfficiencyEnergy,npointsPMT);
+  PMTOptTable->AddProperty("EFFICIENCY",PMTPhotonEnergy,PMTEfficiency,npointsPMT);
   PMTOptTable->AddProperty("REFLECTIVITY",PMTPhotonEnergy,PMTReflectivity,npointsPMT);
   
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(PMTOptTable);
@@ -421,7 +426,7 @@ std::vector<std::string> LArSOpticalSurfaces::GetListOfSurfaces() {
   return v;
 }
 
-TGraph* ReadData(G4String filename) {
+TGraph* ReadData(G4String filename, G4String soption) {
 
   //G4cout << "Looking for " << filename << " file" << G4endl;
   G4String pathFile;
@@ -435,7 +440,7 @@ TGraph* ReadData(G4String filename) {
     G4cout << "Could not find " << pathFile << ". please set the LARSOPTICALDATA variable." << G4endl;
   }
 
-  auto _g = new TGraph(pathFile.data());
+  auto _g = new TGraph(pathFile.data(), soption.c_str());
 
   if (!_g->IsZombie() and _g->GetN() > 0 ) {
     G4cout << "Spectrum/data (" << _g->GetN()

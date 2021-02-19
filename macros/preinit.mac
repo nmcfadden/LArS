@@ -25,7 +25,7 @@
 #/process/optical/absorption/verbose 1
 #/process/optical/boundary/verbose 1
 #/LArS/gun/verbose 2
-/process/optical/printParameters
+#/process/optical/printParameters
 /process/had/verbose 0
 /process/em/verbose 0
 

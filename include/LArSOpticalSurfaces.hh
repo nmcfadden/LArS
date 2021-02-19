@@ -84,6 +84,6 @@ private:
   static std::map<std::string, G4OpticalSurface*> fOpticalSurfaces;
 };
 
- TGraph* ReadData(G4String filename);
+ TGraph* ReadData(G4String filename, G4String soption);
 //
 #endif
