@@ -16,3 +16,6 @@ spectra/*
 output_spectra/*
 log/*
 *.log 
+simdata/*
+simrootfiles
+simrootfiles/*
