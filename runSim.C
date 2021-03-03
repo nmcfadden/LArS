@@ -36,7 +36,7 @@ using namespace std;
 
 
 // to run the program: 
-//$ LArS_bashrc_sim && root -l runSim.C 
+//$ source LArS_bashrc && root -l runSim.C 
 // or directly root -l runSim.C, in case you have already the necessary paths loaded
 
 void runSim()
@@ -73,15 +73,21 @@ void runSim()
      {
 	//if (it>2) break; 
 	//if (bs>0) break;
-	double AlSbs=AlS_BS[bs];
-	stringstream sAlSbs; sAlSbs<<AlSbs*100;
+      double AlSbs=AlS_BS[bs];
+      stringstream sAlSbs; sAlSbs<<AlSbs*100;
+
+      for (int tr=0; tr<n_ref_TTX; tr++)
+      {
+        double TTXref=ref_TTX[tr];
+        stringstream sTTX_r; sTTX_r<<TTXref*100;
 
 	cout<<"\n\n####****#### Starting simulation iteration: "<<it<<" ####****####\n\n"<<endl;
-	cout<<"  qLY: "<<sqLY.str()<<", qQE: "<<sqQE.str()<<", AlS_r: "<<sAlSr.str()<<", AlS_SS: "<<sAlSss.str()<<", AlS_BS: "<<sAlSbs.str()<<endl;
+	cout<<"  qLY: "<<sqLY.str()<<", qQE: "<<sqQE.str()<<", rTTX: "<<sTTX_r.str()<<", AlS_r: "<<sAlSr.str()<<", AlS_SS: "<<sAlSss.str()<<", AlS_BS: "<<sAlSbs.str()<<endl;
 
         if(!itExists(output_dir[0])) system(("mkdir "+output_dir[0]).c_str());
 
-	string svarydata="_LY"+sqLY.str()+"p_QE"+sqQE.str()+"p_AlSr"+sAlSr.str()+"p_SS"+sAlSss.str()+"p_BS"+sAlSbs.str()+"p";
+	string svaryttx; if (n_ref_TTX>1) {svaryttx="p_TTXr"+sTTX_r.str();} else {svaryttx="";}
+	string svarydata="_LY"+sqLY.str()+"p_QE"+sqQE.str()+svaryttx+"p_AlSr"+sAlSr.str()+"p_SS"+sAlSss.str()+"p_BS"+sAlSbs.str()+"p";
         string std_optdata(getenv("LARSOPTICALDATA"));
 	string new_optdata=LArSpath+"/"+output_dir[0]+"/opticalData"+svarydata;
 	system(("cp -Tr "+std_optdata+" "+new_optdata).c_str());
@@ -127,128 +133,56 @@ void runSim()
 		newoutfile<<AlS_rWL[l]<<" "<<AlSr<<" "<<AlSss<<" "<<AlS_SL<<" "<<AlSbs<<endl;
 	}
 	newoutfile.close();
+
+	// ## **** modifying reflectivity of Tetratex
+	sinoutfile=new_optdata+"/"+mod_files[3]+".dat";
+
+ 	auto TTX_rGraph = new TGraph(sinoutfile.c_str());
+ 	double *TTX_rWL=TTX_rGraph->GetX();
+ 	double *TTX_r=TTX_rGraph->GetY();
+
+	newoutfile.open(sinoutfile.c_str());
+	for (int l=0; l<TTX_rGraph->GetN(); l++)
+	{
+		if (TTX_rWL[l]<160) {newoutfile<<TTX_rWL[l]<<" "<<ref_TTX[tr]<<endl;}
+		else {newoutfile<<TTX_rWL[l]<<" "<<TTX_r[l]<<endl;}
+	}
+	newoutfile.close();
 	
-	// create directory and run the simulation
-        if(!itExists(output_dir[1])) system(("mkdir "+output_dir[1]).c_str());
-	string outfile=output_dir[1]+"/events_"+s_samples[which_sample]+"_"+N_events+svarydata+".root";
-	string runsimcmd=runsimcmd_base+outfile+" > sim_log";
+	//----- create directories and run the simulation -------
+	string outdir=output_dir[1]+"/"+output_dir[3];
+	string outdirlog=output_dir[2]+"/"+output_dir[3]; 
+	if (it==0) // it only checks/creates directories in the first iteration
+	{ 
+		if(!itExists(output_dir[1])) system(("mkdir "+output_dir[1]).c_str());
+		if(itExists(outdir)) 
+		{
+			cout<<"\n\n sim directory "+output_dir[3]+" already exists!!! Are you sure you want to overwrite it? if so, press any key, otherwise pres ctrl+c to stop "<<endl;
+			char cont; cin>>cont;
+			system((" rm -rf "+outdir+" "+outdirlog).c_str());
+		}
+		system(("mkdir "+outdir+" "+outdirlog).c_str());
+		system(("cp sim_input.hh "+outdirlog+"/sim_input.hh").c_str());
+	}
+
+	string outfile=outdir+"/events_"+s_samples[which_sample]+"_"+N_events+svarydata+".root";
+	string logfile=outdirlog+"/"+s_samples[which_sample]+"_"+N_events+svarydata+".log";
+
+	string runsimcmd=runsimcmd_base+outfile+" > "+logfile;
 
 	cout<<"\n  opened: "<<new_optdata<<"\n  run command: "<<runsimcmd<<"\n\n####*******####*******####*******####*******####*******####"<<endl;
 	system(("export LARSOPTICALDATA="+new_optdata+" && "+runsimcmd).c_str());
+	// to run multiple jobs in batch mode: system('sbatch --job-name=%s --time=%s --output=%s (as in https://github.com/Physik-Institut-UZH/Gator_2020/blob/master/simulations/gator_v2.0/GatorSims.py)
+	
+	//--------------------------------------------------------
 
 	it++;
+      }
      }
     }
    }
   }
  }
- 
-
-	
-
-
-
-//reflectivity loop 
-
-//copy data file to _LY_QE_R_SL_BS and source std bashrc + export new var
-/*
- int const n_samples=4; int which_sample=0, init_ref=0;
- string s_samples[n_samples]={"absorber", "TTX", "PEN", "WLSR"};
- string initbase_sfile[n_samples]={"events_3K_5MeV_photonyield_108p_185489_newgeo_R","events_TTX_1K_5MeV_photonyield_108p_185489_newgeo_R","", "events_WLSR_1K_5MeV_photonyield_108p_185489_newgeo_E"};
- string endbase_sfile[n_samples]={"p.root","p.root","","p_noref.root"};
-
- TCanvas *chist;
- TCanvas *c1= new TCanvas(); 
- TLegend *lg= new TLegend(0.7, 0.7, 0.85, 0.89);
- lg->SetTextSize(0.035); lg->SetBorderSize(0);lg->SetFillStyle(0); lg->SetHeader("  Reflectivity | Mean"); 
-
- int n_bins=800, step=3; double first_bin=0.5, last_bin=first_bin+n_bins*step;
- int init_fit_PE=400, end_fit_PE=3000; 
- 
- int const n_ref=9;
- double ref[n_ref]={0.007,0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8};//, 0.9}; // reflectivity values
- double PE_values[n_ref], PE_values_sigma[n_ref];
-
-
- double PE_measured[n_samples]={520, 595,1080,1200}; //double exp_ref[n_samples]={0.7, 11, 50, 60};
- TH1F *PE_hist[n_ref];
-
- for (int r=init_ref; r<n_ref; r++)
- {
-	//if (r>3 && r<7) continue;
-	int s=which_sample;
-	int ref_int=ref[r]*100; stringstream ref_p; ref_p<<ref_int; ref_p<<setprecision(2);
-	string inputfile=initbase_sfile[s]+ref_p.str()+endbase_sfile[s];
-	cout<<inputfile<<endl;
-	TFile *pFile = new TFile(inputfile.c_str());
-	TDirectoryFile *pDir = (TDirectoryFile *)pFile->Get("events");
-
-	string hist_name="PE_hist_R"+ref_p.str();
-	PE_hist[r] = new TH1F(hist_name.c_str(),"",n_bins,first_bin, last_bin);
-	TTree *pTree = (TTree *) pDir->Get("events");
-	c1->cd(); pTree->Draw(("ntpmthits>>"+hist_name).c_str()); 
-	//int init_int=100/step; spectrum_int=PE_hist[r]->Integral(init_int,last_bin);
-
-	if (r==init_ref) {chist= new TCanvas("chist", "chist", 800, 500); PE_hist[r]->Draw();}
-	else if (r%2==0) {chist->cd(); PE_hist[r]->Draw("same");} 
-	chist->SetLogy();
-	PE_hist[r]->SetLineColor(kMagenta+r); PE_hist[r]->SetLineWidth(2);
-	PE_hist[r]->GetYaxis()->SetTitle("Counts");
-	PE_hist[r]->GetXaxis()->SetTitle("PE");
-	gStyle->SetOptStat(0);
-
-	if (s==0) {if (ref[r]>0.5){ init_fit_PE=800; PE_hist[r]->SetLineStyle(2);} if (ref[r]>0.75) init_fit_PE=1650;}
-	else if (s==3) {if (ref[r]>0.){ init_fit_PE=1000; PE_hist[r]->SetLineStyle(2);} if (ref[r]>0.75) init_fit_PE=1000;}
-
-	TF1  *f1 = new TF1("f1","gaus", init_fit_PE, end_fit_PE);
-	PE_hist[r]->Fit("f1", "R"); 
-	int mean_gaus=f1->GetParameter(1); //cout <<" ##############" <<mean_gaus<<endl;
-	double sigma=f1->GetParameter(2); //double FWHM=2.35482*sigma;
-	PE_values[r]=f1->GetParameter(1); PE_values_sigma[r]=f1->GetParameter(2); 
-	stringstream smean; smean<<mean_gaus; smean<<setprecision(0);
-
-	if (ref[r]==0.007) ref_p<<.7;
-	string lg_smean=ref_p.str()+"% | "+smean.str()+" PE";
-	if (r%2==0 || s>0) lg->AddEntry(PE_hist[r],lg_smean.c_str(), "l");
-
-	ref[r]*=100;
-
-
- }
- c1->Close();
- lg->Draw();
-
- TGraphErrors *g_ref= new TGraphErrors(n_ref, ref, PE_values, 0, PE_values_sigma);
- TCanvas *cref = new TCanvas("cref","cref", 700, 500); g_ref->Draw("APL"); 
- g_ref->GetYaxis()->SetTitle("Mean PE value");  g_ref->GetXaxis()->SetTitle("Reflectivity [%]"); 
- g_ref->SetTitle(""); 
- g_ref->SetMarkerStyle(20); g_ref->SetMarkerColor(45); g_ref->SetLineColor(48);
- TLegend *glg= new TLegend(0.13, 0.7, 0.33, 0.89);
- glg->SetTextSize(0.035); glg->SetBorderSize(0); glg->SetFillStyle(0);
- glg->AddEntry(g_ref, "Simulated", "lp");
- TText *t;
-
- for (int i=0; i<n_samples-3; i++)
- {
- 	double x1=0, x2=87, y1=PE_measured[i],y2=y1;
-	TLine *PElines= new TLine(x1, y1, x2, y2);
-	PElines->Draw(); PElines->SetLineStyle(2); PElines->SetLineColor(30);
-	t = new TText(80,y1+75,(s_samples[i]).c_str());
-	if (i%2==0) t = new TText(80,y1-75,(s_samples[i]).c_str());
-	t->SetTextAlign(22);  t->SetTextColor(30); t->SetTextFont(43); t->SetTextSize(18);
-	t->Draw();
-	
-
- }
- TLegendEntry* l1 =  glg->AddEntry(t, "Measured", "l");
- l1->SetLineColor(30);  l1->SetLineStyle(2);  l1->SetTextColor(30);
- glg->Draw();
- 
- cref->SaveAs("Reflectivity_absorber_new.png");
- chist->SaveAs("PE_hist_sim_absorber_new.png");
-
-*/
-
 }
 
 

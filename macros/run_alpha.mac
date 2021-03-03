@@ -29,7 +29,7 @@
 # particle type + energy spectrum
 
 #/LArS/gun/energytype Spectrum
-#/LArS/gun/energyspectrum alphaspectrum.dat 
+/LArS/gun/energyspectrum alpha_spectrum 
 /LArS/gun/energy 5.486 MeV
 /LArS/gun/particle alpha
 

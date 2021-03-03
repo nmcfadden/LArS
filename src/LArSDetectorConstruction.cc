@@ -69,7 +69,11 @@ G4VPhysicalVolume* LArSDetectorConstruction::Construct()
       new G4LogicalBorderSurface("PMTQE"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("MgF2-PMT"));
     }
     if(candidateList.contains("wallCell")){
-      if(UseTetratex()&& UsePEN()){
+      if(UseTetratex()){
+        new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToTetratex"));
+        new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTetratex"));
+      }
+      else if(UseTetratex()&& UsePEN()){
         new G4LogicalBorderSurface("wallCell"+to_string(i),lar->GetPhysicalVolume(),phys_vol,opSurfaces->GetOpticalSurface("LArToTetratex"));
         new G4LogicalBorderSurface(to_string(i)+"wallCell",phys_vol,lar->GetPhysicalVolume(),opSurfaces->GetOpticalSurface("LArToTetratex"));
       }

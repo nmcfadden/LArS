@@ -12,7 +12,7 @@
 /LArS/detector/setAcrylicWindow false
 /LArS/detector/setPEN false
 /LArS/detector/setTPB false
-/LArS/detector/setTetratex false
+/LArS/detector/setTetratex true
 
 # simulation options
 /LArS/analysismanager/setFastSim true

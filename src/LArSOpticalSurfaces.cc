@@ -159,7 +159,7 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
     new G4OpticalSurface(
       name         = surf_name + "_Surface",
       model        = unified,
-      finish       = ground, // changed to ground
+      finish       = groundfrontpainted, // changed to ground
       surface_type = dielectric_dielectric
     )
   );
@@ -196,7 +196,8 @@ LArSOpticalSurfaces::LArSOpticalSurfaces() {
 
   fOpticalSurfaces[surf_name]->SetMaterialPropertiesTable(BlackTable);
 
-  // Al surface of the disk where the source is deposited =========================================
+  // Surface of the disk where the source is deposited =========================================
+  // edit: the material of the disk is actually stainless steel.
   surf_name = "AlSource";
   fOpticalSurfaces.emplace(surf_name,
     new G4OpticalSurface(

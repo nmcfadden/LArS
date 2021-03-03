@@ -7,3 +7,6 @@ export G4_INSTALL_DIR=~/geant4/geant4.10.07-install
 source ~/geant4/geant4.10.07-install/bin/geant4.sh
 export LD_LIBRARY_PATH=$G4_INSTALL_DIR/lib:$LD_LIBRARY_PATH
 
+if [ -n "$readsim_env" ]; then
+	alias readsim='cat $LARSDIR/log/$readsim_env/sim_input.hh > $LARSDIR/readinput_sim.hh && root -l $LARSDIR/sim_read.C'
+fi

@@ -1,9 +1,6 @@
-# Demonstrator simulations
- Geant4 Monte Carlo for UZH Darwin Demonstrator Liquid Argon Research Setup (LARS): 
- Managed by Neil McFadden neil.mcfadden@physik.uzh.ch 23-09-2020
-
-
-
+# LArS simulations
+ Geant4 Monte Carlo for UZH Liquid Argon Research Setup (LARS): 
+ Managed by Neil McFadden neil.mcfadden@physik.uzh.ch and Gabriela R. Araujo gabriela@physik.uzh.ch
 
 ## Instructions for git:
 - Be responsible when pushing changes
@@ -35,6 +32,15 @@ TTree *pTree = (TTree *) pDir->Get("events");
 pTree->Draw("ntpmthits");
 c1->SetLogy();
 
+## Simple script for root visualization:
+root -l roofile.root
+root [0] .x plotpmthits.C
+
+## scripts for multiple simulation runs varying optical parameters
+ - change parameters for the simulation in sim_input
+ - change options for the simulation in preinit macro (fast simulation option produces smaller root files)
+ - run the simulation:
+	 $ source LArS_bashrc && root -l runSim.C  (this may create multiple directories for the output)
+ - to read the simulation output, use the script sim_read.C
 
 
-# LArS
